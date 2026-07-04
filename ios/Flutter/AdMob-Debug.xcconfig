@@ -1,0 +1,2 @@
+// Google's public test AdMob App ID. Safe to commit — used for debug builds only.
+ADMOB_APP_ID = ca-app-pub-3940256099942544~1458002511

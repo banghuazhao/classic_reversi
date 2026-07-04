@@ -1,0 +1,4 @@
+// Template for AdMob-Release.xcconfig, which is gitignored since it holds
+// the real production AdMob App ID. Copy this file to AdMob-Release.xcconfig
+// and fill in your real AdMob App ID before building for release.
+ADMOB_APP_ID = ca-app-pub-xxxxxxxxxxxxxxxx~xxxxxxxxxx
