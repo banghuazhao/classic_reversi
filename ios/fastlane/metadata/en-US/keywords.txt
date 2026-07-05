@@ -1,0 +1,1 @@
+reversi,othello,board game,strategy,classic,puzzle,mind game,multiplayer
