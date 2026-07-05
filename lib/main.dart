@@ -150,9 +150,24 @@ class _GameScreenState extends State<GameScreen> {
 
   AppLifecycleReactor? _appLifecycleReactor;
 
+  // The square the most recently placed piece landed on, so it can be
+  // highlighted and is easy to spot (especially after the CPU moves).
+  Position? _lastMove;
+
+  // Snapshots of the board from just before each human move, used to
+  // support taking a move back. Cleared on undo so only one undo can be
+  // used per turn until another move is made.
+  final List<GameModel> _historyStack = [];
+  bool _canUndo = false;
+
   PieceType get _computerColor => widget.settings.twoPlayerMode
       ? PieceType.empty
       : getOpponent(widget.settings.humanColor);
+
+  bool get _undoAllowed =>
+      _canUndo &&
+      (widget.settings.twoPlayerMode ||
+          widget.settings.difficulty != Difficulty.hard);
 
   // Below is the combination of streams that controls the flow of the game.
   // There are two streams of models produced by player interaction (either by
@@ -192,6 +207,7 @@ class _GameScreenState extends State<GameScreen> {
           // instead of feeling instant.
           await Future.delayed(const Duration(milliseconds: 600));
           newModel = newModel.updateForMove(move.x, move.y);
+          _lastMove = move;
           yield newModel;
         } else {
           break;
@@ -279,8 +295,21 @@ class _GameScreenState extends State<GameScreen> {
         ? model.player != PieceType.empty
         : model.player != _computerColor;
     if (isHumanTurn && model.board.isLegalMove(x, y, model.player)) {
+      _historyStack.add(model);
+      _canUndo = true;
+      _lastMove = Position(x, y);
       _userMovesController.add(model.updateForMove(x, y));
     }
+  }
+
+  void _undoLastMove() {
+    if (!_undoAllowed || _historyStack.isEmpty) {
+      return;
+    }
+    final previousModel = _historyStack.removeLast();
+    _canUndo = false;
+    _lastMove = null;
+    _restartController.add(previousModel);
   }
 
   static final ButtonStyle _circleButtonStyle = ElevatedButton.styleFrom(
@@ -331,11 +360,22 @@ class _GameScreenState extends State<GameScreen> {
 
     double lineMargin = boxWidth > 40 ? 2.0 : 1.0;
 
+    // On Easy difficulty (single-player only), show a subtle marker on every
+    // legal move so beginners can learn the rules without getting stuck.
+    final showLegalMoveHints = !widget.settings.twoPlayerMode &&
+        widget.settings.difficulty == Difficulty.easy;
+    final legalMoveHints = showLegalMoveHints && model.player != _computerColor
+        ? model.board.getMovesForPlayer(model.player)
+        : const <Position>[];
+
     for (var y = 0; y < GameBoard.height; y++) {
       final spots = <Widget>[];
 
       for (var x = 0; x < GameBoard.width; x++) {
         PieceType type = model.board.getPieceAtLocation(x, y);
+        final isLastMove = _lastMove?.x == x && _lastMove?.y == y;
+        final isLegalMoveHint = type == PieceType.empty &&
+            legalMoveHints.any((p) => p.x == x && p.y == y);
 
         spots.add(AnimatedContainer(
           duration: Duration(
@@ -344,15 +384,34 @@ class _GameScreenState extends State<GameScreen> {
           margin: EdgeInsets.all(lineMargin),
           decoration: BoxDecoration(
               gradient: Styling.pieceGradients[type],
+              border: isLastMove
+                  ? Border.all(
+                      color: Color(0xffffffff), width: max(boxWidth * 0.06, 2))
+                  : null,
               borderRadius: BorderRadius.all(
                   Radius.circular(type == PieceType.empty ? 0 : boxWidth))),
           child: SizedBox(
             width: boxWidth,
             height: boxWidth,
-            child: GestureDetector(
-              onTap: () {
-                _attemptUserMove(model, x, y);
-              },
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                if (isLegalMoveHint)
+                  Container(
+                    width: boxWidth * 0.3,
+                    height: boxWidth * 0.3,
+                    decoration: BoxDecoration(
+                      color: Color(0x60ffffff),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    _attemptUserMove(model, x, y);
+                  },
+                ),
+              ],
             ),
           ),
         ));
@@ -419,8 +478,21 @@ class _GameScreenState extends State<GameScreen> {
                       _buildScoreBox(PieceType.black, model),
                       _buildScoreBox(PieceType.white, model),
                       SizedBox(
-                        width: 70,
-                        height: 70,
+                        width: 56,
+                        height: 56,
+                        child: ElevatedButton(
+                          onPressed: _undoAllowed ? _undoLastMove : null,
+                          child: Icon(
+                            CupertinoIcons.arrow_uturn_left,
+                            size: 22,
+                            color: Color(0xffffffff),
+                          ),
+                          style: _circleButtonStyle,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 56,
+                        height: 56,
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
@@ -430,15 +502,15 @@ class _GameScreenState extends State<GameScreen> {
                           },
                           child: Icon(
                             CupertinoIcons.refresh_bold,
-                            size: 28,
+                            size: 22,
                             color: Color(0xffffffff),
                           ),
                           style: _circleButtonStyle,
                         ),
                       ),
                       SizedBox(
-                        width: 70,
-                        height: 70,
+                        width: 56,
+                        height: 56,
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.push(
@@ -448,7 +520,7 @@ class _GameScreenState extends State<GameScreen> {
                           },
                           child: Icon(
                             CupertinoIcons.question,
-                            size: 28,
+                            size: 22,
                             color: Color(0xffffffff),
                           ),
                           style: _circleButtonStyle,

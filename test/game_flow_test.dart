@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:classic_reversi/main.dart';
@@ -22,12 +23,12 @@ void main() {
     expect(find.text('white'), findsOneWidget);
     expect(find.text('2'), findsNWidgets(2));
 
-    // Tap a legal opening move for black. GestureDetectors are: the restart
-    // button, the help button, then the 64 board squares in row-major order.
-    // Index 2 + (2*8+4) = 22 is board square (x=4, y=2), a legal opening move.
+    // Tap a legal opening move for black. GestureDetectors are: the undo,
+    // restart, and help buttons, then the 64 board squares in row-major
+    // order. Index 3 + (2*8+4) = 23 is board square (x=4, y=2), a legal move.
     final gestureDetectors = find.byType(GestureDetector);
-    expect(gestureDetectors, findsNWidgets(66));
-    await tester.tap(gestureDetectors.at(22));
+    expect(gestureDetectors, findsNWidgets(67));
+    await tester.tap(gestureDetectors.at(23));
 
     // Let the move resolve and the CPU (which also moves as part of this
     // flow) respond after its "thinking" delay.
@@ -38,5 +39,17 @@ void main() {
     // Both scores should have moved off the starting 2-2 split, confirming
     // the tap was registered as a legal move and the game actually advanced.
     expect(find.text('2'), findsNothing);
+
+    // Undo should take the board all the way back to the starting position
+    // (it reverts to just before the human's move, undoing the CPU's
+    // response along with it).
+    await tester.tap(gestureDetectors.at(0));
+    await tester.pumpAndSettle();
+    expect(find.text('2'), findsNWidgets(2));
+
+    // Only one undo is allowed per turn: the button should now be disabled.
+    final undoButton =
+        tester.widget<ElevatedButton>(find.byType(ElevatedButton).first);
+    expect(undoButton.onPressed, isNull);
   });
 }
