@@ -17,7 +17,8 @@ import 'package:google_mobile_ads/google_mobile_ads.dart'
     if (dart.library.io) 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'Tools/ads_manager.dart' if (dart.library.io) 'Tools/ads_manager.dart';
-import 'Tools/in_app_reviewer_helper.dart' if (dart.library.io) 'Tools/in_app_reviewer_helper.dart';
+import 'Tools/in_app_reviewer_helper.dart'
+    if (dart.library.io) 'Tools/in_app_reviewer_helper.dart';
 import 'game_board.dart';
 import 'game_model.dart';
 import 'generated/l10n.dart';
@@ -34,16 +35,38 @@ void main() {
   if (!kIsWeb) {
     Future.delayed(const Duration(seconds: 1), () {
       AppTrackingTransparency.requestTrackingAuthorization();
+    }).catchError((Object error) {
+      print('ATT request failed: $error');
     });
 
-    MobileAds.instance.initialize();
+    // Ad SDK initialization must never be allowed to take down app startup:
+    // a bad network response, missing config, or SDK bug here would
+    // otherwise crash the app on every single launch.
+    () async {
+      try {
+        await MobileAds.instance.initialize();
+      } catch (error) {
+        print('MobileAds initialization failed: $error');
+      }
+    }();
 
-    AdsManager.debugPrintID();
+    try {
+      AdsManager.debugPrintID();
+    } catch (error) {
+      print('debugPrintID failed: $error');
+    }
 
-    InAppReviewHelper.checkAndAskForReview();
+    InAppReviewHelper.checkAndAskForReview().catchError((Object error) {
+      print('In-app review check failed: $error');
+    });
 
     SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
+            [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
+        .then((_) {
+      runApp(MyApp());
+    }).catchError((Object error) {
+      // Even if setting the preferred orientation fails, the app must still launch.
+      print('setPreferredOrientations failed: $error');
       runApp(MyApp());
     });
   } else {
@@ -108,8 +131,10 @@ class GameScreen extends StatefulWidget {
 /// sent downstream. [GameScreen] uses a [StreamBuilder] wired up to that stream
 /// of models to build out its [Widget] tree.
 class _GameScreenState extends State<GameScreen> {
-  final StreamController<GameModel> _userMovesController = StreamController<GameModel>();
-  final StreamController<GameModel> _restartController = StreamController<GameModel>();
+  final StreamController<GameModel> _userMovesController =
+      StreamController<GameModel>();
+  final StreamController<GameModel> _restartController =
+      StreamController<GameModel>();
   Stream<GameModel>? _modelStream;
 
   BannerAd? _ad;
@@ -163,30 +188,40 @@ class _GameScreenState extends State<GameScreen> {
     super.initState();
 
     if (!kIsWeb) {
-      _ad = BannerAd(
-        adUnitId: AdsManager.bannerAdUnitId,
-        size: AdSize.banner,
-        request: AdRequest(),
-        listener: BannerAdListener(
-          onAdLoaded: (_) {
-            setState(() {
-              _isAdLoaded = true;
-            });
-          },
-          onAdFailedToLoad: (ad, error) {
-            // Releases an ad resource when it fails to load
-            ad.dispose();
+      // Ad setup must never be able to crash the game screen: a failure here
+      // (bad ad unit config, SDK not ready, etc.) should just mean no ads.
+      try {
+        _ad = BannerAd(
+          adUnitId: AdsManager.bannerAdUnitId,
+          size: AdSize.banner,
+          request: AdRequest(),
+          listener: BannerAdListener(
+            onAdLoaded: (_) {
+              if (mounted) {
+                setState(() {
+                  _isAdLoaded = true;
+                });
+              }
+            },
+            onAdFailedToLoad: (ad, error) {
+              // Releases an ad resource when it fails to load
+              ad.dispose();
 
-            print('Ad load failed (code=${error.code} message=${error.message})');
-          },
-        ),
-      );
+              print(
+                  'Ad load failed (code=${error.code} message=${error.message})');
+            },
+          ),
+        );
 
-      _ad?.load();
+        _ad?.load();
 
-      AppOpenAdManager appOpenAdManager = AppOpenAdManager()..loadAd();
-      _appLifecycleReactor = AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
-      _appLifecycleReactor?.listenToAppStateChanges();
+        AppOpenAdManager appOpenAdManager = AppOpenAdManager()..loadAd();
+        _appLifecycleReactor =
+            AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
+        _appLifecycleReactor?.listenToAppStateChanges();
+      } catch (error) {
+        print('Ad setup failed: $error');
+      }
     }
   }
 
@@ -217,14 +252,26 @@ class _GameScreenState extends State<GameScreen> {
   // turn, this method will attempt to make the move, creating a new GameModel
   // in the process.
   void _attemptUserMove(GameModel model, int x, int y) {
-    if (model.player == PieceType.black && model.board.isLegalMove(x, y, model.player)) {
+    if (model.player == PieceType.black &&
+        model.board.isLegalMove(x, y, model.player)) {
       _userMovesController.add(model.updateForMove(x, y));
     }
   }
 
+  static final ButtonStyle _circleButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: Color(0x60421E08),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(35.0)),
+    padding: EdgeInsets.zero,
+    minimumSize: Size.zero,
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    elevation: 0,
+  );
+
   Widget _buildScoreBox(PieceType player, GameModel model) {
     var label = player == PieceType.black ? 'black' : 'white';
-    var scoreText = player == PieceType.black ? '${model.blackScore}' : '${model.whiteScore}';
+    var scoreText = player == PieceType.black
+        ? '${model.blackScore}'
+        : '${model.whiteScore}';
 
     return DecoratedBox(
       decoration: (model.player == player)
@@ -237,31 +284,27 @@ class _GameScreenState extends State<GameScreen> {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: player == PieceType.black ? Styling.scoreLabelTextBlack : Styling.scoreLabelText,
+            style: player == PieceType.black
+                ? Styling.scoreLabelTextBlack
+                : Styling.scoreLabelText,
           ),
           Text(
             scoreText,
             textAlign: TextAlign.center,
-            style: player == PieceType.black ? Styling.scoreTextBlack : Styling.scoreText,
+            style: player == PieceType.black
+                ? Styling.scoreTextBlack
+                : Styling.scoreText,
           )
         ],
       ),
     );
   }
 
-  List<Widget> _buildGameBoardDisplay(BuildContext context, GameModel model) {
+  List<Widget> _buildGameBoardDisplay(
+      BuildContext context, GameModel model, double boxWidth) {
     final rows = <Widget>[];
 
-    double width = MediaQuery.of(context).size.width;
-
-    double sideMargin = max(width * 0.08, 15);
-    double boxWidth;
-    if (kIsWeb) {
-      boxWidth = 40;
-    } else {
-      boxWidth = (width - sideMargin * 2 - 7) / 8;
-    }
-    double lineMargin = sideMargin > 40 ? 2.0 : 1.0;
+    double lineMargin = boxWidth > 40 ? 2.0 : 1.0;
 
     for (var y = 0; y < GameBoard.height; y++) {
       final spots = <Widget>[];
@@ -276,8 +319,8 @@ class _GameScreenState extends State<GameScreen> {
           margin: EdgeInsets.all(lineMargin),
           decoration: BoxDecoration(
               gradient: Styling.pieceGradients[type],
-              borderRadius:
-                  BorderRadius.all(Radius.circular(type == PieceType.empty ? 0 : boxWidth))),
+              borderRadius: BorderRadius.all(
+                  Radius.circular(type == PieceType.empty ? 0 : boxWidth))),
           child: SizedBox(
             width: boxWidth,
             height: boxWidth,
@@ -301,6 +344,15 @@ class _GameScreenState extends State<GameScreen> {
 
   // Builds out the Widget tree using the most recent GameModel from the stream.
   Widget _buildWidgets(BuildContext context, GameModel model) {
+    // Fixed-height chrome that always surrounds the board, used to work out
+    // how much vertical space is actually left for the board itself so it
+    // never gets clipped or pushed off screen on smaller devices.
+    const headerHeight = 90.0;
+    const spacingHeight = 20.0 + 10.0 + 20.0;
+    const resultTextHeight = 70.0;
+    const adReservedHeight = 60.0;
+    const verticalPadding = 30.0 + 20.0;
+
     return Container(
       padding: EdgeInsets.only(top: 30.0, left: 15.0, right: 15.0),
       decoration: BoxDecoration(
@@ -314,82 +366,101 @@ class _GameScreenState extends State<GameScreen> {
         ),
       ),
       child: SafeArea(
-        child: Stack(children: [
-          Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+        child: LayoutBuilder(builder: (context, constraints) {
+          double width = constraints.maxWidth;
+          double sideMargin = max(width * 0.08, 15);
+          double widthBasedBoxWidth = (width - sideMargin * 2 - 7) / 8;
+
+          double reservedHeight = headerHeight +
+              spacingHeight +
+              verticalPadding +
+              (model.gameIsOver ? resultTextHeight : 0) +
+              (_isAdLoaded ? adReservedHeight : 0);
+          double availableBoardHeight = constraints.maxHeight - reservedHeight;
+          double heightBasedBoxWidth = (availableBoardHeight - 7) / 8;
+
+          double boxWidth = min(widthBasedBoxWidth, heightBasedBoxWidth)
+              .clamp(20.0, widthBasedBoxWidth);
+
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildScoreBox(PieceType.black, model),
-                  _buildScoreBox(PieceType.white, model),
-                  SizedBox(
-                    width: 70,
-                    height: 70,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _restartController.add(
-                          GameModel(board: GameBoard()),
-                        );
-                      },
-                      child: Icon(
-                        Icons.refresh_rounded,
-                        size: 36,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildScoreBox(PieceType.black, model),
+                      _buildScoreBox(PieceType.white, model),
+                      SizedBox(
+                        width: 70,
+                        height: 70,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _restartController.add(
+                              GameModel(board: GameBoard()),
+                            );
+                          },
+                          child: Icon(
+                            CupertinoIcons.refresh_bold,
+                            size: 28,
+                            color: Color(0xffffffff),
+                          ),
+                          style: _circleButtonStyle,
+                        ),
                       ),
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Color(0x60421E08)),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(35.0)))),
-                    ),
+                      SizedBox(
+                        width: 70,
+                        height: 70,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) => const MorePage()));
+                          },
+                          child: Icon(
+                            CupertinoIcons.question,
+                            size: 28,
+                            color: Color(0xffffffff),
+                          ),
+                          style: _circleButtonStyle,
+                        ),
+                      )
+                    ],
                   ),
-                  SizedBox(
-                    width: 70,
-                    height: 70,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context, CupertinoPageRoute(builder: (context) => const MorePage()));
-                      },
-                      child: Icon(
-                        Icons.help_outline_rounded,
-                        size: 36,
+                  SizedBox(height: 20),
+                  ThinkingIndicator(
+                    color: Styling.thinkingColor,
+                    height: Styling.thinkingSize,
+                    visible: model.player == PieceType.white,
+                  ),
+                  SizedBox(height: 10),
+                  ..._buildGameBoardDisplay(context, model, boxWidth),
+                  SizedBox(height: 20),
+                  if (model.gameIsOver)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
+                      child: Text(
+                        model.gameResultString,
+                        style: Styling.resultText,
                       ),
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Color(0x60421E08)),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(35.0)))),
                     ),
-                  )
+                  // The banner ad sits below the board in normal document
+                  // flow so it can never overlap or block board taps.
+                  if (_isAdLoaded)
+                    Container(
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                      height: 50.0,
+                      child: AdWidget(ad: _ad!),
+                    ),
                 ],
               ),
-              SizedBox(height: 20),
-              ThinkingIndicator(
-                color: Styling.thinkingColor,
-                height: Styling.thinkingSize,
-                visible: model.player == PieceType.white,
-              ),
-              SizedBox(height: 20),
-              ..._buildGameBoardDisplay(context, model),
-              SizedBox(height: 30),
-              if (model.gameIsOver)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
-                  child: Text(
-                    model.gameResultString,
-                    style: Styling.resultText,
-                  ),
-                ),
-            ],
-          ),
-          if (_isAdLoaded)
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                child: AdWidget(ad: _ad!),
-                height: 50.0,
-              ),
             ),
-        ]),
+          );
+        }),
       ),
     );
   }
