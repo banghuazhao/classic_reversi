@@ -25,6 +25,7 @@ import 'game_settings.dart';
 import 'generated/l10n.dart';
 import 'more_page.dart';
 import 'move_finder.dart';
+import 'settings_service.dart';
 import 'start_screen.dart';
 import 'styling.dart';
 import 'thinking_indicator.dart';
@@ -279,12 +280,49 @@ class _GameScreenState extends State<GameScreen> {
     return StreamBuilder<GameModel>(
       stream: _modelStream,
       builder: (context, snapshot) {
-        return _buildWidgets(
-          context,
-          snapshot.hasData ? snapshot.data! : GameModel(board: GameBoard()),
-        );
+        final model =
+            snapshot.hasData ? snapshot.data! : GameModel(board: GameBoard());
+        _handleGameOverIfNeeded(model);
+        return _buildWidgets(context, model);
       },
     );
+  }
+
+  // Records the win/loss record and, the very first time the player ever
+  // wins, prompts for a store review at that high point. Single-player only:
+  // 2-player local matches aren't attributed to either side. Guarded so it
+  // only fires once per game, right as it ends.
+  bool _gameOverHandled = false;
+
+  void _handleGameOverIfNeeded(GameModel model) {
+    if (!model.gameIsOver) {
+      _gameOverHandled = false;
+      return;
+    }
+    if (_gameOverHandled || widget.settings.twoPlayerMode) {
+      return;
+    }
+    _gameOverHandled = true;
+
+    if (model.blackScore == model.whiteScore) {
+      return;
+    }
+
+    final humanWon = model.blackScore > model.whiteScore
+        ? widget.settings.humanColor == PieceType.black
+        : widget.settings.humanColor == PieceType.white;
+
+    if (humanWon) {
+      SettingsService.incrementWins();
+      SettingsService.getHasWonOnce().then((hasWonOnce) {
+        if (!hasWonOnce) {
+          SettingsService.setHasWonOnce();
+          InAppReviewHelper.requestReviewAfterFirstWin();
+        }
+      });
+    } else {
+      SettingsService.incrementLosses();
+    }
   }
 
   // Called when the user taps on the game's board display. If it's the player's

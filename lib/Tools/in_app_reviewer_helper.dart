@@ -29,4 +29,12 @@ class InAppReviewHelper {
       }
     }
   }
+
+  // Players are at their happiest right after their very first win, so that's
+  // the best moment to ask for a review rather than waiting on open count.
+  static Future<void> requestReviewAfterFirstWin() async {
+    if (await inAppReview.isAvailable()) {
+      inAppReview.requestReview();
+    }
+  }
 }
