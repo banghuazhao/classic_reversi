@@ -439,7 +439,10 @@ class _GameScreenState extends State<GameScreen> {
               gradient: Styling.pieceGradients[type],
               border: isLastMove
                   ? Border.all(
-                      color: Color(0xffffffff), width: max(boxWidth * 0.06, 2))
+                      color: Color(0xffFFC107),
+                      width: max(boxWidth * 0.08, 3),
+                      strokeAlign: BorderSide.strokeAlignInside,
+                    )
                   : null,
               borderRadius: BorderRadius.all(
                   Radius.circular(type == PieceType.empty ? 0 : boxWidth))),
