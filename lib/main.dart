@@ -21,9 +21,11 @@ import 'Tools/in_app_reviewer_helper.dart'
     if (dart.library.io) 'Tools/in_app_reviewer_helper.dart';
 import 'game_board.dart';
 import 'game_model.dart';
+import 'game_settings.dart';
 import 'generated/l10n.dart';
 import 'more_page.dart';
 import 'move_finder.dart';
+import 'start_screen.dart';
 import 'styling.dart';
 import 'thinking_indicator.dart';
 
@@ -110,7 +112,8 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         return PageRouteBuilder<dynamic>(
           settings: settings,
-          pageBuilder: (context, animation, secondaryAnimation) => GameScreen(),
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const StartScreen(),
         );
       },
     );
@@ -120,6 +123,10 @@ class MyApp extends StatelessWidget {
 /// The [GameScreen] Widget represents the entire game
 /// display, from scores to board state and everything in between.
 class GameScreen extends StatefulWidget {
+  final GameSettings settings;
+
+  const GameScreen({super.key, required this.settings});
+
   @override
   State createState() => _GameScreenState();
 }
@@ -143,27 +150,31 @@ class _GameScreenState extends State<GameScreen> {
 
   AppLifecycleReactor? _appLifecycleReactor;
 
-  _GameScreenState() {
-    // Below is the combination of streams that controls the flow of the game.
-    // There are two streams of models produced by player interaction (either by
-    // restarting the game, which produces a brand new game model and sends it
-    // downstream, or tapping on one of the board locations to play a piece, and
-    // which creates a new board model with the result of the move and sends it
-    // downstream. The StreamGroup combines these into a single stream, then
-    // does a little trick with asyncExpand.
-    //
-    // The function used in asyncExpand checks to see if it's the CPU's turn
-    // (white), and if so creates a [MoveFinder] to look for the best move. It
-    // awaits the calculation, and then creates a new [GameModel] with the
-    // result of that move and sends it downstream by yielding it. If it's still
-    // the CPU's turn after making that move (which can happen in reversi), this
-    // is repeated.
-    //
-    // The final stream of models that exits the asyncExpand call is a
-    // combination of "new game" models, models with the results of player
-    // moves, and models with the results of CPU moves. These are fed into the
-    // StreamBuilder in [build], and used to create the widgets that comprise
-    // the game's display.
+  PieceType get _computerColor => widget.settings.twoPlayerMode
+      ? PieceType.empty
+      : getOpponent(widget.settings.humanColor);
+
+  // Below is the combination of streams that controls the flow of the game.
+  // There are two streams of models produced by player interaction (either by
+  // restarting the game, which produces a brand new game model and sends it
+  // downstream, or tapping on one of the board locations to play a piece, and
+  // which creates a new board model with the result of the move and sends it
+  // downstream. The StreamGroup combines these into a single stream, then
+  // does a little trick with asyncExpand.
+  //
+  // The function used in asyncExpand checks to see if it's the CPU's turn,
+  // and if so creates a [MoveFinder] to look for the best move. It awaits the
+  // calculation, and then creates a new [GameModel] with the result of that
+  // move and sends it downstream by yielding it. If it's still the CPU's turn
+  // after making that move (which can happen in reversi), this is repeated.
+  // In 2-player mode there is no CPU, so this loop never runs.
+  //
+  // The final stream of models that exits the asyncExpand call is a
+  // combination of "new game" models, models with the results of player
+  // moves, and models with the results of CPU moves. These are fed into the
+  // StreamBuilder in [build], and used to create the widgets that comprise
+  // the game's display.
+  void _setUpModelStream() {
     _modelStream = StreamGroup.merge([
       _userMovesController.stream,
       _restartController.stream,
@@ -172,12 +183,18 @@ class _GameScreenState extends State<GameScreen> {
 
       var newModel = model;
 
-      while (newModel.player == PieceType.white) {
+      while (newModel.player == _computerColor) {
         final finder = MoveFinder(newModel.board);
-        final move = await finder.findNextMove(newModel.player, 5);
+        final move =
+            await finder.findMove(newModel.player, widget.settings.difficulty);
         if (move != null) {
+          // A brief pause makes the CPU's move visible and easy to follow
+          // instead of feeling instant.
+          await Future.delayed(const Duration(milliseconds: 600));
           newModel = newModel.updateForMove(move.x, move.y);
           yield newModel;
+        } else {
+          break;
         }
       }
     });
@@ -186,6 +203,12 @@ class _GameScreenState extends State<GameScreen> {
   @override
   initState() {
     super.initState();
+
+    _setUpModelStream();
+    // Kick off the very first turn. If the computer is meant to move first,
+    // this is what triggers that opening move; otherwise it just seeds the
+    // stream with the starting position.
+    _restartController.add(GameModel(board: GameBoard()));
 
     if (!kIsWeb) {
       // Ad setup must never be able to crash the game screen: a failure here
@@ -252,8 +275,10 @@ class _GameScreenState extends State<GameScreen> {
   // turn, this method will attempt to make the move, creating a new GameModel
   // in the process.
   void _attemptUserMove(GameModel model, int x, int y) {
-    if (model.player == PieceType.black &&
-        model.board.isLegalMove(x, y, model.player)) {
+    final isHumanTurn = widget.settings.twoPlayerMode
+        ? model.player != PieceType.empty
+        : model.player != _computerColor;
+    if (isHumanTurn && model.board.isLegalMove(x, y, model.player)) {
       _userMovesController.add(model.updateForMove(x, y));
     }
   }
@@ -398,8 +423,9 @@ class _GameScreenState extends State<GameScreen> {
                         height: 70,
                         child: ElevatedButton(
                           onPressed: () {
-                            _restartController.add(
-                              GameModel(board: GameBoard()),
+                            Navigator.of(context).pushReplacement(
+                              CupertinoPageRoute(
+                                  builder: (context) => const StartScreen()),
                             );
                           },
                           child: Icon(
@@ -434,7 +460,7 @@ class _GameScreenState extends State<GameScreen> {
                   ThinkingIndicator(
                     color: Styling.thinkingColor,
                     height: Styling.thinkingSize,
-                    visible: model.player == PieceType.white,
+                    visible: model.player == _computerColor,
                   ),
                   SizedBox(height: 10),
                   ..._buildGameBoardDisplay(context, model, boxWidth),

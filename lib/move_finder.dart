@@ -3,11 +3,13 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
 import 'game_board.dart';
 import 'game_board_scorer.dart';
+import 'game_settings.dart';
 
 class MoveSearchArgs {
   MoveSearchArgs(
@@ -112,5 +114,36 @@ class MoveFinder {
         numPlies: numPlies,
       ),
     );
+  }
+
+  /// Picks a move for [player] according to [difficulty]:
+  ///  - Easy plays a uniformly random legal move, so beginners can win.
+  ///  - Medium greedily picks whichever move scores best right away, with no
+  ///    lookahead, so it's beatable but still plays sensibly.
+  ///  - Hard uses the full minimax search, same as before difficulty existed.
+  Future<Position?> findMove(PieceType player, Difficulty difficulty) async {
+    final availableMoves = initialBoard.getMovesForPlayer(player);
+    if (availableMoves.isEmpty) {
+      return null;
+    }
+
+    switch (difficulty) {
+      case Difficulty.easy:
+        return availableMoves[Random().nextInt(availableMoves.length)];
+      case Difficulty.medium:
+        Position? bestMove;
+        int bestScore = GameBoardScorer.minScore;
+        for (final move in availableMoves) {
+          final newBoard = initialBoard.updateForMove(move.x, move.y, player);
+          final score = GameBoardScorer(newBoard).getScore(player);
+          if (bestMove == null || score > bestScore) {
+            bestScore = score;
+            bestMove = move;
+          }
+        }
+        return bestMove;
+      case Difficulty.hard:
+        return findNextMove(player, 5);
+    }
   }
 }
