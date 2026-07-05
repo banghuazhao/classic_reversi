@@ -4,7 +4,6 @@
 
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'game_board.dart';
@@ -71,15 +70,13 @@ class _StartScreenState extends State<StartScreen> {
     }
 
     Navigator.of(context).pushReplacement(
-      CupertinoPageRoute(
-        builder: (context) => GameScreen(
-          settings: GameSettings(
-            difficulty: _difficulty,
-            twoPlayerMode: _twoPlayerMode,
-            humanColor: humanColor,
-          ),
-        ),
-      ),
+      fadeRoute((context) => GameScreen(
+            settings: GameSettings(
+              difficulty: _difficulty,
+              twoPlayerMode: _twoPlayerMode,
+              humanColor: humanColor,
+            ),
+          )),
     );
   }
 

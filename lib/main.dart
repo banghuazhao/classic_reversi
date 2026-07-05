@@ -79,6 +79,21 @@ void main() {
 
 final RouteObserver<ModalRoute> routeObserver = RouteObserver<ModalRoute>();
 
+/// A plain cross-fade between screens, used for switching between the start
+/// screen and the game screen. Unlike [CupertinoPageRoute]'s slide-and-dim
+/// transition, this doesn't leave the outgoing screen visible/ghosting
+/// through mid-transition, which reads oddly for what's really a mode swap
+/// rather than a drill-down navigation.
+Route<T> fadeRoute<T>(WidgetBuilder builder) {
+  return PageRouteBuilder<T>(
+    pageBuilder: (context, animation, secondaryAnimation) => builder(context),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(opacity: animation, child: child);
+    },
+    transitionDuration: const Duration(milliseconds: 200),
+  );
+}
+
 /// The App class. Unlike many Flutter apps, this one does not use Material
 /// widgets, so there's no [MaterialApp] or [Theme] objects.
 class MyApp extends StatelessWidget {
@@ -505,95 +520,90 @@ class _GameScreenState extends State<GameScreen> {
               .clamp(20.0, widthBasedBoxWidth);
 
           return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildScoreBox(PieceType.black, model),
-                      _buildScoreBox(PieceType.white, model),
-                      SizedBox(
-                        width: 56,
-                        height: 56,
-                        child: ElevatedButton(
-                          onPressed: _undoAllowed ? _undoLastMove : null,
-                          child: Icon(
-                            CupertinoIcons.arrow_uturn_left,
-                            size: 22,
-                            color: Color(0xffffffff),
-                          ),
-                          style: _circleButtonStyle,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildScoreBox(PieceType.black, model),
+                    _buildScoreBox(PieceType.white, model),
+                    SizedBox(
+                      width: 56,
+                      height: 56,
+                      child: ElevatedButton(
+                        onPressed: _undoAllowed ? _undoLastMove : null,
+                        child: Icon(
+                          CupertinoIcons.arrow_uturn_left,
+                          size: 22,
+                          color: Color(0xffffffff),
                         ),
+                        style: _circleButtonStyle,
                       ),
-                      SizedBox(
-                        width: 56,
-                        height: 56,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pushReplacement(
+                    ),
+                    SizedBox(
+                      width: 56,
+                      height: 56,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(
+                            fadeRoute((context) => const StartScreen()),
+                          );
+                        },
+                        child: Icon(
+                          CupertinoIcons.refresh_bold,
+                          size: 22,
+                          color: Color(0xffffffff),
+                        ),
+                        style: _circleButtonStyle,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 56,
+                      height: 56,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
                               CupertinoPageRoute(
-                                  builder: (context) => const StartScreen()),
-                            );
-                          },
-                          child: Icon(
-                            CupertinoIcons.refresh_bold,
-                            size: 22,
-                            color: Color(0xffffffff),
-                          ),
-                          style: _circleButtonStyle,
+                                  builder: (context) => const MorePage()));
+                        },
+                        child: Icon(
+                          CupertinoIcons.question,
+                          size: 22,
+                          color: Color(0xffffffff),
                         ),
+                        style: _circleButtonStyle,
                       ),
-                      SizedBox(
-                        width: 56,
-                        height: 56,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) => const MorePage()));
-                          },
-                          child: Icon(
-                            CupertinoIcons.question,
-                            size: 22,
-                            color: Color(0xffffffff),
-                          ),
-                          style: _circleButtonStyle,
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  ThinkingIndicator(
-                    color: Styling.thinkingColor,
-                    height: Styling.thinkingSize,
-                    visible: model.player == _computerColor,
-                  ),
-                  SizedBox(height: 10),
-                  ..._buildGameBoardDisplay(context, model, boxWidth),
-                  SizedBox(height: 20),
-                  if (model.gameIsOver)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
-                      child: Text(
-                        model.gameResultString,
-                        style: Styling.resultText,
-                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 20),
+                ThinkingIndicator(
+                  color: Styling.thinkingColor,
+                  height: Styling.thinkingSize,
+                  visible: model.player == _computerColor,
+                ),
+                SizedBox(height: 10),
+                ..._buildGameBoardDisplay(context, model, boxWidth),
+                SizedBox(height: 20),
+                if (model.gameIsOver)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
+                    child: Text(
+                      model.gameResultString,
+                      style: Styling.resultText,
                     ),
-                  // The banner ad sits below the board in normal document
-                  // flow so it can never overlap or block board taps.
-                  if (_isAdLoaded)
-                    Container(
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                      height: 50.0,
-                      child: AdWidget(ad: _ad!),
-                    ),
-                ],
-              ),
+                  ),
+                // The banner ad sits below the board in normal document
+                // flow so it can never overlap or block board taps.
+                if (_isAdLoaded)
+                  Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                    height: 50.0,
+                    child: AdWidget(ad: _ad!),
+                  ),
+              ],
             ),
           );
         }),
