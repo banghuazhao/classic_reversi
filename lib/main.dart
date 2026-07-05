@@ -430,28 +430,43 @@ class _GameScreenState extends State<GameScreen> {
         final isLegalMoveHint = type == PieceType.empty &&
             legalMoveHints.any((p) => p.x == x && p.y == y);
 
-        spots.add(AnimatedContainer(
-          duration: Duration(
-            milliseconds: 500,
-          ),
+        // The outer Container is deliberately NOT animated: it defines the
+        // grid geometry (cell size, margins, the translucent square
+        // background), which must stay rock-solid while pieces animate.
+        // Only the inner AnimatedContainer - the piece overlay - animates,
+        // so a mid-animation frame can never shift or distort the grid.
+        spots.add(Container(
           margin: EdgeInsets.all(lineMargin),
+          width: boxWidth,
+          height: boxWidth,
           decoration: BoxDecoration(
-              gradient: Styling.pieceGradients[type],
-              border: isLastMove
-                  ? Border.all(
-                      color: Color(0xffFFC107),
-                      width: max(boxWidth * 0.08, 3),
-                      strokeAlign: BorderSide.strokeAlignInside,
-                    )
-                  : null,
-              borderRadius: BorderRadius.all(
-                  Radius.circular(type == PieceType.empty ? 0 : boxWidth))),
-          child: SizedBox(
-            width: boxWidth,
-            height: boxWidth,
+            gradient: Styling.pieceGradients[PieceType.empty],
+          ),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              _attemptUserMove(model, x, y);
+            },
             child: Stack(
               alignment: Alignment.center,
               children: [
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 500),
+                  decoration: BoxDecoration(
+                    gradient: type == PieceType.empty
+                        ? null
+                        : Styling.pieceGradients[type],
+                    border: isLastMove && type != PieceType.empty
+                        ? Border.all(
+                            color: Color(0xffFFC107),
+                            width: max(boxWidth * 0.08, 3),
+                            strokeAlign: BorderSide.strokeAlignInside,
+                          )
+                        : null,
+                    borderRadius: BorderRadius.all(Radius.circular(
+                        type == PieceType.empty ? 0 : boxWidth)),
+                  ),
+                ),
                 if (isLegalMoveHint)
                   Container(
                     width: boxWidth * 0.3,
@@ -461,12 +476,6 @@ class _GameScreenState extends State<GameScreen> {
                       shape: BoxShape.circle,
                     ),
                   ),
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    _attemptUserMove(model, x, y);
-                  },
-                ),
               ],
             ),
           ),
@@ -511,11 +520,15 @@ class _GameScreenState extends State<GameScreen> {
           double sideMargin = max(width * 0.08, 15);
           double widthBasedBoxWidth = (width - sideMargin * 2 - 7) / 8;
 
+          // Always reserve space for the result text and the banner ad, even
+          // before they appear: the board must keep the exact same size for
+          // the whole game, never resizing mid-play when the ad loads or the
+          // game ends (a resizing grid mid-game looks broken).
           double reservedHeight = headerHeight +
               spacingHeight +
               verticalPadding +
-              (model.gameIsOver ? resultTextHeight : 0) +
-              (_isAdLoaded ? adReservedHeight : 0);
+              resultTextHeight +
+              adReservedHeight;
           double availableBoardHeight = constraints.maxHeight - reservedHeight;
           double heightBasedBoxWidth = (availableBoardHeight - 7) / 8;
 
