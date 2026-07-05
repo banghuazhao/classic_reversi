@@ -1,0 +1,8 @@
+app_identifier("com.appsbay.classicReversi")
+apple_id("banghuazhao@me.com") # Assuming this from the environment or path, usually needs verification
+itc_team_id("121406606") # This might need to be fetched if unknown, but usually hardcoded
+
+# For API Key based auth
+# issuer_id("947c7ee7-4c99-4b7a-96b7-227a9bf35ed5")
+# key_id("T52YR38D64")
+# key_filepath("/Users/banghuazhao/Development/secret/AppStore Connect API keys/AuthKey_T52YR38D64.p8")
