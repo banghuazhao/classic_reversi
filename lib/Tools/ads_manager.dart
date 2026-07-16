@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,15 +10,17 @@ import 'ads_ids_release.dart';
 class AdsManager {
   static bool disableAllAdsForScreenshot = false;
 
+  static TargetPlatform get _targetPlatform => defaultTargetPlatform;
+
   static String get bannerAdUnitId {
     if (disableAllAdsForScreenshot) {
       return "";
     }
-    if (Platform.isAndroid) {
+    if (_targetPlatform == TargetPlatform.android) {
       return kDebugMode
           ? AdsIdsDebug.bannerAdUnitIdAndroid
           : AdsIdsRelease.bannerAdUnitIdAndroid;
-    } else if (Platform.isIOS) {
+    } else if (_targetPlatform == TargetPlatform.iOS) {
       return kDebugMode
           ? AdsIdsDebug.bannerAdUnitIdIOS
           : AdsIdsRelease.bannerAdUnitIdIOS;
@@ -31,11 +33,11 @@ class AdsManager {
     if (disableAllAdsForScreenshot) {
       return "";
     }
-    if (Platform.isAndroid) {
+    if (_targetPlatform == TargetPlatform.android) {
       return kDebugMode
           ? AdsIdsDebug.openAdUnitIdAndroid
           : AdsIdsRelease.openAdUnitIdAndroid;
-    } else if (Platform.isIOS) {
+    } else if (_targetPlatform == TargetPlatform.iOS) {
       return kDebugMode
           ? AdsIdsDebug.openAdUnitIdIOS
           : AdsIdsRelease.openAdUnitIdIOS;
@@ -125,17 +127,24 @@ class AppOpenAdManager {
     );
     _appOpenAd?.show();
   }
+
+  void dispose() {
+    _appOpenAd?.dispose();
+    _appOpenAd = null;
+  }
 }
 
 /// Listens for app foreground events and shows app open ads.
 class AppLifecycleReactor extends WidgetsBindingObserver {
   final AppOpenAdManager appOpenAdManager;
+  StreamSubscription<AppState>? _appStateSubscription;
 
   AppLifecycleReactor({required this.appOpenAdManager});
 
   void listenToAppStateChanges() {
     AppStateEventNotifier.startListening();
-    AppStateEventNotifier.appStateStream.forEach((state) => _onAppStateChanged(state));
+    _appStateSubscription ??=
+        AppStateEventNotifier.appStateStream.listen(_onAppStateChanged);
   }
 
   void _onAppStateChanged(AppState appState) {
@@ -145,5 +154,10 @@ class AppLifecycleReactor extends WidgetsBindingObserver {
     if (appState == AppState.foreground) {
       appOpenAdManager.showAdIfAvailable();
     }
+  }
+
+  void dispose() {
+    _appStateSubscription?.cancel();
+    _appStateSubscription = null;
   }
 }
