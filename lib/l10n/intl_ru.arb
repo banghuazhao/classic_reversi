@@ -1,0 +1,31 @@
+{
+  "More": "Ещё",
+  "MoreApps": "Другие приложения",
+  "Classic_Reversi": "Классические Реверси",
+  "How_to_play": "Как играть?",
+  "How_to_play_explain": "В игре все фишки соперника, лежащие по прямой линии между только что поставленной фишкой и другой фишкой текущего игрока, переворачиваются в цвет текущего игрока. Цель игры — к моменту заполнения последней свободной клетки иметь на доске большинство фишек своего цвета.",
+  "Difficulty": "Сложность",
+  "DifficultyEasy": "Лёгкий",
+  "DifficultyMedium": "Средний",
+  "DifficultyHard": "Сложный",
+  "TwoPlayersMode": "2 игрока (по очереди)",
+  "PlayAgainstFriend": "Играть с другом на этом устройстве",
+  "WhoGoesFirst": "Кто ходит первым?",
+  "FirstPlayerHuman": "Игрок",
+  "FirstPlayerComputer": "Компьютер",
+  "FirstPlayerRandom": "Случайно",
+  "StartGame": "Начать игру",
+  "WinsLosses": "Побед {wins} · Поражений {losses}",
+  "@WinsLosses": {
+    "type": "text",
+    "placeholders": {
+      "wins": {},
+      "losses": {}
+    }
+  },
+  "Black": "чёрные",
+  "White": "белые",
+  "BlackWins": "Чёрные побеждают",
+  "WhiteWins": "Белые побеждают",
+  "Tie": "Ничья"
+}

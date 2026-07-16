@@ -1,0 +1,12 @@
+Classic Reversi (noto anche come Othello) è un gioco da tavolo strategico per due giocatori, su una scacchiera 8×8.
+
+Caratteristiche:
+- Tre livelli di difficoltà: Facile, Medio e Difficile.
+- Gioca contro il computer o un amico (modalità locale a 2 giocatori).
+- Scegli chi inizia.
+- Annulla le mosse.
+- Suggerimenti delle mosse valide a difficoltà Facile.
+- Tieni traccia di vittorie e sconfitte.
+- Design responsive per telefoni e tablet.
+
+Goditi la strategia senza tempo di Reversi con un'interfaccia pulita e moderna!

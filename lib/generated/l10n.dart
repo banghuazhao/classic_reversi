@@ -1,6 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -18,8 +19,10 @@ class S {
   static S? _current;
 
   static S get current {
-    assert(_current != null,
-        'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.');
+    assert(
+      _current != null,
+      'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.',
+    );
     return _current!;
   }
 
@@ -41,8 +44,10 @@ class S {
 
   static S of(BuildContext context) {
     final instance = S.maybeOf(context);
-    assert(instance != null,
-        'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?');
+    assert(
+      instance != null,
+      'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?',
+    );
     return instance!;
   }
 
@@ -52,22 +57,12 @@ class S {
 
   /// `More`
   String get More {
-    return Intl.message(
-      'More',
-      name: 'More',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('More', name: 'More', desc: '', args: []);
   }
 
   /// `More Apps`
   String get MoreApps {
-    return Intl.message(
-      'More Apps',
-      name: 'MoreApps',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('More Apps', name: 'MoreApps', desc: '', args: []);
   }
 
   /// `Falling Block Puzzle`
@@ -92,12 +87,7 @@ class S {
 
   /// `Image Guru`
   String get Image_Guru {
-    return Intl.message(
-      'Image Guru',
-      name: 'Image_Guru',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Image Guru', name: 'Image_Guru', desc: '', args: []);
   }
 
   /// `Solitaire Guru`
@@ -112,12 +102,7 @@ class S {
 
   /// `Yes Habit`
   String get Yes_Habit {
-    return Intl.message(
-      'Yes Habit',
-      name: 'Yes_Habit',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Yes Habit', name: 'Yes_Habit', desc: '', args: []);
   }
 
   /// `Cute Animal Merge`
@@ -192,12 +177,7 @@ class S {
 
   /// `Fling Knife`
   String get Fling_Knife {
-    return Intl.message(
-      'Fling Knife',
-      name: 'Fling_Knife',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Fling Knife', name: 'Fling_Knife', desc: '', args: []);
   }
 
   /// `Mint Translate`
@@ -212,22 +192,12 @@ class S {
 
   /// `Novels Hub`
   String get Novels_Hub {
-    return Intl.message(
-      'Novels Hub',
-      name: 'Novels_Hub',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Novels Hub', name: 'Novels_Hub', desc: '', args: []);
   }
 
   /// `Relaxing Up`
   String get Relaxing_Up {
-    return Intl.message(
-      'Relaxing Up',
-      name: 'Relaxing_Up',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Relaxing Up', name: 'Relaxing_Up', desc: '', args: []);
   }
 
   /// `We Play Piano`
@@ -312,12 +282,7 @@ class S {
 
   /// `Flappy Fish`
   String get Flappy_Fish {
-    return Intl.message(
-      'Flappy Fish',
-      name: 'Flappy_Fish',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Flappy Fish', name: 'Flappy_Fish', desc: '', args: []);
   }
 
   /// `How to play?`
@@ -339,6 +304,131 @@ class S {
       args: [],
     );
   }
+
+  /// `Classic Reversi`
+  String get Classic_Reversi {
+    return Intl.message(
+      'Classic Reversi',
+      name: 'Classic_Reversi',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Difficulty`
+  String get Difficulty {
+    return Intl.message('Difficulty', name: 'Difficulty', desc: '', args: []);
+  }
+
+  /// `Easy`
+  String get DifficultyEasy {
+    return Intl.message('Easy', name: 'DifficultyEasy', desc: '', args: []);
+  }
+
+  /// `Medium`
+  String get DifficultyMedium {
+    return Intl.message('Medium', name: 'DifficultyMedium', desc: '', args: []);
+  }
+
+  /// `Hard`
+  String get DifficultyHard {
+    return Intl.message('Hard', name: 'DifficultyHard', desc: '', args: []);
+  }
+
+  /// `2 Players (pass & play)`
+  String get TwoPlayersMode {
+    return Intl.message(
+      '2 Players (pass & play)',
+      name: 'TwoPlayersMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Play against a friend on this device`
+  String get PlayAgainstFriend {
+    return Intl.message(
+      'Play against a friend on this device',
+      name: 'PlayAgainstFriend',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Who goes first?`
+  String get WhoGoesFirst {
+    return Intl.message(
+      'Who goes first?',
+      name: 'WhoGoesFirst',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Player`
+  String get FirstPlayerHuman {
+    return Intl.message('Player', name: 'FirstPlayerHuman', desc: '', args: []);
+  }
+
+  /// `Computer`
+  String get FirstPlayerComputer {
+    return Intl.message(
+      'Computer',
+      name: 'FirstPlayerComputer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Random`
+  String get FirstPlayerRandom {
+    return Intl.message(
+      'Random',
+      name: 'FirstPlayerRandom',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start Game`
+  String get StartGame {
+    return Intl.message('Start Game', name: 'StartGame', desc: '', args: []);
+  }
+
+  /// `Wins {wins} · Losses {losses}`
+  String WinsLosses(Object wins, Object losses) {
+    return Intl.message(
+      'Wins $wins · Losses $losses',
+      name: 'WinsLosses',
+      desc: '',
+      args: [wins, losses],
+    );
+  }
+
+  /// `black`
+  String get Black {
+    return Intl.message('black', name: 'Black', desc: '', args: []);
+  }
+
+  /// `white`
+  String get White {
+    return Intl.message('white', name: 'White', desc: '', args: []);
+  }
+
+  /// `Black wins`
+  String get BlackWins {
+    return Intl.message('Black wins', name: 'BlackWins', desc: '', args: []);
+  }
+
+  /// `White wins`
+  String get WhiteWins {
+    return Intl.message('White wins', name: 'WhiteWins', desc: '', args: []);
+  }
+
+  /// `Tie`
+  String get Tie {
+    return Intl.message('Tie', name: 'Tie', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
@@ -347,7 +437,11 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   List<Locale> get supportedLocales {
     return const <Locale>[
       Locale.fromSubtags(languageCode: 'en'),
+      Locale.fromSubtags(languageCode: 'id'),
+      Locale.fromSubtags(languageCode: 'it'),
       Locale.fromSubtags(languageCode: 'ja'),
+      Locale.fromSubtags(languageCode: 'ru'),
+      Locale.fromSubtags(languageCode: 'vi'),
       Locale.fromSubtags(languageCode: 'zh'),
       Locale.fromSubtags(languageCode: 'zh', countryCode: 'HK'),
     ];

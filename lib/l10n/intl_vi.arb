@@ -1,0 +1,31 @@
+{
+  "More": "Thêm",
+  "MoreApps": "Ứng dụng khác",
+  "Classic_Reversi": "Cờ Lật Cổ Điển",
+  "How_to_play": "Cách chơi?",
+  "How_to_play_explain": "Trong trò chơi, tất cả các quân của đối phương nằm trên một đường thẳng và bị kẹp giữa quân vừa đặt và một quân khác của người chơi hiện tại sẽ được lật sang màu của người chơi hiện tại. Mục tiêu của trò chơi là có nhiều quân mang màu của mình nhất khi ô trống có thể chơi cuối cùng được lấp đầy.",
+  "Difficulty": "Độ khó",
+  "DifficultyEasy": "Dễ",
+  "DifficultyMedium": "Trung bình",
+  "DifficultyHard": "Khó",
+  "TwoPlayersMode": "2 người chơi (chơi lần lượt)",
+  "PlayAgainstFriend": "Chơi cùng bạn bè trên thiết bị này",
+  "WhoGoesFirst": "Ai đi trước?",
+  "FirstPlayerHuman": "Người chơi",
+  "FirstPlayerComputer": "Máy tính",
+  "FirstPlayerRandom": "Ngẫu nhiên",
+  "StartGame": "Bắt đầu",
+  "WinsLosses": "Thắng {wins} · Thua {losses}",
+  "@WinsLosses": {
+    "type": "text",
+    "placeholders": {
+      "wins": {},
+      "losses": {}
+    }
+  },
+  "Black": "đen",
+  "White": "trắng",
+  "BlackWins": "Quân đen thắng",
+  "WhiteWins": "Quân trắng thắng",
+  "Tie": "Hòa"
+}

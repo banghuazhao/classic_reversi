@@ -1,0 +1,31 @@
+{
+  "More": "Lainnya",
+  "MoreApps": "Aplikasi Lainnya",
+  "Classic_Reversi": "Classic Reversi",
+  "How_to_play": "Cara bermain?",
+  "How_to_play_explain": "Dalam permainan ini, semua keping lawan yang berada dalam satu garis lurus dan diapit oleh keping yang baru diletakkan dan keping lain milik pemain saat ini akan dibalik menjadi warna pemain saat ini. Tujuan permainan adalah memiliki mayoritas keping dengan warna Anda saat kotak kosong terakhir yang bisa dimainkan terisi.",
+  "Difficulty": "Tingkat Kesulitan",
+  "DifficultyEasy": "Mudah",
+  "DifficultyMedium": "Sedang",
+  "DifficultyHard": "Sulit",
+  "TwoPlayersMode": "2 Pemain (main bergantian)",
+  "PlayAgainstFriend": "Main melawan teman di perangkat ini",
+  "WhoGoesFirst": "Siapa yang jalan duluan?",
+  "FirstPlayerHuman": "Pemain",
+  "FirstPlayerComputer": "Komputer",
+  "FirstPlayerRandom": "Acak",
+  "StartGame": "Mulai Permainan",
+  "WinsLosses": "Menang {wins} · Kalah {losses}",
+  "@WinsLosses": {
+    "type": "text",
+    "placeholders": {
+      "wins": {},
+      "losses": {}
+    }
+  },
+  "Black": "hitam",
+  "White": "putih",
+  "BlackWins": "Hitam menang",
+  "WhiteWins": "Putih menang",
+  "Tie": "Seri"
+}

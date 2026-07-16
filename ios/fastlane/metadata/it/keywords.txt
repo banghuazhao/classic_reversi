@@ -1,0 +1,1 @@
+reversi,othello,gioco da tavolo,strategia,classico,puzzle,rompicapo,multiplayer

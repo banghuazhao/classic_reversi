@@ -110,20 +110,29 @@ class MyApp extends StatelessWidget {
       ],
       navigatorObservers: [routeObserver],
       supportedLocales: S.delegate.supportedLocales,
-      localeResolutionCallback: (locale, supportLocales) {
-        print(locale);
+      localeResolutionCallback: (locale, supportedLocales) {
         // 中文 简繁体处理
         if (locale?.languageCode == 'zh') {
-          if (locale?.scriptCode == 'Hant') {
+          if (locale?.scriptCode == 'Hant' ||
+              locale?.countryCode == 'HK' ||
+              locale?.countryCode == 'TW' ||
+              locale?.countryCode == 'MO') {
             return const Locale('zh', 'HK'); //繁体
           } else {
             return const Locale('zh', ''); //简体
           }
         }
-        if (locale?.languageCode == 'ja') {
-          return const Locale('ja', ''); //日语
+        // Fall back to matching any other language this app has translations
+        // for (ja, ru, it, id, vi, ...), so new locales just need an arb file
+        // added - no further changes needed here.
+        if (locale != null) {
+          for (final supported in supportedLocales) {
+            if (supported.languageCode == locale.languageCode) {
+              return supported;
+            }
+          }
         }
-        return Locale('en', '');
+        return const Locale('en', '');
       },
       onGenerateRoute: (settings) {
         return PageRouteBuilder<dynamic>(
@@ -164,6 +173,7 @@ class _GameScreenState extends State<GameScreen> {
 
   bool _isAdLoaded = false;
 
+  AppOpenAdManager? _appOpenAdManager;
   AppLifecycleReactor? _appLifecycleReactor;
 
   // The square the most recently placed piece landed on, so it can be
@@ -222,7 +232,11 @@ class _GameScreenState extends State<GameScreen> {
           // A brief pause makes the CPU's move visible and easy to follow
           // instead of feeling instant.
           await Future.delayed(const Duration(milliseconds: 600));
-          newModel = newModel.updateForMove(move.x, move.y);
+          final updatedModel = newModel.updateForMove(move.x, move.y);
+          if (updatedModel == null) {
+            break;
+          }
+          newModel = updatedModel;
           _lastMove = move;
           yield newModel;
         } else {
@@ -270,9 +284,9 @@ class _GameScreenState extends State<GameScreen> {
 
         _ad?.load();
 
-        AppOpenAdManager appOpenAdManager = AppOpenAdManager()..loadAd();
+        _appOpenAdManager = AppOpenAdManager()..loadAd();
         _appLifecycleReactor =
-            AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
+            AppLifecycleReactor(appOpenAdManager: _appOpenAdManager!);
         _appLifecycleReactor?.listenToAppStateChanges();
       } catch (error) {
         print('Ad setup failed: $error');
@@ -283,6 +297,9 @@ class _GameScreenState extends State<GameScreen> {
   // Thou shalt tidy up thy stream controllers.
   @override
   void dispose() {
+    _appLifecycleReactor?.dispose();
+    _appOpenAdManager?.dispose();
+    _ad?.dispose();
     _userMovesController.close();
     _restartController.close();
     super.dispose();
@@ -351,7 +368,10 @@ class _GameScreenState extends State<GameScreen> {
       _historyStack.add(model);
       _canUndo = true;
       _lastMove = Position(x, y);
-      _userMovesController.add(model.updateForMove(x, y));
+      final updatedModel = model.updateForMove(x, y);
+      if (updatedModel != null) {
+        _userMovesController.add(updatedModel);
+      }
     }
   }
 
@@ -374,8 +394,18 @@ class _GameScreenState extends State<GameScreen> {
     elevation: 0,
   );
 
+  String _gameResultString(BuildContext context, GameModel model) {
+    if (model.blackScore > model.whiteScore) {
+      return S.of(context).BlackWins;
+    } else if (model.whiteScore > model.blackScore) {
+      return S.of(context).WhiteWins;
+    } else {
+      return S.of(context).Tie;
+    }
+  }
+
   Widget _buildScoreBox(PieceType player, GameModel model) {
-    var label = player == PieceType.black ? 'black' : 'white';
+    var label = player == PieceType.black ? S.of(context).Black : S.of(context).White;
     var scoreText = player == PieceType.black
         ? '${model.blackScore}'
         : '${model.whiteScore}';
@@ -606,7 +636,7 @@ class _GameScreenState extends State<GameScreen> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
                     child: Text(
-                      model.gameResultString,
+                      _gameResultString(context, model),
                       style: Styling.resultText,
                     ),
                   ),

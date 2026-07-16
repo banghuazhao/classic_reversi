@@ -12,5 +12,29 @@
   "Classic_Minesweeper": "Classic Minesweeper",
   "Flappy_Fish": "Flappy Fish",
   "How_to_play": "遊び方紹介",
-  "How_to_play_explain": "ゲームでは、それぞれ黒と白を担当する2人のプレイヤーが交互に盤面へ石を打っていき、最終的に盤上の石が多かったほうが勝ちとなる。相手の石を自分の石で挟んだときは、相手の石を裏返すことで、自分の石にする。最後にプレイ可能な空のマスがいっぱいになったときに、ディスクの大部分を自分の色で表示するようにすることです."
+  "How_to_play_explain": "ゲームでは、それぞれ黒と白を担当する2人のプレイヤーが交互に盤面へ石を打っていき、最終的に盤上の石が多かったほうが勝ちとなる。相手の石を自分の石で挟んだときは、相手の石を裏返すことで、自分の石にする。最後にプレイ可能な空のマスがいっぱいになったときに、ディスクの大部分を自分の色で表示するようにすることです.",
+  "Difficulty": "難易度",
+  "DifficultyEasy": "かんたん",
+  "DifficultyMedium": "ふつう",
+  "DifficultyHard": "むずかしい",
+  "TwoPlayersMode": "2人対戦（同じ端末で交互に）",
+  "PlayAgainstFriend": "この端末で友達と対戦する",
+  "WhoGoesFirst": "先手はどちら？",
+  "FirstPlayerHuman": "プレイヤー",
+  "FirstPlayerComputer": "コンピューター",
+  "FirstPlayerRandom": "ランダム",
+  "StartGame": "ゲーム開始",
+  "WinsLosses": "勝ち {wins} · 負け {losses}",
+  "@WinsLosses": {
+    "type": "text",
+    "placeholders": {
+      "wins": {},
+      "losses": {}
+    }
+  },
+  "Black": "黒",
+  "White": "白",
+  "BlackWins": "黒の勝ち",
+  "WhiteWins": "白の勝ち",
+  "Tie": "引き分け"
 }

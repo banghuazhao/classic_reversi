@@ -21,22 +21,12 @@ class GameModel {
 
   bool get gameIsOver => (board.getMovesForPlayer(player).isEmpty);
 
-  String get gameResultString {
-    if (blackScore > whiteScore) {
-      return 'Black wins';
-    } else if (whiteScore > blackScore) {
-      return 'White wins';
-    } else {
-      return 'Tie';
-    }
-  }
-
   /// Attempts to create a new instance of GameModel using the coordinates
   /// provided as the current player's move. If successful, a new GameModel is
   /// returned. If unsuccessful, null is returned.
-  GameModel updateForMove(int x, int y) {
+  GameModel? updateForMove(int x, int y) {
     if (!board.isLegalMove(x, y, player)) {
-      return null!;
+      return null;
     }
 
     final newBoard = board.updateForMove(x, y, player);

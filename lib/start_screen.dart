@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 import 'game_board.dart';
 import 'game_settings.dart';
+import 'generated/l10n.dart';
 import 'main.dart';
 import 'settings_service.dart';
 import 'styling.dart';
@@ -27,6 +28,7 @@ class _StartScreenState extends State<StartScreen> {
   Difficulty _difficulty = Difficulty.hard;
   FirstPlayer _firstPlayer = FirstPlayer.human;
   bool _twoPlayerMode = false;
+  bool _showHowToPlay = false;
   int _wins = 0;
   int _losses = 0;
 
@@ -117,6 +119,68 @@ class _StartScreenState extends State<StartScreen> {
     );
   }
 
+  // An expandable "How to Play" panel, styled to match the other settings
+  // rows. Kept as a simple GestureDetector + AnimatedCrossFade (no
+  // ExpansionTile) since this app deliberately avoids Material/Theme.
+  Widget _howToPlaySection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        GestureDetector(
+          onTap: () => setState(() => _showHowToPlay = !_showHowToPlay),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Color(0x40ffffff),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  S.of(context).How_to_play,
+                  style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xffffffff),
+                  ),
+                ),
+                AnimatedRotation(
+                  turns: _showHowToPlay ? 0.5 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: Color(0xffffffff),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        AnimatedCrossFade(
+          firstChild: const SizedBox(width: double.infinity, height: 0),
+          secondChild: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+            child: Text(
+              S.of(context).How_to_play_explain,
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 13,
+                height: 1.4,
+                color: Color(0xe0ffffff),
+              ),
+            ),
+          ),
+          crossFadeState:
+              _showHowToPlay ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+          duration: const Duration(milliseconds: 200),
+          sizeCurve: Curves.easeInOut,
+        ),
+      ],
+    );
+  }
+
   Widget _segmentedControl<T>({
     required List<T> values,
     required T selected,
@@ -177,26 +241,28 @@ class _StartScreenState extends State<StartScreen> {
             children: [
               SizedBox(height: 20),
               Text(
-                'Classic Reversi',
+                S.of(context).Classic_Reversi,
                 textAlign: TextAlign.center,
                 style: Styling.resultText.copyWith(fontSize: 36),
               ),
               SizedBox(height: 10),
               Text(
-                'Wins $_wins · Losses $_losses',
+                S.of(context).WinsLosses(_wins, _losses),
                 textAlign: TextAlign.center,
                 style: Styling.scoreLabelText.copyWith(fontSize: 16),
               ),
-              SizedBox(height: 40),
-              _sectionLabel('Difficulty'),
+              SizedBox(height: 30),
+              _howToPlaySection(context),
+              SizedBox(height: 30),
+              _sectionLabel(S.of(context).Difficulty),
               _segmentedControl<Difficulty>(
                 values: Difficulty.values,
                 selected: _difficulty,
-                labelFor: (d) => d.label,
+                labelFor: (d) => d.label(context),
                 onSelected: (d) => setState(() => _difficulty = d),
               ),
               SizedBox(height: 30),
-              _sectionLabel('2 Players (pass & play)'),
+              _sectionLabel(S.of(context).TwoPlayersMode),
               GestureDetector(
                 onTap: () => setState(() => _twoPlayerMode = !_twoPlayerMode),
                 child: Container(
@@ -211,7 +277,7 @@ class _StartScreenState extends State<StartScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          'Play against a friend on this device',
+                          S.of(context).PlayAgainstFriend,
                           style: TextStyle(
                             fontFamily: 'Roboto',
                             fontSize: 14,
@@ -226,11 +292,11 @@ class _StartScreenState extends State<StartScreen> {
               ),
               if (!_twoPlayerMode) ...[
                 SizedBox(height: 30),
-                _sectionLabel('Who goes first?'),
+                _sectionLabel(S.of(context).WhoGoesFirst),
                 _segmentedControl<FirstPlayer>(
                   values: FirstPlayer.values,
                   selected: _firstPlayer,
-                  labelFor: (f) => f.label,
+                  labelFor: (f) => f.label(context),
                   onSelected: (f) => setState(() => _firstPlayer = f),
                 ),
               ],
@@ -246,7 +312,7 @@ class _StartScreenState extends State<StartScreen> {
                     ),
                   ),
                   child: Text(
-                    'Start Game',
+                    S.of(context).StartGame,
                     style: TextStyle(
                       fontFamily: 'Roboto',
                       fontSize: 20,

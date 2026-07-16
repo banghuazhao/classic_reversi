@@ -20,26 +20,52 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'ja';
 
+  static String m0(wins, losses) => "勝ち ${wins} · 負け ${losses}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "Classic_15_Puzzle":
-            MessageLookupByLibrary.simpleMessage("Classic 15 Puzzle"),
-        "Classic_2048": MessageLookupByLibrary.simpleMessage("Classic 2048"),
-        "Classic_Memory_Game":
-            MessageLookupByLibrary.simpleMessage("Classic Memory Game"),
-        "Classic_Minesweeper":
-            MessageLookupByLibrary.simpleMessage("Classic Minesweeper"),
-        "Crazy_Pyramid": MessageLookupByLibrary.simpleMessage("Crazy Pyramid"),
-        "Flappy_Fish": MessageLookupByLibrary.simpleMessage("Flappy Fish"),
-        "Garden_Catch_Bugs":
-            MessageLookupByLibrary.simpleMessage("Garden: Catch Bugs"),
-        "How_to_play": MessageLookupByLibrary.simpleMessage("遊び方紹介"),
-        "How_to_play_explain": MessageLookupByLibrary.simpleMessage(
-            "ゲームでは、それぞれ黒と白を担当する2人のプレイヤーが交互に盤面へ石を打っていき、最終的に盤上の石が多かったほうが勝ちとなる。相手の石を自分の石で挟んだときは、相手の石を裏返すことで、自分の石にする。最後にプレイ可能な空のマスがいっぱいになったときに、ディスクの大部分を自分の色で表示するようにすることです."),
-        "More": MessageLookupByLibrary.simpleMessage("More"),
-        "MoreApps": MessageLookupByLibrary.simpleMessage("More Apps"),
-        "Space_Jumper": MessageLookupByLibrary.simpleMessage("Space Jumper"),
-        "falling_block_puzzle":
-            MessageLookupByLibrary.simpleMessage("Falling Block Puzzle")
-      };
+    "Black": MessageLookupByLibrary.simpleMessage("黒"),
+    "BlackWins": MessageLookupByLibrary.simpleMessage("黒の勝ち"),
+    "Classic_15_Puzzle": MessageLookupByLibrary.simpleMessage(
+      "Classic 15 Puzzle",
+    ),
+    "Classic_2048": MessageLookupByLibrary.simpleMessage("Classic 2048"),
+    "Classic_Memory_Game": MessageLookupByLibrary.simpleMessage(
+      "Classic Memory Game",
+    ),
+    "Classic_Minesweeper": MessageLookupByLibrary.simpleMessage(
+      "Classic Minesweeper",
+    ),
+    "Classic_Reversi": MessageLookupByLibrary.simpleMessage("Classic Reversi"),
+    "Crazy_Pyramid": MessageLookupByLibrary.simpleMessage("Crazy Pyramid"),
+    "Difficulty": MessageLookupByLibrary.simpleMessage("難易度"),
+    "DifficultyEasy": MessageLookupByLibrary.simpleMessage("かんたん"),
+    "DifficultyHard": MessageLookupByLibrary.simpleMessage("むずかしい"),
+    "DifficultyMedium": MessageLookupByLibrary.simpleMessage("ふつう"),
+    "FirstPlayerComputer": MessageLookupByLibrary.simpleMessage("コンピューター"),
+    "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("プレイヤー"),
+    "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("ランダム"),
+    "Flappy_Fish": MessageLookupByLibrary.simpleMessage("Flappy Fish"),
+    "Garden_Catch_Bugs": MessageLookupByLibrary.simpleMessage(
+      "Garden: Catch Bugs",
+    ),
+    "How_to_play": MessageLookupByLibrary.simpleMessage("遊び方紹介"),
+    "How_to_play_explain": MessageLookupByLibrary.simpleMessage(
+      "ゲームでは、それぞれ黒と白を担当する2人のプレイヤーが交互に盤面へ石を打っていき、最終的に盤上の石が多かったほうが勝ちとなる。相手の石を自分の石で挟んだときは、相手の石を裏返すことで、自分の石にする。最後にプレイ可能な空のマスがいっぱいになったときに、ディスクの大部分を自分の色で表示するようにすることです.",
+    ),
+    "More": MessageLookupByLibrary.simpleMessage("More"),
+    "MoreApps": MessageLookupByLibrary.simpleMessage("More Apps"),
+    "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage("この端末で友達と対戦する"),
+    "Space_Jumper": MessageLookupByLibrary.simpleMessage("Space Jumper"),
+    "StartGame": MessageLookupByLibrary.simpleMessage("ゲーム開始"),
+    "Tie": MessageLookupByLibrary.simpleMessage("引き分け"),
+    "TwoPlayersMode": MessageLookupByLibrary.simpleMessage("2人対戦（同じ端末で交互に）"),
+    "White": MessageLookupByLibrary.simpleMessage("白"),
+    "WhiteWins": MessageLookupByLibrary.simpleMessage("白の勝ち"),
+    "WhoGoesFirst": MessageLookupByLibrary.simpleMessage("先手はどちら？"),
+    "WinsLosses": m0,
+    "falling_block_puzzle": MessageLookupByLibrary.simpleMessage(
+      "Falling Block Puzzle",
+    ),
+  };
 }

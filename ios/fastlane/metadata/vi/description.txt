@@ -1,0 +1,12 @@
+Cờ Lật Cổ Điển (còn gọi là Othello) là trò chơi cờ bàn chiến thuật dành cho hai người chơi, trên bàn cờ 8×8.
+
+Tính năng:
+- Ba cấp độ khó: Dễ, Trung bình và Khó.
+- Chơi với máy tính hoặc bạn bè (chế độ 2 người chơi trên cùng thiết bị).
+- Chọn ai đi trước.
+- Đi lại nước cờ (undo).
+- Gợi ý nước đi hợp lệ ở cấp độ Dễ.
+- Theo dõi số trận thắng/thua.
+- Thiết kế responsive cho điện thoại và máy tính bảng.
+
+Tận hưởng chiến thuật kinh điển của cờ lật với giao diện gọn gàng, hiện đại!

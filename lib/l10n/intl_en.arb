@@ -27,5 +27,30 @@
   "Classic_Minesweeper": "Classic Minesweeper",
   "Flappy_Fish": "Flappy Fish",
   "How_to_play": "How to play?",
-  "How_to_play_explain": "In the game, any disks of the opponent's color that are in a straight line and bounded by the disk just placed and another disk of the current player's color are turned over to the current player's color. The objective of the game is to have the majority of disks turned to display one's color when the last playable empty square is filled."
+  "How_to_play_explain": "In the game, any disks of the opponent's color that are in a straight line and bounded by the disk just placed and another disk of the current player's color are turned over to the current player's color. The objective of the game is to have the majority of disks turned to display one's color when the last playable empty square is filled.",
+  "Classic_Reversi": "Classic Reversi",
+  "Difficulty": "Difficulty",
+  "DifficultyEasy": "Easy",
+  "DifficultyMedium": "Medium",
+  "DifficultyHard": "Hard",
+  "TwoPlayersMode": "2 Players (pass & play)",
+  "PlayAgainstFriend": "Play against a friend on this device",
+  "WhoGoesFirst": "Who goes first?",
+  "FirstPlayerHuman": "Player",
+  "FirstPlayerComputer": "Computer",
+  "FirstPlayerRandom": "Random",
+  "StartGame": "Start Game",
+  "WinsLosses": "Wins {wins} · Losses {losses}",
+  "@WinsLosses": {
+    "type": "text",
+    "placeholders": {
+      "wins": {},
+      "losses": {}
+    }
+  },
+  "Black": "black",
+  "White": "white",
+  "BlackWins": "Black wins",
+  "WhiteWins": "White wins",
+  "Tie": "Tie"
 }

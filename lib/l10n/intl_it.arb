@@ -1,0 +1,31 @@
+{
+  "More": "Altro",
+  "MoreApps": "Altre App",
+  "Classic_Reversi": "Classic Reversi",
+  "How_to_play": "Come si gioca?",
+  "How_to_play_explain": "Nel gioco, tutti i dischi dell'avversario allineati e compresi tra il disco appena posizionato e un altro disco del giocatore corrente vengono capovolti nel colore del giocatore corrente. L'obiettivo del gioco è avere la maggioranza dei dischi del proprio colore quando l'ultima casella vuota giocabile viene riempita.",
+  "Difficulty": "Difficoltà",
+  "DifficultyEasy": "Facile",
+  "DifficultyMedium": "Medio",
+  "DifficultyHard": "Difficile",
+  "TwoPlayersMode": "2 giocatori (a turno)",
+  "PlayAgainstFriend": "Gioca con un amico su questo dispositivo",
+  "WhoGoesFirst": "Chi inizia?",
+  "FirstPlayerHuman": "Giocatore",
+  "FirstPlayerComputer": "Computer",
+  "FirstPlayerRandom": "Casuale",
+  "StartGame": "Inizia partita",
+  "WinsLosses": "Vittorie {wins} · Sconfitte {losses}",
+  "@WinsLosses": {
+    "type": "text",
+    "placeholders": {
+      "wins": {},
+      "losses": {}
+    }
+  },
+  "Black": "nero",
+  "White": "bianco",
+  "BlackWins": "Vince il nero",
+  "WhiteWins": "Vince il bianco",
+  "Tie": "Pareggio"
+}
