@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:open_store/open_store.dart'
-    if (dart.library.io) 'package:open_store/open_store.dart';
 
+import 'Tools/store_launcher.dart';
 import 'generated/l10n.dart';
 
 class MorePage extends StatelessWidget {
@@ -18,120 +15,156 @@ class MorePage extends StatelessWidget {
       var falling_block_puzzle = MoreAppItem(
           Image.asset("assets/app_icons/falling_block_puzzle.png"),
           S.of(context).falling_block_puzzle, () {
-        OpenStore.instance.open(appStoreId: "1609440799", androidAppBundleId: "");
+        launchStore(appStoreId: "1609440799");
       });
 
-      var Classic_Memory_Game = MoreAppItem(Image.asset("assets/app_icons/classic_memory_game.png"),
+      var Classic_Memory_Game = MoreAppItem(
+          Image.asset("assets/app_icons/classic_memory_game.png"),
           S.of(context).Classic_Memory_Game, () {
-        OpenStore.instance.open(appStoreId: "1617593078", androidAppBundleId: "");
+        launchStore(appStoreId: "1617593078");
       });
 
-      var Image_Guru =
-          MoreAppItem(Image.asset("assets/app_icons/image_guru.png"), S.of(context).Image_Guru, () {
-        OpenStore.instance.open(appStoreId: "1625021625", androidAppBundleId: "");
+      var Image_Guru = MoreAppItem(
+          Image.asset("assets/app_icons/image_guru.png"),
+          S.of(context).Image_Guru, () {
+        launchStore(appStoreId: "1625021625");
       });
 
       var Solitaire_Guru = MoreAppItem(
-          Image.asset("assets/app_icons/solitaire_guru.png"), S.of(context).Solitaire_Guru, () {
-        OpenStore.instance
-            .open(appStoreId: "1636116344", androidAppBundleId: "com.appsbay.solitaire_guru");
+          Image.asset("assets/app_icons/solitaire_guru.png"),
+          S.of(context).Solitaire_Guru, () {
+        launchStore(
+          appStoreId: "1636116344",
+          androidAppBundleId: "com.appsbay.solitaire_guru",
+        );
       });
 
-      var Yes_Habit =
-          MoreAppItem(Image.asset("assets/app_icons/yes_habit.png"), S.of(context).Yes_Habit, () {
-        OpenStore.instance.open(appStoreId: "1637643734", androidAppBundleId: "");
+      var Yes_Habit = MoreAppItem(Image.asset("assets/app_icons/yes_habit.png"),
+          S.of(context).Yes_Habit, () {
+        launchStore(appStoreId: "1637643734");
       });
 
       var Instant_Face = MoreAppItem(
-          Image.asset("assets/app_icons/instant_face.png"), S.of(context).Instant_Face, () {
-        OpenStore.instance
-            .open(appStoreId: "1638563222", androidAppBundleId: "com.appsbay.instant_face");
+          Image.asset("assets/app_icons/instant_face.png"),
+          S.of(context).Instant_Face, () {
+        launchStore(
+          appStoreId: "1638563222",
+          androidAppBundleId: "com.appsbay.instant_face",
+        );
       });
 
       var World_Weather_Live = MoreAppItem(
-          Image.asset("assets/app_icons/world_weather_live.png"), S.of(context).World_Weather_Live,
-          () {
-        OpenStore.instance
-            .open(appStoreId: "1612773646", androidAppBundleId: "com.appsbay.world_weather_live");
+          Image.asset("assets/app_icons/world_weather_live.png"),
+          S.of(context).World_Weather_Live, () {
+        launchStore(
+          appStoreId: "1612773646",
+          androidAppBundleId: "com.appsbay.world_weather_live",
+        );
       });
 
       var Saving_Ambulance = MoreAppItem(
-          Image.asset("assets/app_icons/saving_ambulance.png"), S.of(context).Saving_Ambulance, () {
-        OpenStore.instance
-            .open(appStoreId: "1639693525", androidAppBundleId: "com.appsbay.saving_ambulance");
+          Image.asset("assets/app_icons/saving_ambulance.png"),
+          S.of(context).Saving_Ambulance, () {
+        launchStore(
+          appStoreId: "1639693525",
+          androidAppBundleId: "com.appsbay.saving_ambulance",
+        );
       });
 
       var Money_Tracker = MoreAppItem(
-          Image.asset("assets/app_icons/money_tracker.png"), S.of(context).Money_Tracker, () {
-        OpenStore.instance.open(appStoreId: "1534244892", androidAppBundleId: "");
+          Image.asset("assets/app_icons/money_tracker.png"),
+          S.of(context).Money_Tracker, () {
+        launchStore(appStoreId: "1534244892");
       });
 
       var Sudoku_Lover = MoreAppItem(
-          Image.asset("assets/app_icons/sudoku_lover.png"), S.of(context).Sudoku_Lover, () {
-        OpenStore.instance
-            .open(appStoreId: "1620749798", androidAppBundleId: "com.appsbay.sudoku_lovers");
+          Image.asset("assets/app_icons/sudoku_lover.png"),
+          S.of(context).Sudoku_Lover, () {
+        launchStore(
+          appStoreId: "1620749798",
+          androidAppBundleId: "com.appsbay.sudoku_lovers",
+        );
       });
 
       var Fling_Knife = MoreAppItem(
-          Image.asset("assets/app_icons/fling_knife.png"), S.of(context).Fling_Knife, () {
-        OpenStore.instance
-            .open(appStoreId: "1636426217", androidAppBundleId: "com.appsbay.fling_knife");
+          Image.asset("assets/app_icons/fling_knife.png"),
+          S.of(context).Fling_Knife, () {
+        launchStore(
+          appStoreId: "1636426217",
+          androidAppBundleId: "com.appsbay.fling_knife",
+        );
       });
 
       var Mint_Translate = MoreAppItem(
-          Image.asset("assets/app_icons/mint_translate.png"), S.of(context).Mint_Translate, () {
-        OpenStore.instance
-            .open(appStoreId: "1638456603", androidAppBundleId: "com.appsbay.mint_translate");
+          Image.asset("assets/app_icons/mint_translate.png"),
+          S.of(context).Mint_Translate, () {
+        launchStore(
+          appStoreId: "1638456603",
+          androidAppBundleId: "com.appsbay.mint_translate",
+        );
       });
 
-      var Novels_Hub =
-          MoreAppItem(Image.asset("assets/app_icons/novels_hub.png"), S.of(context).Novels_Hub, () {
-        OpenStore.instance
-            .open(appStoreId: "1528820845", androidAppBundleId: "com.appsbay.novelshub");
+      var Novels_Hub = MoreAppItem(
+          Image.asset("assets/app_icons/novels_hub.png"),
+          S.of(context).Novels_Hub, () {
+        launchStore(
+          appStoreId: "1528820845",
+          androidAppBundleId: "com.appsbay.novelshub",
+        );
       });
 
       var Relaxing_Up = MoreAppItem(
-          Image.asset("assets/app_icons/relaxing_up.png"), S.of(context).Relaxing_Up, () {
-        OpenStore.instance
-            .open(appStoreId: "1618712178", androidAppBundleId: "com.appsbay.relaxing_up");
+          Image.asset("assets/app_icons/relaxing_up.png"),
+          S.of(context).Relaxing_Up, () {
+        launchStore(
+          appStoreId: "1618712178",
+          androidAppBundleId: "com.appsbay.relaxing_up",
+        );
       });
 
       var We_Play_Piano = MoreAppItem(
-          Image.asset("assets/app_icons/we_play_piano.png"), S.of(context).We_Play_Piano, () {
-        OpenStore.instance
-            .open(appStoreId: "1625018611", androidAppBundleId: "com.appsbay.we_play_piano");
+          Image.asset("assets/app_icons/we_play_piano.png"),
+          S.of(context).We_Play_Piano, () {
+        launchStore(
+          appStoreId: "1625018611",
+          androidAppBundleId: "com.appsbay.we_play_piano",
+        );
       });
 
       var Simple_Calculator = MoreAppItem(
-          Image.asset("assets/app_icons/simple_calculator.png"), S.of(context).Simple_Calculator,
-          () {
-        OpenStore.instance
-            .open(appStoreId: "1610829871", androidAppBundleId: "com.appsbay.simple_calculator");
+          Image.asset("assets/app_icons/simple_calculator.png"),
+          S.of(context).Simple_Calculator, () {
+        launchStore(
+          appStoreId: "1610829871",
+          androidAppBundleId: "com.appsbay.simple_calculator",
+        );
       });
 
       var Classic_15_Puzzle = MoreAppItem(
-          Image.asset("assets/app_icons/classic_15_puzzle.png"), S.of(context).Classic_15_Puzzle,
-          () {
-        OpenStore.instance.open(appStoreId: "1611891108");
+          Image.asset("assets/app_icons/classic_15_puzzle.png"),
+          S.of(context).Classic_15_Puzzle, () {
+        launchStore(appStoreId: "1611891108");
       });
 
       var Garden_Catch_Bugs = MoreAppItem(
-          Image.asset("assets/app_icons/garden_catch_bugs.png"), S.of(context).Garden_Catch_Bugs,
-          () {
-        OpenStore.instance.open(appStoreId: "1514979792", androidAppBundleId: "");
+          Image.asset("assets/app_icons/garden_catch_bugs.png"),
+          S.of(context).Garden_Catch_Bugs, () {
+        launchStore(appStoreId: "1514979792");
       });
 
       var Space_Jumper = MoreAppItem(
-          Image.asset("assets/app_icons/space_jumper.png"), S.of(context).Space_Jumper, () {
-        OpenStore.instance.open(appStoreId: "1516635884", androidAppBundleId: "");
+          Image.asset("assets/app_icons/space_jumper.png"),
+          S.of(context).Space_Jumper, () {
+        launchStore(appStoreId: "1516635884");
       });
 
       var Crazy_Pyramid = MoreAppItem(
-          Image.asset("assets/app_icons/crazy_pyramid.png"), S.of(context).Crazy_Pyramid, () {
-        OpenStore.instance.open(appStoreId: "1495037584", androidAppBundleId: "");
+          Image.asset("assets/app_icons/crazy_pyramid.png"),
+          S.of(context).Crazy_Pyramid, () {
+        launchStore(appStoreId: "1495037584");
       });
 
-      if (Platform.isIOS) {
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
         _items = [
           falling_block_puzzle,
           Classic_Memory_Game,
