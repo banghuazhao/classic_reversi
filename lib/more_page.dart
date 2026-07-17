@@ -1,11 +1,170 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'Tools/purchase_service.dart';
 import 'Tools/store_launcher.dart';
 import 'generated/l10n.dart';
 
-class MorePage extends StatelessWidget {
+class MorePage extends StatefulWidget {
   const MorePage({Key? key}) : super(key: key);
+
+  @override
+  State<MorePage> createState() => _MorePageState();
+}
+
+class _MorePageState extends State<MorePage> {
+  bool _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    PurchaseService.instance.addListener(_onPurchaseChanged);
+    if (PurchaseService.instance.isSupportedPlatform) {
+      PurchaseService.instance.loadProducts();
+    }
+  }
+
+  @override
+  void dispose() {
+    PurchaseService.instance.removeListener(_onPurchaseChanged);
+    super.dispose();
+  }
+
+  void _onPurchaseChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _showMessage(String message) {
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    if (messenger != null) {
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(SnackBar(content: Text(message)));
+      return;
+    }
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _messageFor(PurchaseFeedback feedback) {
+    final s = S.of(context);
+    switch (feedback) {
+      case PurchaseFeedback.success:
+        return s.PurchaseSuccess;
+      case PurchaseFeedback.restoreSuccess:
+        return s.RestoreSuccess;
+      case PurchaseFeedback.restoreNothing:
+        return s.RestoreNothing;
+      case PurchaseFeedback.cancelled:
+        return s.PurchaseCancelled;
+      case PurchaseFeedback.pending:
+        return s.PurchasePending;
+      case PurchaseFeedback.failed:
+        return s.PurchaseFailed;
+      case PurchaseFeedback.unavailable:
+        return s.PurchaseUnavailable;
+      case PurchaseFeedback.alreadyOwned:
+        return s.PurchaseAlreadyOwned;
+    }
+  }
+
+  Future<void> _buyRemoveAds() async {
+    if (_busy) {
+      return;
+    }
+    setState(() => _busy = true);
+    final feedback = await PurchaseService.instance.buyRemoveAds();
+    if (!mounted) {
+      return;
+    }
+    setState(() => _busy = false);
+    _showMessage(_messageFor(feedback));
+  }
+
+  Future<void> _restorePurchases() async {
+    if (_busy) {
+      return;
+    }
+    setState(() => _busy = true);
+    final feedback = await PurchaseService.instance.restorePurchases();
+    if (!mounted) {
+      return;
+    }
+    setState(() => _busy = false);
+    _showMessage(_messageFor(feedback));
+  }
+
+  Widget _buildPurchaseSection(BuildContext context) {
+    if (!PurchaseService.instance.isSupportedPlatform) {
+      return const SizedBox.shrink();
+    }
+
+    final purchase = PurchaseService.instance;
+    final s = S.of(context);
+    final price = purchase.localizedPrice;
+    final removeAdsTitle = purchase.isAdsRemoved
+        ? s.AdsRemoved
+        : (price != null ? '${s.RemoveAds} · $price' : s.RemoveAds);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+          decoration: const BoxDecoration(
+            color: Colors.white60,
+            borderRadius: BorderRadius.all(Radius.circular(24)),
+          ),
+          child: Column(
+            children: [
+              MoreRow(
+                leadingIcon: Icons.money_off,
+                title: removeAdsTitle,
+                onTap: purchase.isAdsRemoved || _busy
+                    ? () {}
+                    : () {
+                        if (!purchase.isAvailable ||
+                            purchase.removeAdsProduct == null) {
+                          _showMessage(s.PurchaseUnavailable);
+                          return;
+                        }
+                        _buyRemoveAds();
+                      },
+              ),
+              const Divider(height: 1, indent: 16, endIndent: 16),
+              MoreRow(
+                leadingIcon: Icons.restore,
+                title: s.RestorePurchases,
+                onTap: _busy ? () {} : _restorePurchases,
+              ),
+            ],
+          ),
+        ),
+        if (_busy || purchase.isPurchaseInProgress)
+          const Padding(
+            padding: EdgeInsets.only(top: 12),
+            child: Center(
+              child: SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -225,6 +384,7 @@ class MorePage extends StatelessWidget {
         backgroundColor: Color(0xb0DFC9B4).withOpacity(0.8),
         body: ListView(
           children: [
+            _buildPurchaseSection(context),
             Container(
                 padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: Text(

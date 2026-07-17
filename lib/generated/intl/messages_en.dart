@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "AdsRemoved": MessageLookupByLibrary.simpleMessage("Ads removed"),
     "Black": MessageLookupByLibrary.simpleMessage("black"),
     "BlackWins": MessageLookupByLibrary.simpleMessage("Black wins"),
     "Classic_15_Puzzle": MessageLookupByLibrary.simpleMessage(
@@ -70,7 +71,35 @@ class MessageLookup extends MessageLookupByLibrary {
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Play against a friend on this device",
     ),
+    "PurchaseAlreadyOwned": MessageLookupByLibrary.simpleMessage(
+      "You already own Remove Ads.",
+    ),
+    "PurchaseCancelled": MessageLookupByLibrary.simpleMessage(
+      "Purchase cancelled.",
+    ),
+    "PurchaseFailed": MessageLookupByLibrary.simpleMessage(
+      "Purchase failed. Please try again.",
+    ),
+    "PurchasePending": MessageLookupByLibrary.simpleMessage(
+      "Purchase pending approval…",
+    ),
+    "PurchaseSuccess": MessageLookupByLibrary.simpleMessage(
+      "Ads have been removed. Thank you!",
+    ),
+    "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage(
+      "Purchases are currently unavailable.",
+    ),
     "Relaxing_Up": MessageLookupByLibrary.simpleMessage("Relaxing Up"),
+    "RemoveAds": MessageLookupByLibrary.simpleMessage("Remove Ads"),
+    "RestoreNothing": MessageLookupByLibrary.simpleMessage(
+      "No purchases to restore.",
+    ),
+    "RestorePurchases": MessageLookupByLibrary.simpleMessage(
+      "Restore Purchases",
+    ),
+    "RestoreSuccess": MessageLookupByLibrary.simpleMessage(
+      "Purchases restored.",
+    ),
     "Saving_Ambulance": MessageLookupByLibrary.simpleMessage(
       "Saving Ambulance",
     ),

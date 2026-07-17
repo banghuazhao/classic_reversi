@@ -6,14 +6,19 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'ads_ids_debug.dart';
 import 'ads_ids_release.dart';
+import 'purchase_service.dart';
 
 class AdsManager {
   static bool disableAllAdsForScreenshot = false;
 
+  /// Whether any ads should initialize, load, or show.
+  static bool get adsEnabled =>
+      !disableAllAdsForScreenshot && shouldShowAds;
+
   static TargetPlatform get _targetPlatform => defaultTargetPlatform;
 
   static String get bannerAdUnitId {
-    if (disableAllAdsForScreenshot) {
+    if (!adsEnabled) {
       return "";
     }
     if (_targetPlatform == TargetPlatform.android) {
@@ -30,7 +35,7 @@ class AdsManager {
   }
 
   static String get openAdUnitID {
-    if (disableAllAdsForScreenshot) {
+    if (!adsEnabled) {
       return "";
     }
     if (_targetPlatform == TargetPlatform.android) {
@@ -64,11 +69,23 @@ class AppOpenAdManager {
 
   /// Load an AppOpenAd.
   void loadAd() {
+    if (!AdsManager.adsEnabled) {
+      dispose();
+      return;
+    }
+    final adUnitId = AdsManager.openAdUnitID;
+    if (adUnitId.isEmpty) {
+      return;
+    }
     AppOpenAd.load(
-      adUnitId: AdsManager.openAdUnitID,
+      adUnitId: adUnitId,
       request: AdRequest(),
       adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (ad) {
+          if (!AdsManager.adsEnabled) {
+            ad.dispose();
+            return;
+          }
           print('$ad loaded');
           _appOpenLoadTime = DateTime.now();
           _appOpenAd = ad;
@@ -87,6 +104,15 @@ class AppOpenAdManager {
   }
 
   void showAdIfAvailable() {
+    if (!AdsManager.adsEnabled) {
+      dispose();
+      return;
+    }
+    // Don't interrupt an in-progress purchase with an app-open ad.
+    if (PurchaseService.instance.isPurchaseInProgress) {
+      print('Skipping app open ad while purchase is in progress.');
+      return;
+    }
     if (!isAdAvailable) {
       print('Tried to show ad before available.');
       loadAd();
@@ -142,6 +168,9 @@ class AppLifecycleReactor extends WidgetsBindingObserver {
   AppLifecycleReactor({required this.appOpenAdManager});
 
   void listenToAppStateChanges() {
+    if (!AdsManager.adsEnabled) {
+      return;
+    }
     AppStateEventNotifier.startListening();
     _appStateSubscription ??=
         AppStateEventNotifier.appStateStream.listen(_onAppStateChanged);
@@ -151,6 +180,9 @@ class AppLifecycleReactor extends WidgetsBindingObserver {
     // Try to show an app open ad if the app is being resumed and
     // we're not already showing an app open ad.
     print("didChangeAppLifecycleState: $appState");
+    if (!AdsManager.adsEnabled) {
+      return;
+    }
     if (appState == AppState.foreground) {
       appOpenAdManager.showAdIfAvailable();
     }

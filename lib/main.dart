@@ -19,6 +19,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart'
 import 'Tools/ads_manager.dart' if (dart.library.io) 'Tools/ads_manager.dart';
 import 'Tools/in_app_reviewer_helper.dart'
     if (dart.library.io) 'Tools/in_app_reviewer_helper.dart';
+import 'Tools/purchase_service.dart';
 import 'game_board.dart';
 import 'game_model.dart';
 import 'game_settings.dart';
@@ -42,36 +43,40 @@ void main() {
       print('ATT request failed: $error');
     });
 
-    // Ad SDK initialization must never be allowed to take down app startup:
-    // a bad network response, missing config, or SDK bug here would
-    // otherwise crash the app on every single launch.
-    () async {
-      try {
-        await MobileAds.instance.initialize();
-      } catch (error) {
-        print('MobileAds initialization failed: $error');
-      }
-    }();
-
-    try {
-      AdsManager.debugPrintID();
-    } catch (error) {
-      print('debugPrintID failed: $error');
-    }
-
     InAppReviewHelper.checkAndAskForReview().catchError((Object error) {
       print('In-app review check failed: $error');
     });
 
-    SystemChrome.setPreferredOrientations(
-            [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
-        .then((_) {
+    () async {
+      // Entitlement before ads / first frame so purchased users skip ads.
+      try {
+        await PurchaseService.instance.init();
+      } catch (error) {
+        print('PurchaseService init failed: $error');
+      }
+
+      if (AdsManager.adsEnabled) {
+        try {
+          await MobileAds.instance.initialize();
+        } catch (error) {
+          print('MobileAds initialization failed: $error');
+        }
+
+        try {
+          AdsManager.debugPrintID();
+        } catch (error) {
+          print('debugPrintID failed: $error');
+        }
+      }
+
+      try {
+        await SystemChrome.setPreferredOrientations(
+            [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+      } catch (error) {
+        print('setPreferredOrientations failed: $error');
+      }
       runApp(MyApp());
-    }).catchError((Object error) {
-      // Even if setting the preferred orientation fails, the app must still launch.
-      print('setPreferredOrientations failed: $error');
-      runApp(MyApp());
-    });
+    }();
   } else {
     runApp(MyApp());
   }
@@ -256,50 +261,81 @@ class _GameScreenState extends State<GameScreen> {
     // stream with the starting position.
     _restartController.add(GameModel(board: GameBoard()));
 
-    if (!kIsWeb) {
-      // Ad setup must never be able to crash the game screen: a failure here
-      // (bad ad unit config, SDK not ready, etc.) should just mean no ads.
-      try {
-        _ad = BannerAd(
-          adUnitId: AdsManager.bannerAdUnitId,
-          size: AdSize.banner,
-          request: AdRequest(),
-          listener: BannerAdListener(
-            onAdLoaded: (_) {
-              if (mounted) {
-                setState(() {
-                  _isAdLoaded = true;
-                });
-              }
-            },
-            onAdFailedToLoad: (ad, error) {
-              // Releases an ad resource when it fails to load
-              ad.dispose();
+    PurchaseService.instance.addListener(_onPurchaseEntitlementChanged);
 
-              print(
-                  'Ad load failed (code=${error.code} message=${error.message})');
-            },
-          ),
-        );
-
-        _ad?.load();
-
-        _appOpenAdManager = AppOpenAdManager()..loadAd();
-        _appLifecycleReactor =
-            AppLifecycleReactor(appOpenAdManager: _appOpenAdManager!);
-        _appLifecycleReactor?.listenToAppStateChanges();
-      } catch (error) {
-        print('Ad setup failed: $error');
-      }
+    if (!kIsWeb && AdsManager.adsEnabled) {
+      _setupAds();
     }
+  }
+
+  void _onPurchaseEntitlementChanged() {
+    if (!mounted) {
+      return;
+    }
+    if (PurchaseService.instance.isAdsRemoved) {
+      _tearDownAds();
+      setState(() {});
+    }
+  }
+
+  void _setupAds() {
+    // Ad setup must never be able to crash the game screen: a failure here
+    // (bad ad unit config, SDK not ready, etc.) should just mean no ads.
+    try {
+      final bannerId = AdsManager.bannerAdUnitId;
+      if (bannerId.isEmpty) {
+        return;
+      }
+      _ad = BannerAd(
+        adUnitId: bannerId,
+        size: AdSize.banner,
+        request: AdRequest(),
+        listener: BannerAdListener(
+          onAdLoaded: (_) {
+            if (mounted && AdsManager.adsEnabled) {
+              setState(() {
+                _isAdLoaded = true;
+              });
+            } else {
+              _tearDownAds();
+            }
+          },
+          onAdFailedToLoad: (ad, error) {
+            // Releases an ad resource when it fails to load
+            ad.dispose();
+
+            print(
+                'Ad load failed (code=${error.code} message=${error.message})');
+          },
+        ),
+      );
+
+      _ad?.load();
+
+      _appOpenAdManager = AppOpenAdManager()..loadAd();
+      _appLifecycleReactor =
+          AppLifecycleReactor(appOpenAdManager: _appOpenAdManager!);
+      _appLifecycleReactor?.listenToAppStateChanges();
+    } catch (error) {
+      print('Ad setup failed: $error');
+    }
+  }
+
+  void _tearDownAds() {
+    _appLifecycleReactor?.dispose();
+    _appLifecycleReactor = null;
+    _appOpenAdManager?.dispose();
+    _appOpenAdManager = null;
+    _ad?.dispose();
+    _ad = null;
+    _isAdLoaded = false;
   }
 
   // Thou shalt tidy up thy stream controllers.
   @override
   void dispose() {
-    _appLifecycleReactor?.dispose();
-    _appOpenAdManager?.dispose();
-    _ad?.dispose();
+    PurchaseService.instance.removeListener(_onPurchaseEntitlementChanged);
+    _tearDownAds();
     _userMovesController.close();
     _restartController.close();
     super.dispose();
@@ -529,7 +565,8 @@ class _GameScreenState extends State<GameScreen> {
     const headerHeight = 90.0;
     const spacingHeight = 20.0 + 10.0 + 20.0;
     const resultTextHeight = 70.0;
-    const adReservedHeight = 60.0;
+    // Only reserve banner space when ads can actually show.
+    final adReservedHeight = AdsManager.adsEnabled ? 60.0 : 0.0;
     const verticalPadding = 30.0 + 20.0;
 
     return Container(
@@ -550,10 +587,10 @@ class _GameScreenState extends State<GameScreen> {
           double sideMargin = max(width * 0.08, 15);
           double widthBasedBoxWidth = (width - sideMargin * 2 - 7) / 8;
 
-          // Always reserve space for the result text and the banner ad, even
-          // before they appear: the board must keep the exact same size for
-          // the whole game, never resizing mid-play when the ad loads or the
-          // game ends (a resizing grid mid-game looks broken).
+          // Always reserve space for the result text and (when enabled) the
+          // banner ad, even before they appear: the board must keep the exact
+          // same size for the whole game, never resizing mid-play when the ad
+          // loads or the game ends (a resizing grid mid-game looks broken).
           double reservedHeight = headerHeight +
               spacingHeight +
               verticalPadding +

@@ -36,5 +36,16 @@
   "White": "白",
   "BlackWins": "黒の勝ち",
   "WhiteWins": "白の勝ち",
-  "Tie": "引き分け"
+  "Tie": "引き分け",
+  "RemoveAds": "広告を削除",
+  "RestorePurchases": "購入を復元",
+  "AdsRemoved": "広告は削除されました",
+  "PurchaseUnavailable": "現在購入できません。",
+  "PurchaseSuccess": "広告を削除しました。ありがとうございます！",
+  "PurchaseCancelled": "購入をキャンセルしました。",
+  "PurchasePending": "購入の承認待ちです…",
+  "PurchaseFailed": "購入に失敗しました。もう一度お試しください。",
+  "PurchaseAlreadyOwned": "広告削除はすでに購入済みです。",
+  "RestoreSuccess": "購入を復元しました。",
+  "RestoreNothing": "復元できる購入はありません。"
 }

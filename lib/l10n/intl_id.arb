@@ -27,5 +27,16 @@
   "White": "putih",
   "BlackWins": "Hitam menang",
   "WhiteWins": "Putih menang",
-  "Tie": "Seri"
+  "Tie": "Seri",
+  "RemoveAds": "Hapus Iklan",
+  "RestorePurchases": "Pulihkan Pembelian",
+  "AdsRemoved": "Iklan telah dihapus",
+  "PurchaseUnavailable": "Pembelian saat ini tidak tersedia.",
+  "PurchaseSuccess": "Iklan telah dihapus. Terima kasih!",
+  "PurchaseCancelled": "Pembelian dibatalkan.",
+  "PurchasePending": "Pembelian menunggu persetujuan…",
+  "PurchaseFailed": "Pembelian gagal. Silakan coba lagi.",
+  "PurchaseAlreadyOwned": "Anda sudah memiliki Hapus Iklan.",
+  "RestoreSuccess": "Pembelian dipulihkan.",
+  "RestoreNothing": "Tidak ada pembelian untuk dipulihkan."
 }

@@ -27,5 +27,16 @@
   "White": "белые",
   "BlackWins": "Чёрные побеждают",
   "WhiteWins": "Белые побеждают",
-  "Tie": "Ничья"
+  "Tie": "Ничья",
+  "RemoveAds": "Убрать рекламу",
+  "RestorePurchases": "Восстановить покупки",
+  "AdsRemoved": "Реклама отключена",
+  "PurchaseUnavailable": "Покупки сейчас недоступны.",
+  "PurchaseSuccess": "Реклама отключена. Спасибо!",
+  "PurchaseCancelled": "Покупка отменена.",
+  "PurchasePending": "Покупка ожидает подтверждения…",
+  "PurchaseFailed": "Не удалось совершить покупку. Попробуйте ещё раз.",
+  "PurchaseAlreadyOwned": "У вас уже есть «Убрать рекламу».",
+  "RestoreSuccess": "Покупки восстановлены.",
+  "RestoreNothing": "Нет покупок для восстановления."
 }

@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "AdsRemoved": MessageLookupByLibrary.simpleMessage("Iklan telah dihapus"),
     "Black": MessageLookupByLibrary.simpleMessage("hitam"),
     "BlackWins": MessageLookupByLibrary.simpleMessage("Hitam menang"),
     "Classic_Reversi": MessageLookupByLibrary.simpleMessage("Classic Reversi"),
@@ -42,6 +43,34 @@ class MessageLookup extends MessageLookupByLibrary {
     "MoreApps": MessageLookupByLibrary.simpleMessage("Aplikasi Lainnya"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Main melawan teman di perangkat ini",
+    ),
+    "PurchaseAlreadyOwned": MessageLookupByLibrary.simpleMessage(
+      "Anda sudah memiliki Hapus Iklan.",
+    ),
+    "PurchaseCancelled": MessageLookupByLibrary.simpleMessage(
+      "Pembelian dibatalkan.",
+    ),
+    "PurchaseFailed": MessageLookupByLibrary.simpleMessage(
+      "Pembelian gagal. Silakan coba lagi.",
+    ),
+    "PurchasePending": MessageLookupByLibrary.simpleMessage(
+      "Pembelian menunggu persetujuan…",
+    ),
+    "PurchaseSuccess": MessageLookupByLibrary.simpleMessage(
+      "Iklan telah dihapus. Terima kasih!",
+    ),
+    "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage(
+      "Pembelian saat ini tidak tersedia.",
+    ),
+    "RemoveAds": MessageLookupByLibrary.simpleMessage("Hapus Iklan"),
+    "RestoreNothing": MessageLookupByLibrary.simpleMessage(
+      "Tidak ada pembelian untuk dipulihkan.",
+    ),
+    "RestorePurchases": MessageLookupByLibrary.simpleMessage(
+      "Pulihkan Pembelian",
+    ),
+    "RestoreSuccess": MessageLookupByLibrary.simpleMessage(
+      "Pembelian dipulihkan.",
     ),
     "StartGame": MessageLookupByLibrary.simpleMessage("Mulai Permainan"),
     "Tie": MessageLookupByLibrary.simpleMessage("Seri"),

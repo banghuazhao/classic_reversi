@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "AdsRemoved": MessageLookupByLibrary.simpleMessage("广告已去除"),
     "Black": MessageLookupByLibrary.simpleMessage("黑棋"),
     "BlackWins": MessageLookupByLibrary.simpleMessage("黑棋获胜"),
     "Classic_15_Puzzle": MessageLookupByLibrary.simpleMessage("十五数字华容道"),
@@ -56,7 +57,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "MoreApps": MessageLookupByLibrary.simpleMessage("更多App"),
     "Novels_Hub": MessageLookupByLibrary.simpleMessage("英文小说站"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage("与好友在本设备上对战"),
+    "PurchaseAlreadyOwned": MessageLookupByLibrary.simpleMessage("你已拥有去除广告。"),
+    "PurchaseCancelled": MessageLookupByLibrary.simpleMessage("已取消购买。"),
+    "PurchaseFailed": MessageLookupByLibrary.simpleMessage("购买失败，请重试。"),
+    "PurchasePending": MessageLookupByLibrary.simpleMessage("购买待批准…"),
+    "PurchaseSuccess": MessageLookupByLibrary.simpleMessage("广告已去除，谢谢！"),
+    "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage("暂时无法购买。"),
     "Relaxing_Up": MessageLookupByLibrary.simpleMessage("冥想Up"),
+    "RemoveAds": MessageLookupByLibrary.simpleMessage("去除广告"),
+    "RestoreNothing": MessageLookupByLibrary.simpleMessage("没有可恢复的购买。"),
+    "RestorePurchases": MessageLookupByLibrary.simpleMessage("恢复购买"),
+    "RestoreSuccess": MessageLookupByLibrary.simpleMessage("已恢复购买。"),
     "Saving_Ambulance": MessageLookupByLibrary.simpleMessage("拯救救护车"),
     "Simple_Calculator": MessageLookupByLibrary.simpleMessage("极简计算器"),
     "Solitaire_Guru": MessageLookupByLibrary.simpleMessage("纸牌大师"),

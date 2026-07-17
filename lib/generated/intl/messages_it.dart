@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "AdsRemoved": MessageLookupByLibrary.simpleMessage("Annunci rimossi"),
     "Black": MessageLookupByLibrary.simpleMessage("nero"),
     "BlackWins": MessageLookupByLibrary.simpleMessage("Vince il nero"),
     "Classic_Reversi": MessageLookupByLibrary.simpleMessage("Classic Reversi"),
@@ -42,6 +43,34 @@ class MessageLookup extends MessageLookupByLibrary {
     "MoreApps": MessageLookupByLibrary.simpleMessage("Altre App"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Gioca con un amico su questo dispositivo",
+    ),
+    "PurchaseAlreadyOwned": MessageLookupByLibrary.simpleMessage(
+      "Possiedi già Rimuovi annunci.",
+    ),
+    "PurchaseCancelled": MessageLookupByLibrary.simpleMessage(
+      "Acquisto annullato.",
+    ),
+    "PurchaseFailed": MessageLookupByLibrary.simpleMessage(
+      "Acquisto non riuscito. Riprova.",
+    ),
+    "PurchasePending": MessageLookupByLibrary.simpleMessage(
+      "Acquisto in attesa di approvazione…",
+    ),
+    "PurchaseSuccess": MessageLookupByLibrary.simpleMessage(
+      "Gli annunci sono stati rimossi. Grazie!",
+    ),
+    "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage(
+      "Gli acquisti non sono al momento disponibili.",
+    ),
+    "RemoveAds": MessageLookupByLibrary.simpleMessage("Rimuovi annunci"),
+    "RestoreNothing": MessageLookupByLibrary.simpleMessage(
+      "Nessun acquisto da ripristinare.",
+    ),
+    "RestorePurchases": MessageLookupByLibrary.simpleMessage(
+      "Ripristina acquisti",
+    ),
+    "RestoreSuccess": MessageLookupByLibrary.simpleMessage(
+      "Acquisti ripristinati.",
     ),
     "StartGame": MessageLookupByLibrary.simpleMessage("Inizia partita"),
     "Tie": MessageLookupByLibrary.simpleMessage("Pareggio"),

@@ -52,5 +52,16 @@
   "White": "white",
   "BlackWins": "Black wins",
   "WhiteWins": "White wins",
-  "Tie": "Tie"
+  "Tie": "Tie",
+  "RemoveAds": "Remove Ads",
+  "RestorePurchases": "Restore Purchases",
+  "AdsRemoved": "Ads removed",
+  "PurchaseUnavailable": "Purchases are currently unavailable.",
+  "PurchaseSuccess": "Ads have been removed. Thank you!",
+  "PurchaseCancelled": "Purchase cancelled.",
+  "PurchasePending": "Purchase pending approval…",
+  "PurchaseFailed": "Purchase failed. Please try again.",
+  "PurchaseAlreadyOwned": "You already own Remove Ads.",
+  "RestoreSuccess": "Purchases restored.",
+  "RestoreNothing": "No purchases to restore."
 }

@@ -27,5 +27,16 @@
   "White": "bianco",
   "BlackWins": "Vince il nero",
   "WhiteWins": "Vince il bianco",
-  "Tie": "Pareggio"
+  "Tie": "Pareggio",
+  "RemoveAds": "Rimuovi annunci",
+  "RestorePurchases": "Ripristina acquisti",
+  "AdsRemoved": "Annunci rimossi",
+  "PurchaseUnavailable": "Gli acquisti non sono al momento disponibili.",
+  "PurchaseSuccess": "Gli annunci sono stati rimossi. Grazie!",
+  "PurchaseCancelled": "Acquisto annullato.",
+  "PurchasePending": "Acquisto in attesa di approvazione…",
+  "PurchaseFailed": "Acquisto non riuscito. Riprova.",
+  "PurchaseAlreadyOwned": "Possiedi già Rimuovi annunci.",
+  "RestoreSuccess": "Acquisti ripristinati.",
+  "RestoreNothing": "Nessun acquisto da ripristinare."
 }

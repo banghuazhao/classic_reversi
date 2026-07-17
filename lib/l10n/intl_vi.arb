@@ -27,5 +27,16 @@
   "White": "trắng",
   "BlackWins": "Quân đen thắng",
   "WhiteWins": "Quân trắng thắng",
-  "Tie": "Hòa"
+  "Tie": "Hòa",
+  "RemoveAds": "Gỡ quảng cáo",
+  "RestorePurchases": "Khôi phục giao dịch",
+  "AdsRemoved": "Đã gỡ quảng cáo",
+  "PurchaseUnavailable": "Hiện không thể mua.",
+  "PurchaseSuccess": "Đã gỡ quảng cáo. Cảm ơn bạn!",
+  "PurchaseCancelled": "Đã hủy giao dịch.",
+  "PurchasePending": "Giao dịch đang chờ phê duyệt…",
+  "PurchaseFailed": "Giao dịch thất bại. Vui lòng thử lại.",
+  "PurchaseAlreadyOwned": "Bạn đã sở hữu Gỡ quảng cáo.",
+  "RestoreSuccess": "Đã khôi phục giao dịch.",
+  "RestoreNothing": "Không có giao dịch nào để khôi phục."
 }

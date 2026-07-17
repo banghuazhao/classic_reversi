@@ -51,5 +51,16 @@
   "White": "白棋",
   "BlackWins": "黑棋獲勝",
   "WhiteWins": "白棋獲勝",
-  "Tie": "平局"
+  "Tie": "平局",
+  "RemoveAds": "移除廣告",
+  "RestorePurchases": "恢復購買",
+  "AdsRemoved": "已移除廣告",
+  "PurchaseUnavailable": "目前無法購買。",
+  "PurchaseSuccess": "已移除廣告，謝謝！",
+  "PurchaseCancelled": "已取消購買。",
+  "PurchasePending": "購買待核准…",
+  "PurchaseFailed": "購買失敗，請再試一次。",
+  "PurchaseAlreadyOwned": "你已擁有移除廣告。",
+  "RestoreSuccess": "已恢復購買。",
+  "RestoreNothing": "沒有可恢復的購買。"
 }

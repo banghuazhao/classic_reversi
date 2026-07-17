@@ -8,14 +8,16 @@ import 'game_settings.dart';
 
 /// Thin wrapper around [SharedPreferences] for the handful of values the app
 /// needs to remember across launches: the player's preferred difficulty and
-/// first-player choice, their win/loss record, and whether they've ever won a
-/// game (used to decide when to prompt for a store review).
+/// first-player choice, their win/loss record, whether they've ever won a
+/// game (used to decide when to prompt for a store review), and the Remove Ads
+/// entitlement cache.
 class SettingsService {
   static const _difficultyKey = 'difficulty';
   static const _firstPlayerKey = 'firstPlayer';
   static const _winsKey = 'wins';
   static const _lossesKey = 'losses';
   static const _hasWonOnceKey = 'hasWonOnce';
+  static const _adsRemovedKey = 'adsRemoved';
 
   static Future<Difficulty> getDifficulty() async {
     final prefs = await SharedPreferences.getInstance();
@@ -67,5 +69,17 @@ class SettingsService {
   static Future<void> setHasWonOnce() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_hasWonOnceKey, true);
+  }
+
+  /// Local cache of the Remove Ads entitlement for offline launches.
+  /// Store entitlements remain authoritative and are reconciled on startup.
+  static Future<bool> getAdsRemoved() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_adsRemovedKey) ?? false;
+  }
+
+  static Future<void> setAdsRemoved(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_adsRemovedKey, value);
   }
 }

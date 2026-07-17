@@ -1,7 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -428,6 +427,106 @@ class S {
   /// `Tie`
   String get Tie {
     return Intl.message('Tie', name: 'Tie', desc: '', args: []);
+  }
+
+  /// `Remove Ads`
+  String get RemoveAds {
+    return Intl.message('Remove Ads', name: 'RemoveAds', desc: '', args: []);
+  }
+
+  /// `Restore Purchases`
+  String get RestorePurchases {
+    return Intl.message(
+      'Restore Purchases',
+      name: 'RestorePurchases',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ads removed`
+  String get AdsRemoved {
+    return Intl.message('Ads removed', name: 'AdsRemoved', desc: '', args: []);
+  }
+
+  /// `Purchases are currently unavailable.`
+  String get PurchaseUnavailable {
+    return Intl.message(
+      'Purchases are currently unavailable.',
+      name: 'PurchaseUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ads have been removed. Thank you!`
+  String get PurchaseSuccess {
+    return Intl.message(
+      'Ads have been removed. Thank you!',
+      name: 'PurchaseSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Purchase cancelled.`
+  String get PurchaseCancelled {
+    return Intl.message(
+      'Purchase cancelled.',
+      name: 'PurchaseCancelled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Purchase pending approval…`
+  String get PurchasePending {
+    return Intl.message(
+      'Purchase pending approval…',
+      name: 'PurchasePending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Purchase failed. Please try again.`
+  String get PurchaseFailed {
+    return Intl.message(
+      'Purchase failed. Please try again.',
+      name: 'PurchaseFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You already own Remove Ads.`
+  String get PurchaseAlreadyOwned {
+    return Intl.message(
+      'You already own Remove Ads.',
+      name: 'PurchaseAlreadyOwned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Purchases restored.`
+  String get RestoreSuccess {
+    return Intl.message(
+      'Purchases restored.',
+      name: 'RestoreSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No purchases to restore.`
+  String get RestoreNothing {
+    return Intl.message(
+      'No purchases to restore.',
+      name: 'RestoreNothing',
+      desc: '',
+      args: [],
+    );
   }
 }
 

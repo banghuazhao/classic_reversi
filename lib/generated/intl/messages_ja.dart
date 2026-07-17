@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "AdsRemoved": MessageLookupByLibrary.simpleMessage("広告は削除されました"),
     "Black": MessageLookupByLibrary.simpleMessage("黒"),
     "BlackWins": MessageLookupByLibrary.simpleMessage("黒の勝ち"),
     "Classic_15_Puzzle": MessageLookupByLibrary.simpleMessage(
@@ -56,6 +57,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "More": MessageLookupByLibrary.simpleMessage("More"),
     "MoreApps": MessageLookupByLibrary.simpleMessage("More Apps"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage("この端末で友達と対戦する"),
+    "PurchaseAlreadyOwned": MessageLookupByLibrary.simpleMessage(
+      "広告削除はすでに購入済みです。",
+    ),
+    "PurchaseCancelled": MessageLookupByLibrary.simpleMessage("購入をキャンセルしました。"),
+    "PurchaseFailed": MessageLookupByLibrary.simpleMessage(
+      "購入に失敗しました。もう一度お試しください。",
+    ),
+    "PurchasePending": MessageLookupByLibrary.simpleMessage("購入の承認待ちです…"),
+    "PurchaseSuccess": MessageLookupByLibrary.simpleMessage(
+      "広告を削除しました。ありがとうございます！",
+    ),
+    "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage("現在購入できません。"),
+    "RemoveAds": MessageLookupByLibrary.simpleMessage("広告を削除"),
+    "RestoreNothing": MessageLookupByLibrary.simpleMessage("復元できる購入はありません。"),
+    "RestorePurchases": MessageLookupByLibrary.simpleMessage("購入を復元"),
+    "RestoreSuccess": MessageLookupByLibrary.simpleMessage("購入を復元しました。"),
     "Space_Jumper": MessageLookupByLibrary.simpleMessage("Space Jumper"),
     "StartGame": MessageLookupByLibrary.simpleMessage("ゲーム開始"),
     "Tie": MessageLookupByLibrary.simpleMessage("引き分け"),

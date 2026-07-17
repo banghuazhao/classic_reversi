@@ -41,4 +41,11 @@ void main() {
     await SettingsService.setHasWonOnce();
     expect(await SettingsService.getHasWonOnce(), isTrue);
   });
+
+  test('adsRemoved defaults to false and round-trips', () async {
+    expect(await SettingsService.getAdsRemoved(), isFalse);
+
+    await SettingsService.setAdsRemoved(true);
+    expect(await SettingsService.getAdsRemoved(), isTrue);
+  });
 }

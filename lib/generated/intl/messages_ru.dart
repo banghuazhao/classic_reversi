@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "AdsRemoved": MessageLookupByLibrary.simpleMessage("Реклама отключена"),
     "Black": MessageLookupByLibrary.simpleMessage("чёрные"),
     "BlackWins": MessageLookupByLibrary.simpleMessage("Чёрные побеждают"),
     "Classic_Reversi": MessageLookupByLibrary.simpleMessage(
@@ -44,6 +45,34 @@ class MessageLookup extends MessageLookupByLibrary {
     "MoreApps": MessageLookupByLibrary.simpleMessage("Другие приложения"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Играть с другом на этом устройстве",
+    ),
+    "PurchaseAlreadyOwned": MessageLookupByLibrary.simpleMessage(
+      "У вас уже есть «Убрать рекламу».",
+    ),
+    "PurchaseCancelled": MessageLookupByLibrary.simpleMessage(
+      "Покупка отменена.",
+    ),
+    "PurchaseFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось совершить покупку. Попробуйте ещё раз.",
+    ),
+    "PurchasePending": MessageLookupByLibrary.simpleMessage(
+      "Покупка ожидает подтверждения…",
+    ),
+    "PurchaseSuccess": MessageLookupByLibrary.simpleMessage(
+      "Реклама отключена. Спасибо!",
+    ),
+    "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage(
+      "Покупки сейчас недоступны.",
+    ),
+    "RemoveAds": MessageLookupByLibrary.simpleMessage("Убрать рекламу"),
+    "RestoreNothing": MessageLookupByLibrary.simpleMessage(
+      "Нет покупок для восстановления.",
+    ),
+    "RestorePurchases": MessageLookupByLibrary.simpleMessage(
+      "Восстановить покупки",
+    ),
+    "RestoreSuccess": MessageLookupByLibrary.simpleMessage(
+      "Покупки восстановлены.",
     ),
     "StartGame": MessageLookupByLibrary.simpleMessage("Начать игру"),
     "Tie": MessageLookupByLibrary.simpleMessage("Ничья"),

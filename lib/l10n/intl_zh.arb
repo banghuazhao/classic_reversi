@@ -52,5 +52,16 @@
   "White": "白棋",
   "BlackWins": "黑棋获胜",
   "WhiteWins": "白棋获胜",
-  "Tie": "平局"
+  "Tie": "平局",
+  "RemoveAds": "去除广告",
+  "RestorePurchases": "恢复购买",
+  "AdsRemoved": "广告已去除",
+  "PurchaseUnavailable": "暂时无法购买。",
+  "PurchaseSuccess": "广告已去除，谢谢！",
+  "PurchaseCancelled": "已取消购买。",
+  "PurchasePending": "购买待批准…",
+  "PurchaseFailed": "购买失败，请重试。",
+  "PurchaseAlreadyOwned": "你已拥有去除广告。",
+  "RestoreSuccess": "已恢复购买。",
+  "RestoreNothing": "没有可恢复的购买。"
 }

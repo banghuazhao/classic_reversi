@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "AdsRemoved": MessageLookupByLibrary.simpleMessage("Đã gỡ quảng cáo"),
     "Black": MessageLookupByLibrary.simpleMessage("đen"),
     "BlackWins": MessageLookupByLibrary.simpleMessage("Quân đen thắng"),
     "Classic_Reversi": MessageLookupByLibrary.simpleMessage("Cờ Lật Cổ Điển"),
@@ -42,6 +43,34 @@ class MessageLookup extends MessageLookupByLibrary {
     "MoreApps": MessageLookupByLibrary.simpleMessage("Ứng dụng khác"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Chơi cùng bạn bè trên thiết bị này",
+    ),
+    "PurchaseAlreadyOwned": MessageLookupByLibrary.simpleMessage(
+      "Bạn đã sở hữu Gỡ quảng cáo.",
+    ),
+    "PurchaseCancelled": MessageLookupByLibrary.simpleMessage(
+      "Đã hủy giao dịch.",
+    ),
+    "PurchaseFailed": MessageLookupByLibrary.simpleMessage(
+      "Giao dịch thất bại. Vui lòng thử lại.",
+    ),
+    "PurchasePending": MessageLookupByLibrary.simpleMessage(
+      "Giao dịch đang chờ phê duyệt…",
+    ),
+    "PurchaseSuccess": MessageLookupByLibrary.simpleMessage(
+      "Đã gỡ quảng cáo. Cảm ơn bạn!",
+    ),
+    "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage(
+      "Hiện không thể mua.",
+    ),
+    "RemoveAds": MessageLookupByLibrary.simpleMessage("Gỡ quảng cáo"),
+    "RestoreNothing": MessageLookupByLibrary.simpleMessage(
+      "Không có giao dịch nào để khôi phục.",
+    ),
+    "RestorePurchases": MessageLookupByLibrary.simpleMessage(
+      "Khôi phục giao dịch",
+    ),
+    "RestoreSuccess": MessageLookupByLibrary.simpleMessage(
+      "Đã khôi phục giao dịch.",
     ),
     "StartGame": MessageLookupByLibrary.simpleMessage("Bắt đầu"),
     "Tie": MessageLookupByLibrary.simpleMessage("Hòa"),
