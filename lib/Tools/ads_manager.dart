@@ -51,9 +51,114 @@ class AdsManager {
     }
   }
 
+  static String get rewardedAdUnitId {
+    if (_targetPlatform == TargetPlatform.android) {
+      if (kDebugMode) {
+        return AdsIdsDebug.rewardedAdUnitIdAndroid;
+      }
+      final id = AdsIdsRelease.rewardedAdUnitIdAndroid;
+      return id.isEmpty ? AdsIdsDebug.rewardedAdUnitIdAndroid : id;
+    } else if (_targetPlatform == TargetPlatform.iOS) {
+      if (kDebugMode) {
+        return AdsIdsDebug.rewardedAdUnitIdIOS;
+      }
+      final id = AdsIdsRelease.rewardedAdUnitIdIOS;
+      return id.isEmpty ? AdsIdsDebug.rewardedAdUnitIdIOS : id;
+    } else {
+      throw UnsupportedError("Unsupported platform");
+    }
+  }
+
   static void debugPrintID() {
     print("bannerAdUnitId: ${AdsManager.bannerAdUnitId}");
     // print("openAdUnitID: ${AdsManager.openAdUnitID}");
+  }
+}
+
+/// Loads and shows a rewarded ad. If ads are removed via IAP, grants the
+/// reward immediately without showing an ad.
+class RewardedAdHelper {
+  RewardedAd? _ad;
+  bool _loading = false;
+
+  bool get isReady => _ad != null;
+
+  Future<void> load() async {
+    if (!AdsManager.adsEnabled || _loading || _ad != null) {
+      return;
+    }
+    final adUnitId = AdsManager.rewardedAdUnitId;
+    if (adUnitId.isEmpty) {
+      return;
+    }
+    _loading = true;
+    await RewardedAd.load(
+      adUnitId: adUnitId,
+      request: const AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) {
+          _ad = ad;
+          _loading = false;
+        },
+        onAdFailedToLoad: (error) {
+          print('RewardedAd failed to load: $error');
+          _loading = false;
+        },
+      ),
+    );
+  }
+
+  /// Returns true when the user earned the reward (or ads are removed).
+  Future<bool> show({required VoidCallback onUserEarnedReward}) async {
+    if (!AdsManager.adsEnabled || PurchaseService.instance.isAdsRemoved) {
+      onUserEarnedReward();
+      return true;
+    }
+
+    if (_ad == null) {
+      await load();
+    }
+    final ad = _ad;
+    if (ad == null) {
+      return false;
+    }
+
+    final completer = Completer<bool>();
+    var earned = false;
+
+    ad.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (ad) {
+        ad.dispose();
+        _ad = null;
+        load();
+        if (!completer.isCompleted) {
+          completer.complete(earned);
+        }
+      },
+      onAdFailedToShowFullScreenContent: (ad, error) {
+        print('RewardedAd failed to show: $error');
+        ad.dispose();
+        _ad = null;
+        load();
+        if (!completer.isCompleted) {
+          completer.complete(false);
+        }
+      },
+    );
+
+    await ad.show(
+      onUserEarnedReward: (ad, reward) {
+        earned = true;
+        onUserEarnedReward();
+      },
+    );
+    _ad = null;
+    return completer.future;
+  }
+
+  void dispose() {
+    _ad?.dispose();
+    _ad = null;
   }
 }
 

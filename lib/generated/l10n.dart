@@ -528,6 +528,336 @@ class S {
       args: [],
     );
   }
+
+  /// `Settings`
+  String get Settings {
+    return Intl.message('Settings', name: 'Settings', desc: '', args: []);
+  }
+
+  /// `Sound`
+  String get Sound {
+    return Intl.message('Sound', name: 'Sound', desc: '', args: []);
+  }
+
+  /// `Haptics`
+  String get Haptics {
+    return Intl.message('Haptics', name: 'Haptics', desc: '', args: []);
+  }
+
+  /// `Theme`
+  String get Theme {
+    return Intl.message('Theme', name: 'Theme', desc: '', args: []);
+  }
+
+  /// `Classic`
+  String get ThemeClassic {
+    return Intl.message('Classic', name: 'ThemeClassic', desc: '', args: []);
+  }
+
+  /// `Night`
+  String get ThemeNight {
+    return Intl.message('Night', name: 'ThemeNight', desc: '', args: []);
+  }
+
+  /// `Contrast`
+  String get ThemeContrast {
+    return Intl.message('Contrast', name: 'ThemeContrast', desc: '', args: []);
+  }
+
+  /// `Daily Challenge`
+  String get DailyChallenge {
+    return Intl.message(
+      'Daily Challenge',
+      name: 'DailyChallenge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Beat today's puzzle on Hard`
+  String get DailyChallengeSubtitle {
+    return Intl.message(
+      'Beat today\'s puzzle on Hard',
+      name: 'DailyChallengeSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Completed today — play again for fun`
+  String get DailyCompleted {
+    return Intl.message(
+      'Completed today — play again for fun',
+      name: 'DailyCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Game Over`
+  String get GameOver {
+    return Intl.message('Game Over', name: 'GameOver', desc: '', args: []);
+  }
+
+  /// `You win!`
+  String get YouWin {
+    return Intl.message('You win!', name: 'YouWin', desc: '', args: []);
+  }
+
+  /// `You lose`
+  String get YouLose {
+    return Intl.message('You lose', name: 'YouLose', desc: '', args: []);
+  }
+
+  /// `Rematch`
+  String get Rematch {
+    return Intl.message('Rematch', name: 'Rematch', desc: '', args: []);
+  }
+
+  /// `Share`
+  String get Share {
+    return Intl.message('Share', name: 'Share', desc: '', args: []);
+  }
+
+  /// `Home`
+  String get Home {
+    return Intl.message('Home', name: 'Home', desc: '', args: []);
+  }
+
+  /// `{result} · Black {black} – White {white} ({mode}) — Classic Reversi`
+  String ShareResult(Object result, Object black, Object white, Object mode) {
+    return Intl.message(
+      '$result · Black $black – White $white ($mode) — Classic Reversi',
+      name: 'ShareResult',
+      desc: '',
+      args: [result, black, white, mode],
+    );
+  }
+
+  /// `Watch Ad`
+  String get WatchAd {
+    return Intl.message('Watch Ad', name: 'WatchAd', desc: '', args: []);
+  }
+
+  /// `Watch a short ad to undo your last move.`
+  String get WatchAdForUndo {
+    return Intl.message(
+      'Watch a short ad to undo your last move.',
+      name: 'WatchAdForUndo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Watch a short ad to show legal moves for this game.`
+  String get WatchAdForHint {
+    return Intl.message(
+      'Watch a short ad to show legal moves for this game.',
+      name: 'WatchAdForHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Watch`
+  String get Watch {
+    return Intl.message('Watch', name: 'Watch', desc: '', args: []);
+  }
+
+  /// `Cancel`
+  String get Cancel {
+    return Intl.message('Cancel', name: 'Cancel', desc: '', args: []);
+  }
+
+  /// `Hint`
+  String get Hint {
+    return Intl.message('Hint', name: 'Hint', desc: '', args: []);
+  }
+
+  /// `Hints enabled for this game.`
+  String get HintsEnabled {
+    return Intl.message(
+      'Hints enabled for this game.',
+      name: 'HintsEnabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading ad…`
+  String get AdLoading {
+    return Intl.message('Loading ad…', name: 'AdLoading', desc: '', args: []);
+  }
+
+  /// `Ad unavailable. Please try again later.`
+  String get AdFailed {
+    return Intl.message(
+      'Ad unavailable. Please try again later.',
+      name: 'AdFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stats`
+  String get Stats {
+    return Intl.message('Stats', name: 'Stats', desc: '', args: []);
+  }
+
+  /// `Achievements`
+  String get Achievements {
+    return Intl.message(
+      'Achievements',
+      name: 'Achievements',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Achievement unlocked`
+  String get AchievementUnlocked {
+    return Intl.message(
+      'Achievement unlocked',
+      name: 'AchievementUnlocked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Win streak`
+  String get CurrentStreak {
+    return Intl.message(
+      'Win streak',
+      name: 'CurrentStreak',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Best streak`
+  String get BestStreak {
+    return Intl.message('Best streak', name: 'BestStreak', desc: '', args: []);
+  }
+
+  /// `Win rate`
+  String get WinRate {
+    return Intl.message('Win rate', name: 'WinRate', desc: '', args: []);
+  }
+
+  /// `Games played`
+  String get GamesPlayed {
+    return Intl.message(
+      'Games played',
+      name: 'GamesPlayed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ties`
+  String get Ties {
+    return Intl.message('Ties', name: 'Ties', desc: '', args: []);
+  }
+
+  /// `Wins by difficulty`
+  String get WinsByDifficulty {
+    return Intl.message(
+      'Wins by difficulty',
+      name: 'WinsByDifficulty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Perfect wins`
+  String get PerfectWins {
+    return Intl.message(
+      'Perfect wins',
+      name: 'PerfectWins',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `First victory`
+  String get AchFirstWin {
+    return Intl.message(
+      'First victory',
+      name: 'AchFirstWin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `3-win streak`
+  String get AchWinStreak3 {
+    return Intl.message(
+      '3-win streak',
+      name: 'AchWinStreak3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `5-win streak`
+  String get AchWinStreak5 {
+    return Intl.message(
+      '5-win streak',
+      name: 'AchWinStreak5',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hard mode win`
+  String get AchWinHard {
+    return Intl.message(
+      'Hard mode win',
+      name: 'AchWinHard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Perfect game`
+  String get AchPerfectGame {
+    return Intl.message(
+      'Perfect game',
+      name: 'AchPerfectGame',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Daily champion`
+  String get AchDailyChallenge {
+    return Intl.message(
+      'Daily champion',
+      name: 'AchDailyChallenge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `10 games played`
+  String get AchGames10 {
+    return Intl.message(
+      '10 games played',
+      name: 'AchGames10',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `50 games played`
+  String get AchGames50 {
+    return Intl.message(
+      '50 games played',
+      name: 'AchGames50',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

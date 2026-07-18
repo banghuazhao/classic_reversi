@@ -47,10 +47,16 @@ class GameSettings {
   final Difficulty difficulty;
   final bool twoPlayerMode;
   final PieceType humanColor;
+  final bool isDailyChallenge;
+  final GameBoard? initialBoard;
+  final PieceType? initialPlayer;
 
   const GameSettings({
     required this.difficulty,
     required this.twoPlayerMode,
     this.humanColor = PieceType.black,
+    this.isDailyChallenge = false,
+    this.initialBoard,
+    this.initialPlayer,
   });
 }

@@ -28,6 +28,7 @@ dependencies:
   url_launcher: ^6.3.2
   share_plus: ^13.2.0
   in_app_purchase: ^3.3.0
+  audioplayers: ^6.8.1
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +59,7 @@ flutter:
   assets:
     - assets/
     - assets/app_icons/
+    - assets/sounds/
 
   fonts:
     - family: Roboto

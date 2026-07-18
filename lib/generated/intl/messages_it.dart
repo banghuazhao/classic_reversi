@@ -20,14 +20,45 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'it';
 
-  static String m0(wins, losses) => "Vittorie ${wins} · Sconfitte ${losses}";
+  static String m0(result, black, white, mode) =>
+      "${result} · Nero ${black} – Bianco ${white} (${mode}) — Classic Reversi";
+
+  static String m1(wins, losses) => "Vittorie ${wins} · Sconfitte ${losses}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "AchDailyChallenge": MessageLookupByLibrary.simpleMessage(
+      "Campione giornaliero",
+    ),
+    "AchFirstWin": MessageLookupByLibrary.simpleMessage("Prima vittoria"),
+    "AchGames10": MessageLookupByLibrary.simpleMessage("10 partite"),
+    "AchGames50": MessageLookupByLibrary.simpleMessage("50 partite"),
+    "AchPerfectGame": MessageLookupByLibrary.simpleMessage("Partita perfetta"),
+    "AchWinHard": MessageLookupByLibrary.simpleMessage("Vittoria in Difficile"),
+    "AchWinStreak3": MessageLookupByLibrary.simpleMessage("Serie di 3"),
+    "AchWinStreak5": MessageLookupByLibrary.simpleMessage("Serie di 5"),
+    "AchievementUnlocked": MessageLookupByLibrary.simpleMessage(
+      "Obiettivo sbloccato",
+    ),
+    "Achievements": MessageLookupByLibrary.simpleMessage("Obiettivi"),
+    "AdFailed": MessageLookupByLibrary.simpleMessage(
+      "Annuncio non disponibile. Riprova più tardi.",
+    ),
+    "AdLoading": MessageLookupByLibrary.simpleMessage("Caricamento annuncio…"),
     "AdsRemoved": MessageLookupByLibrary.simpleMessage("Annunci rimossi"),
+    "BestStreak": MessageLookupByLibrary.simpleMessage("Miglior serie"),
     "Black": MessageLookupByLibrary.simpleMessage("nero"),
     "BlackWins": MessageLookupByLibrary.simpleMessage("Vince il nero"),
+    "Cancel": MessageLookupByLibrary.simpleMessage("Annulla"),
     "Classic_Reversi": MessageLookupByLibrary.simpleMessage("Classic Reversi"),
+    "CurrentStreak": MessageLookupByLibrary.simpleMessage("Serie di vittorie"),
+    "DailyChallenge": MessageLookupByLibrary.simpleMessage("Sfida giornaliera"),
+    "DailyChallengeSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Batti il puzzle di oggi in Difficile",
+    ),
+    "DailyCompleted": MessageLookupByLibrary.simpleMessage(
+      "Completata oggi — puoi rigiocare",
+    ),
     "Difficulty": MessageLookupByLibrary.simpleMessage("Difficoltà"),
     "DifficultyEasy": MessageLookupByLibrary.simpleMessage("Facile"),
     "DifficultyHard": MessageLookupByLibrary.simpleMessage("Difficile"),
@@ -35,12 +66,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "FirstPlayerComputer": MessageLookupByLibrary.simpleMessage("Computer"),
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Giocatore"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Casuale"),
+    "GameOver": MessageLookupByLibrary.simpleMessage("Fine partita"),
+    "GamesPlayed": MessageLookupByLibrary.simpleMessage("Partite giocate"),
+    "Haptics": MessageLookupByLibrary.simpleMessage("Vibrazione"),
+    "Hint": MessageLookupByLibrary.simpleMessage("Suggerimento"),
+    "HintsEnabled": MessageLookupByLibrary.simpleMessage(
+      "Suggerimenti attivati per questa partita.",
+    ),
+    "Home": MessageLookupByLibrary.simpleMessage("Home"),
     "How_to_play": MessageLookupByLibrary.simpleMessage("Come si gioca?"),
     "How_to_play_explain": MessageLookupByLibrary.simpleMessage(
       "Nel gioco, tutti i dischi dell\'avversario allineati e compresi tra il disco appena posizionato e un altro disco del giocatore corrente vengono capovolti nel colore del giocatore corrente. L\'obiettivo del gioco è avere la maggioranza dei dischi del proprio colore quando l\'ultima casella vuota giocabile viene riempita.",
     ),
     "More": MessageLookupByLibrary.simpleMessage("Altro"),
     "MoreApps": MessageLookupByLibrary.simpleMessage("Altre App"),
+    "PerfectWins": MessageLookupByLibrary.simpleMessage("Vittorie perfette"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Gioca con un amico su questo dispositivo",
     ),
@@ -62,6 +102,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage(
       "Gli acquisti non sono al momento disponibili.",
     ),
+    "Rematch": MessageLookupByLibrary.simpleMessage("Rivincita"),
     "RemoveAds": MessageLookupByLibrary.simpleMessage("Rimuovi annunci"),
     "RestoreNothing": MessageLookupByLibrary.simpleMessage(
       "Nessun acquisto da ripristinare.",
@@ -72,14 +113,38 @@ class MessageLookup extends MessageLookupByLibrary {
     "RestoreSuccess": MessageLookupByLibrary.simpleMessage(
       "Acquisti ripristinati.",
     ),
+    "Settings": MessageLookupByLibrary.simpleMessage("Impostazioni"),
+    "Share": MessageLookupByLibrary.simpleMessage("Condividi"),
+    "ShareResult": m0,
+    "Sound": MessageLookupByLibrary.simpleMessage("Suoni"),
     "StartGame": MessageLookupByLibrary.simpleMessage("Inizia partita"),
+    "Stats": MessageLookupByLibrary.simpleMessage("Statistiche"),
+    "Theme": MessageLookupByLibrary.simpleMessage("Tema"),
+    "ThemeClassic": MessageLookupByLibrary.simpleMessage("Classico"),
+    "ThemeContrast": MessageLookupByLibrary.simpleMessage("Contrasto"),
+    "ThemeNight": MessageLookupByLibrary.simpleMessage("Notte"),
     "Tie": MessageLookupByLibrary.simpleMessage("Pareggio"),
+    "Ties": MessageLookupByLibrary.simpleMessage("Pareggi"),
     "TwoPlayersMode": MessageLookupByLibrary.simpleMessage(
       "2 giocatori (a turno)",
+    ),
+    "Watch": MessageLookupByLibrary.simpleMessage("Guarda"),
+    "WatchAd": MessageLookupByLibrary.simpleMessage("Guarda annuncio"),
+    "WatchAdForHint": MessageLookupByLibrary.simpleMessage(
+      "Guarda un breve annuncio per mostrare le mosse legali.",
+    ),
+    "WatchAdForUndo": MessageLookupByLibrary.simpleMessage(
+      "Guarda un breve annuncio per annullare l\'ultima mossa.",
     ),
     "White": MessageLookupByLibrary.simpleMessage("bianco"),
     "WhiteWins": MessageLookupByLibrary.simpleMessage("Vince il bianco"),
     "WhoGoesFirst": MessageLookupByLibrary.simpleMessage("Chi inizia?"),
-    "WinsLosses": m0,
+    "WinRate": MessageLookupByLibrary.simpleMessage("Percentuale vittorie"),
+    "WinsByDifficulty": MessageLookupByLibrary.simpleMessage(
+      "Vittorie per difficoltà",
+    ),
+    "WinsLosses": m1,
+    "YouLose": MessageLookupByLibrary.simpleMessage("Hai perso"),
+    "YouWin": MessageLookupByLibrary.simpleMessage("Hai vinto!"),
   };
 }

@@ -34,11 +34,40 @@ class GameBoard {
 
   /// Default constructor, which creates a board with pieces in starting
   /// position.
-  GameBoard() : rows = _emptyBoard;
+  GameBoard() : rows = _copyRows(_emptyBoard);
+
+  /// Builds a board from an explicit 8×8 grid (used by Daily Challenge).
+  GameBoard.fromRows(List<List<PieceType>> source) : rows = _copyRows(source);
 
   /// Copy constructor.
   GameBoard.fromGameBoard(GameBoard other)
       : rows = List.generate(height, (i) => List.from(other.rows[i]));
+
+  static List<List<PieceType>> _copyRows(List<List<PieceType>> source) {
+    return List.generate(height, (i) => List<PieceType>.from(source[i]));
+  }
+
+  /// Cells that changed color between [before] and [after], excluding [placed].
+  static List<Position> flippedPositions(
+    GameBoard before,
+    GameBoard after,
+    Position placed,
+  ) {
+    final flipped = <Position>[];
+    for (var y = 0; y < height; y++) {
+      for (var x = 0; x < width; x++) {
+        if (x == placed.x && y == placed.y) {
+          continue;
+        }
+        final was = before.getPieceAtLocation(x, y);
+        final now = after.getPieceAtLocation(x, y);
+        if (was != PieceType.empty && now != PieceType.empty && was != now) {
+          flipped.add(Position(x, y));
+        }
+      }
+    }
+    return flipped;
+  }
 
   /// Retrieves the type of piece at a location on the game board.
   PieceType getPieceAtLocation(int x, int y) {

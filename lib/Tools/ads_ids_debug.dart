@@ -7,4 +7,9 @@ class AdsIdsDebug {
 
   static const String openAdUnitIdAndroid = "ca-app-pub-3940256099942544/3419835294";
   static const String openAdUnitIdIOS = "ca-app-pub-3940256099942544/5662855259";
+
+  static const String rewardedAdUnitIdAndroid =
+      "ca-app-pub-3940256099942544/5224354917";
+  static const String rewardedAdUnitIdIOS =
+      "ca-app-pub-3940256099942544/1712485313";
 }

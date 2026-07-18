@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:classic_reversi/app_theme.dart';
 import 'package:classic_reversi/game_settings.dart';
 import 'package:classic_reversi/settings_service.dart';
 
@@ -47,5 +48,43 @@ void main() {
 
     await SettingsService.setAdsRemoved(true);
     expect(await SettingsService.getAdsRemoved(), isTrue);
+  });
+
+  test('sound and haptics default to enabled', () async {
+    expect(await SettingsService.getSoundEnabled(), isTrue);
+    expect(await SettingsService.getHapticsEnabled(), isTrue);
+
+    await SettingsService.setSoundEnabled(false);
+    await SettingsService.setHapticsEnabled(false);
+    expect(await SettingsService.getSoundEnabled(), isFalse);
+    expect(await SettingsService.getHapticsEnabled(), isFalse);
+  });
+
+  test('board theme defaults to classic and round-trips', () async {
+    expect(await SettingsService.getBoardTheme(), BoardThemeId.classic);
+
+    await SettingsService.setBoardTheme(BoardThemeId.night);
+    expect(await SettingsService.getBoardTheme(), BoardThemeId.night);
+  });
+
+  test('streaks update on win and reset on loss', () async {
+    await SettingsService.recordWinStreak();
+    await SettingsService.recordWinStreak();
+    expect(await SettingsService.getCurrentStreak(), 2);
+    expect(await SettingsService.getBestStreak(), 2);
+
+    await SettingsService.resetWinStreak();
+    expect(await SettingsService.getCurrentStreak(), 0);
+    expect(await SettingsService.getBestStreak(), 2);
+  });
+
+  test('daily completion is tracked once per day', () async {
+    expect(await SettingsService.isDailyCompletedToday(), isFalse);
+    await SettingsService.markDailyCompletedToday();
+    expect(await SettingsService.isDailyCompletedToday(), isTrue);
+    expect(await SettingsService.getDailyCompletions(), 1);
+
+    await SettingsService.markDailyCompletedToday();
+    expect(await SettingsService.getDailyCompletions(), 1);
   });
 }

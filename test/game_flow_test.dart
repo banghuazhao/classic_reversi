@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -12,9 +11,11 @@ void main() {
     expect(find.text('Classic Reversi'), findsOneWidget);
     expect(find.text('Start Game'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('Easy'));
     await tester.tap(find.text('Easy'));
     await tester.pumpAndSettle();
 
+    await tester.ensureVisible(find.text('Start Game'));
     await tester.tap(find.text('Start Game'));
     await tester.pumpAndSettle();
 
@@ -23,12 +24,8 @@ void main() {
     expect(find.text('white'), findsOneWidget);
     expect(find.text('2'), findsNWidgets(2));
 
-    // Tap a legal opening move for black. GestureDetectors are: the undo,
-    // restart, and help buttons, then the 64 board squares in row-major
-    // order. Index 3 + (2*8+4) = 23 is board square (x=4, y=2), a legal move.
-    final gestureDetectors = find.byType(GestureDetector);
-    expect(gestureDetectors, findsNWidgets(67));
-    await tester.tap(gestureDetectors.at(23));
+    // (4, 2) is a legal opening move for black.
+    await tester.tap(find.byKey(const ValueKey('cell-4-2')));
 
     // Let the move resolve and the CPU (which also moves as part of this
     // flow) respond after its "thinking" delay.
@@ -43,7 +40,7 @@ void main() {
     // Undo should take the board all the way back to the starting position
     // (it reverts to just before the human's move, undoing the CPU's
     // response along with it).
-    await tester.tap(gestureDetectors.at(0));
+    await tester.tap(find.byType(ElevatedButton).first);
     await tester.pumpAndSettle();
     expect(find.text('2'), findsNWidgets(2));
 

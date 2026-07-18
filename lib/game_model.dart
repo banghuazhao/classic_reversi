@@ -15,6 +15,17 @@ class GameModel {
     this.player = PieceType.black,
   });
 
+  /// Starting position for a normal game or Daily Challenge.
+  factory GameModel.initial({
+    GameBoard? board,
+    PieceType? player,
+  }) {
+    return GameModel(
+      board: board ?? GameBoard(),
+      player: player ?? PieceType.black,
+    );
+  }
+
   int get blackScore => board.getPieceCount(PieceType.black);
 
   int get whiteScore => board.getPieceCount(PieceType.white);

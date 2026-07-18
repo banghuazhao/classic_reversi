@@ -7,4 +7,9 @@ class AdsIdsRelease {
 
   static const String openAdUnitIdAndroid = "ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx";
   static const String openAdUnitIdIOS = "ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx";
+
+  static const String rewardedAdUnitIdAndroid =
+      "ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx";
+  static const String rewardedAdUnitIdIOS =
+      "ca-app-pub-xxxxxxxxxxxxxxxx/xxxxxxxxxx";
 }

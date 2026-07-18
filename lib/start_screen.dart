@@ -4,14 +4,19 @@
 
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'daily_challenge.dart';
 import 'game_board.dart';
 import 'game_settings.dart';
 import 'generated/l10n.dart';
 import 'main.dart';
+import 'settings_screen.dart';
 import 'settings_service.dart';
+import 'stats_screen.dart';
 import 'styling.dart';
+import 'theme_controller.dart';
 
 /// The very first screen the player sees: pick a difficulty, choose who goes
 /// first (or play locally with a friend), see the running win/loss record,
@@ -31,11 +36,26 @@ class _StartScreenState extends State<StartScreen> {
   bool _showHowToPlay = false;
   int _wins = 0;
   int _losses = 0;
+  int _currentStreak = 0;
+  bool _dailyCompleted = false;
 
   @override
   void initState() {
     super.initState();
+    ThemeController.instance.addListener(_onThemeChanged);
     _loadSettings();
+  }
+
+  @override
+  void dispose() {
+    ThemeController.instance.removeListener(_onThemeChanged);
+    super.dispose();
+  }
+
+  void _onThemeChanged() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> _loadSettings() async {
@@ -43,12 +63,16 @@ class _StartScreenState extends State<StartScreen> {
     final firstPlayer = await SettingsService.getFirstPlayer();
     final wins = await SettingsService.getWins();
     final losses = await SettingsService.getLosses();
+    final streak = await SettingsService.getCurrentStreak();
+    final dailyDone = await DailyChallenge.isCompletedToday();
     if (!mounted) return;
     setState(() {
       _difficulty = difficulty;
       _firstPlayer = firstPlayer;
       _wins = wins;
       _losses = losses;
+      _currentStreak = streak;
+      _dailyCompleted = dailyDone;
     });
   }
 
@@ -82,6 +106,14 @@ class _StartScreenState extends State<StartScreen> {
     );
   }
 
+  void _startDailyChallenge() {
+    Navigator.of(context).pushReplacement(
+      fadeRoute((context) => GameScreen(
+            settings: DailyChallenge.settingsForToday(),
+          )),
+    );
+  }
+
   Widget _sectionLabel(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -95,6 +127,7 @@ class _StartScreenState extends State<StartScreen> {
   // A minimal on/off switch that doesn't need a Material ancestor, since this
   // app deliberately doesn't use MaterialApp/Theme (see main.dart).
   Widget _toggleSwitch(bool value) {
+    final theme = ThemeController.instance.theme;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
       width: 46,
@@ -111,7 +144,7 @@ class _StartScreenState extends State<StartScreen> {
           width: 22,
           height: 22,
           decoration: BoxDecoration(
-            color: value ? Styling.backgroundFinishColor : Color(0xffffffff),
+            color: value ? theme.backgroundFinish : Color(0xffffffff),
             shape: BoxShape.circle,
           ),
         ),
@@ -220,16 +253,39 @@ class _StartScreenState extends State<StartScreen> {
     );
   }
 
+  Widget _iconButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    return SizedBox(
+      width: 44,
+      height: 44,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ThemeController.instance.theme.buttonFill,
+          shape: const CircleBorder(),
+          padding: EdgeInsets.zero,
+          elevation: 0,
+        ),
+        child: Icon(icon, size: 20, color: const Color(0xffffffff)),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = ThemeController.instance.theme;
+    final s = S.of(context);
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Styling.backgroundStartColor,
-            Styling.backgroundFinishColor,
+            theme.backgroundStart,
+            theme.backgroundFinish,
           ],
         ),
       ),
@@ -239,22 +295,107 @@ class _StartScreenState extends State<StartScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: 20),
+              Row(
+                children: [
+                  _iconButton(
+                    icon: CupertinoIcons.chart_bar,
+                    onPressed: () async {
+                      await Navigator.of(context).push(
+                        fadeRoute((context) => const StatsScreen()),
+                      );
+                      _loadSettings();
+                    },
+                  ),
+                  const Spacer(),
+                  _iconButton(
+                    icon: CupertinoIcons.settings,
+                    onPressed: () async {
+                      await Navigator.of(context).push(
+                        fadeRoute((context) => const SettingsScreen()),
+                      );
+                      if (mounted) setState(() {});
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
               Text(
-                S.of(context).Classic_Reversi,
+                s.Classic_Reversi,
                 textAlign: TextAlign.center,
                 style: Styling.resultText.copyWith(fontSize: 36),
               ),
               SizedBox(height: 10),
               Text(
-                S.of(context).WinsLosses(_wins, _losses),
+                s.WinsLosses(_wins, _losses),
                 textAlign: TextAlign.center,
                 style: Styling.scoreLabelText.copyWith(fontSize: 16),
               ),
-              SizedBox(height: 30),
+              if (_currentStreak > 0) ...[
+                SizedBox(height: 4),
+                Text(
+                  '${s.CurrentStreak}: $_currentStreak',
+                  textAlign: TextAlign.center,
+                  style: Styling.scoreLabelText.copyWith(fontSize: 14),
+                ),
+              ],
+              SizedBox(height: 22),
+              GestureDetector(
+                onTap: _startDailyChallenge,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Color(0x55ffffff),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: theme.lastMoveBorder, width: 1.2),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(CupertinoIcons.calendar,
+                          color: theme.lastMoveBorder, size: 22),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              s.DailyChallenge,
+                              style: const TextStyle(
+                                fontFamily: 'Roboto',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xffffffff),
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              _dailyCompleted
+                                  ? s.DailyCompleted
+                                  : s.DailyChallengeSubtitle,
+                              style: TextStyle(
+                                fontFamily: 'Roboto',
+                                fontSize: 12,
+                                color: Color(0xe0ffffff),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        _dailyCompleted
+                            ? CupertinoIcons.checkmark_circle_fill
+                            : CupertinoIcons.chevron_right,
+                        color: Color(0xffffffff),
+                        size: 20,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 24),
               _howToPlaySection(context),
               SizedBox(height: 30),
-              _sectionLabel(S.of(context).Difficulty),
+              _sectionLabel(s.Difficulty),
               _segmentedControl<Difficulty>(
                 values: Difficulty.values,
                 selected: _difficulty,
@@ -262,7 +403,7 @@ class _StartScreenState extends State<StartScreen> {
                 onSelected: (d) => setState(() => _difficulty = d),
               ),
               SizedBox(height: 30),
-              _sectionLabel(S.of(context).TwoPlayersMode),
+              _sectionLabel(s.TwoPlayersMode),
               GestureDetector(
                 onTap: () => setState(() => _twoPlayerMode = !_twoPlayerMode),
                 child: Container(
@@ -277,7 +418,7 @@ class _StartScreenState extends State<StartScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          S.of(context).PlayAgainstFriend,
+                          s.PlayAgainstFriend,
                           style: TextStyle(
                             fontFamily: 'Roboto',
                             fontSize: 14,
@@ -292,7 +433,7 @@ class _StartScreenState extends State<StartScreen> {
               ),
               if (!_twoPlayerMode) ...[
                 SizedBox(height: 30),
-                _sectionLabel(S.of(context).WhoGoesFirst),
+                _sectionLabel(s.WhoGoesFirst),
                 _segmentedControl<FirstPlayer>(
                   values: FirstPlayer.values,
                   selected: _firstPlayer,
@@ -312,7 +453,7 @@ class _StartScreenState extends State<StartScreen> {
                     ),
                   ),
                   child: Text(
-                    S.of(context).StartGame,
+                    s.StartGame,
                     style: TextStyle(
                       fontFamily: 'Roboto',
                       fontSize: 20,

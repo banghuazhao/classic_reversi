@@ -20,13 +20,34 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(wins, losses) => "Wins ${wins} · Losses ${losses}";
+  static String m0(result, black, white, mode) =>
+      "${result} · Black ${black} – White ${white} (${mode}) — Classic Reversi";
+
+  static String m1(wins, losses) => "Wins ${wins} · Losses ${losses}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "AchDailyChallenge": MessageLookupByLibrary.simpleMessage("Daily champion"),
+    "AchFirstWin": MessageLookupByLibrary.simpleMessage("First victory"),
+    "AchGames10": MessageLookupByLibrary.simpleMessage("10 games played"),
+    "AchGames50": MessageLookupByLibrary.simpleMessage("50 games played"),
+    "AchPerfectGame": MessageLookupByLibrary.simpleMessage("Perfect game"),
+    "AchWinHard": MessageLookupByLibrary.simpleMessage("Hard mode win"),
+    "AchWinStreak3": MessageLookupByLibrary.simpleMessage("3-win streak"),
+    "AchWinStreak5": MessageLookupByLibrary.simpleMessage("5-win streak"),
+    "AchievementUnlocked": MessageLookupByLibrary.simpleMessage(
+      "Achievement unlocked",
+    ),
+    "Achievements": MessageLookupByLibrary.simpleMessage("Achievements"),
+    "AdFailed": MessageLookupByLibrary.simpleMessage(
+      "Ad unavailable. Please try again later.",
+    ),
+    "AdLoading": MessageLookupByLibrary.simpleMessage("Loading ad…"),
     "AdsRemoved": MessageLookupByLibrary.simpleMessage("Ads removed"),
+    "BestStreak": MessageLookupByLibrary.simpleMessage("Best streak"),
     "Black": MessageLookupByLibrary.simpleMessage("black"),
     "BlackWins": MessageLookupByLibrary.simpleMessage("Black wins"),
+    "Cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "Classic_15_Puzzle": MessageLookupByLibrary.simpleMessage(
       "Classic 15 Puzzle",
     ),
@@ -42,8 +63,16 @@ class MessageLookup extends MessageLookupByLibrary {
       "Classical Music Box",
     ),
     "Crazy_Pyramid": MessageLookupByLibrary.simpleMessage("Crazy Pyramid"),
+    "CurrentStreak": MessageLookupByLibrary.simpleMessage("Win streak"),
     "Cute_Animal_Merge": MessageLookupByLibrary.simpleMessage(
       "Cute Animal Merge",
+    ),
+    "DailyChallenge": MessageLookupByLibrary.simpleMessage("Daily Challenge"),
+    "DailyChallengeSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Beat today\'s puzzle on Hard",
+    ),
+    "DailyCompleted": MessageLookupByLibrary.simpleMessage(
+      "Completed today — play again for fun",
     ),
     "Difficulty": MessageLookupByLibrary.simpleMessage("Difficulty"),
     "DifficultyEasy": MessageLookupByLibrary.simpleMessage("Easy"),
@@ -54,9 +83,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Random"),
     "Flappy_Fish": MessageLookupByLibrary.simpleMessage("Flappy Fish"),
     "Fling_Knife": MessageLookupByLibrary.simpleMessage("Fling Knife"),
+    "GameOver": MessageLookupByLibrary.simpleMessage("Game Over"),
+    "GamesPlayed": MessageLookupByLibrary.simpleMessage("Games played"),
     "Garden_Catch_Bugs": MessageLookupByLibrary.simpleMessage(
       "Garden: Catch Bugs",
     ),
+    "Haptics": MessageLookupByLibrary.simpleMessage("Haptics"),
+    "Hint": MessageLookupByLibrary.simpleMessage("Hint"),
+    "HintsEnabled": MessageLookupByLibrary.simpleMessage(
+      "Hints enabled for this game.",
+    ),
+    "Home": MessageLookupByLibrary.simpleMessage("Home"),
     "How_to_play": MessageLookupByLibrary.simpleMessage("How to play?"),
     "How_to_play_explain": MessageLookupByLibrary.simpleMessage(
       "In the game, any disks of the opponent\'s color that are in a straight line and bounded by the disk just placed and another disk of the current player\'s color are turned over to the current player\'s color. The objective of the game is to have the majority of disks turned to display one\'s color when the last playable empty square is filled.",
@@ -68,6 +105,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "More": MessageLookupByLibrary.simpleMessage("More"),
     "MoreApps": MessageLookupByLibrary.simpleMessage("More Apps"),
     "Novels_Hub": MessageLookupByLibrary.simpleMessage("Novels Hub"),
+    "PerfectWins": MessageLookupByLibrary.simpleMessage("Perfect wins"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Play against a friend on this device",
     ),
@@ -90,6 +128,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Purchases are currently unavailable.",
     ),
     "Relaxing_Up": MessageLookupByLibrary.simpleMessage("Relaxing Up"),
+    "Rematch": MessageLookupByLibrary.simpleMessage("Rematch"),
     "RemoveAds": MessageLookupByLibrary.simpleMessage("Remove Ads"),
     "RestoreNothing": MessageLookupByLibrary.simpleMessage(
       "No purchases to restore.",
@@ -103,26 +142,50 @@ class MessageLookup extends MessageLookupByLibrary {
     "Saving_Ambulance": MessageLookupByLibrary.simpleMessage(
       "Saving Ambulance",
     ),
+    "Settings": MessageLookupByLibrary.simpleMessage("Settings"),
+    "Share": MessageLookupByLibrary.simpleMessage("Share"),
+    "ShareResult": m0,
     "Simple_Calculator": MessageLookupByLibrary.simpleMessage(
       "Simple Calculator",
     ),
     "Solitaire_Guru": MessageLookupByLibrary.simpleMessage("Solitaire Guru"),
+    "Sound": MessageLookupByLibrary.simpleMessage("Sound"),
     "Space_Jumper": MessageLookupByLibrary.simpleMessage("Space Jumper"),
     "StartGame": MessageLookupByLibrary.simpleMessage("Start Game"),
+    "Stats": MessageLookupByLibrary.simpleMessage("Stats"),
     "Sudoku_Lover": MessageLookupByLibrary.simpleMessage("Sudoku Lover"),
+    "Theme": MessageLookupByLibrary.simpleMessage("Theme"),
+    "ThemeClassic": MessageLookupByLibrary.simpleMessage("Classic"),
+    "ThemeContrast": MessageLookupByLibrary.simpleMessage("Contrast"),
+    "ThemeNight": MessageLookupByLibrary.simpleMessage("Night"),
     "Tie": MessageLookupByLibrary.simpleMessage("Tie"),
+    "Ties": MessageLookupByLibrary.simpleMessage("Ties"),
     "TwoPlayersMode": MessageLookupByLibrary.simpleMessage(
       "2 Players (pass & play)",
+    ),
+    "Watch": MessageLookupByLibrary.simpleMessage("Watch"),
+    "WatchAd": MessageLookupByLibrary.simpleMessage("Watch Ad"),
+    "WatchAdForHint": MessageLookupByLibrary.simpleMessage(
+      "Watch a short ad to show legal moves for this game.",
+    ),
+    "WatchAdForUndo": MessageLookupByLibrary.simpleMessage(
+      "Watch a short ad to undo your last move.",
     ),
     "We_Play_Piano": MessageLookupByLibrary.simpleMessage("We Play Piano"),
     "White": MessageLookupByLibrary.simpleMessage("white"),
     "WhiteWins": MessageLookupByLibrary.simpleMessage("White wins"),
     "WhoGoesFirst": MessageLookupByLibrary.simpleMessage("Who goes first?"),
-    "WinsLosses": m0,
+    "WinRate": MessageLookupByLibrary.simpleMessage("Win rate"),
+    "WinsByDifficulty": MessageLookupByLibrary.simpleMessage(
+      "Wins by difficulty",
+    ),
+    "WinsLosses": m1,
     "World_Weather_Live": MessageLookupByLibrary.simpleMessage(
       "World Weather Live",
     ),
     "Yes_Habit": MessageLookupByLibrary.simpleMessage("Yes Habit"),
+    "YouLose": MessageLookupByLibrary.simpleMessage("You lose"),
+    "YouWin": MessageLookupByLibrary.simpleMessage("You win!"),
     "falling_block_puzzle": MessageLookupByLibrary.simpleMessage(
       "Falling Block Puzzle",
     ),

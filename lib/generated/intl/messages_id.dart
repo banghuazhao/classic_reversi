@@ -20,14 +20,49 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'id';
 
-  static String m0(wins, losses) => "Menang ${wins} · Kalah ${losses}";
+  static String m0(result, black, white, mode) =>
+      "${result} · Hitam ${black} – Putih ${white} (${mode}) — Classic Reversi";
+
+  static String m1(wins, losses) => "Menang ${wins} · Kalah ${losses}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "AchDailyChallenge": MessageLookupByLibrary.simpleMessage("Juara harian"),
+    "AchFirstWin": MessageLookupByLibrary.simpleMessage("Kemenangan pertama"),
+    "AchGames10": MessageLookupByLibrary.simpleMessage("10 permainan"),
+    "AchGames50": MessageLookupByLibrary.simpleMessage("50 permainan"),
+    "AchPerfectGame": MessageLookupByLibrary.simpleMessage(
+      "Permainan sempurna",
+    ),
+    "AchWinHard": MessageLookupByLibrary.simpleMessage("Menang mode Hard"),
+    "AchWinStreak3": MessageLookupByLibrary.simpleMessage(
+      "3 kemenangan beruntun",
+    ),
+    "AchWinStreak5": MessageLookupByLibrary.simpleMessage(
+      "5 kemenangan beruntun",
+    ),
+    "AchievementUnlocked": MessageLookupByLibrary.simpleMessage(
+      "Pencapaian terbuka",
+    ),
+    "Achievements": MessageLookupByLibrary.simpleMessage("Pencapaian"),
+    "AdFailed": MessageLookupByLibrary.simpleMessage(
+      "Iklan tidak tersedia. Coba lagi nanti.",
+    ),
+    "AdLoading": MessageLookupByLibrary.simpleMessage("Memuat iklan…"),
     "AdsRemoved": MessageLookupByLibrary.simpleMessage("Iklan telah dihapus"),
+    "BestStreak": MessageLookupByLibrary.simpleMessage("Rekor terbaik"),
     "Black": MessageLookupByLibrary.simpleMessage("hitam"),
     "BlackWins": MessageLookupByLibrary.simpleMessage("Hitam menang"),
+    "Cancel": MessageLookupByLibrary.simpleMessage("Batal"),
     "Classic_Reversi": MessageLookupByLibrary.simpleMessage("Classic Reversi"),
+    "CurrentStreak": MessageLookupByLibrary.simpleMessage("Rekor kemenangan"),
+    "DailyChallenge": MessageLookupByLibrary.simpleMessage("Tantangan Harian"),
+    "DailyChallengeSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Kalahkan teka-teki hari ini di Hard",
+    ),
+    "DailyCompleted": MessageLookupByLibrary.simpleMessage(
+      "Selesai hari ini — main lagi untuk fun",
+    ),
     "Difficulty": MessageLookupByLibrary.simpleMessage("Tingkat Kesulitan"),
     "DifficultyEasy": MessageLookupByLibrary.simpleMessage("Mudah"),
     "DifficultyHard": MessageLookupByLibrary.simpleMessage("Sulit"),
@@ -35,12 +70,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "FirstPlayerComputer": MessageLookupByLibrary.simpleMessage("Komputer"),
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Pemain"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Acak"),
+    "GameOver": MessageLookupByLibrary.simpleMessage("Permainan Selesai"),
+    "GamesPlayed": MessageLookupByLibrary.simpleMessage("Permainan dimainkan"),
+    "Haptics": MessageLookupByLibrary.simpleMessage("Getar"),
+    "Hint": MessageLookupByLibrary.simpleMessage("Petunjuk"),
+    "HintsEnabled": MessageLookupByLibrary.simpleMessage(
+      "Petunjuk diaktifkan untuk permainan ini.",
+    ),
+    "Home": MessageLookupByLibrary.simpleMessage("Beranda"),
     "How_to_play": MessageLookupByLibrary.simpleMessage("Cara bermain?"),
     "How_to_play_explain": MessageLookupByLibrary.simpleMessage(
       "Dalam permainan ini, semua keping lawan yang berada dalam satu garis lurus dan diapit oleh keping yang baru diletakkan dan keping lain milik pemain saat ini akan dibalik menjadi warna pemain saat ini. Tujuan permainan adalah memiliki mayoritas keping dengan warna Anda saat kotak kosong terakhir yang bisa dimainkan terisi.",
     ),
     "More": MessageLookupByLibrary.simpleMessage("Lainnya"),
     "MoreApps": MessageLookupByLibrary.simpleMessage("Aplikasi Lainnya"),
+    "PerfectWins": MessageLookupByLibrary.simpleMessage("Menang sempurna"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Main melawan teman di perangkat ini",
     ),
@@ -62,6 +106,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage(
       "Pembelian saat ini tidak tersedia.",
     ),
+    "Rematch": MessageLookupByLibrary.simpleMessage("Ulangi"),
     "RemoveAds": MessageLookupByLibrary.simpleMessage("Hapus Iklan"),
     "RestoreNothing": MessageLookupByLibrary.simpleMessage(
       "Tidak ada pembelian untuk dipulihkan.",
@@ -72,16 +117,40 @@ class MessageLookup extends MessageLookupByLibrary {
     "RestoreSuccess": MessageLookupByLibrary.simpleMessage(
       "Pembelian dipulihkan.",
     ),
+    "Settings": MessageLookupByLibrary.simpleMessage("Pengaturan"),
+    "Share": MessageLookupByLibrary.simpleMessage("Bagikan"),
+    "ShareResult": m0,
+    "Sound": MessageLookupByLibrary.simpleMessage("Suara"),
     "StartGame": MessageLookupByLibrary.simpleMessage("Mulai Permainan"),
+    "Stats": MessageLookupByLibrary.simpleMessage("Statistik"),
+    "Theme": MessageLookupByLibrary.simpleMessage("Tema"),
+    "ThemeClassic": MessageLookupByLibrary.simpleMessage("Klasik"),
+    "ThemeContrast": MessageLookupByLibrary.simpleMessage("Kontras"),
+    "ThemeNight": MessageLookupByLibrary.simpleMessage("Malam"),
     "Tie": MessageLookupByLibrary.simpleMessage("Seri"),
+    "Ties": MessageLookupByLibrary.simpleMessage("Seri"),
     "TwoPlayersMode": MessageLookupByLibrary.simpleMessage(
       "2 Pemain (main bergantian)",
+    ),
+    "Watch": MessageLookupByLibrary.simpleMessage("Tonton"),
+    "WatchAd": MessageLookupByLibrary.simpleMessage("Tonton Iklan"),
+    "WatchAdForHint": MessageLookupByLibrary.simpleMessage(
+      "Tonton iklan singkat untuk menampilkan langkah legal.",
+    ),
+    "WatchAdForUndo": MessageLookupByLibrary.simpleMessage(
+      "Tonton iklan singkat untuk membatalkan langkah terakhir.",
     ),
     "White": MessageLookupByLibrary.simpleMessage("putih"),
     "WhiteWins": MessageLookupByLibrary.simpleMessage("Putih menang"),
     "WhoGoesFirst": MessageLookupByLibrary.simpleMessage(
       "Siapa yang jalan duluan?",
     ),
-    "WinsLosses": m0,
+    "WinRate": MessageLookupByLibrary.simpleMessage("Tingkat kemenangan"),
+    "WinsByDifficulty": MessageLookupByLibrary.simpleMessage(
+      "Menang per kesulitan",
+    ),
+    "WinsLosses": m1,
+    "YouLose": MessageLookupByLibrary.simpleMessage("Kamu kalah"),
+    "YouWin": MessageLookupByLibrary.simpleMessage("Kamu menang!"),
   };
 }

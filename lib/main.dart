@@ -20,15 +20,20 @@ import 'Tools/ads_manager.dart' if (dart.library.io) 'Tools/ads_manager.dart';
 import 'Tools/in_app_reviewer_helper.dart'
     if (dart.library.io) 'Tools/in_app_reviewer_helper.dart';
 import 'Tools/purchase_service.dart';
+import 'achievements_service.dart';
+import 'app_theme.dart';
+import 'feedback_service.dart';
+import 'flip_piece.dart';
 import 'game_board.dart';
 import 'game_model.dart';
+import 'game_over_sheet.dart';
 import 'game_settings.dart';
 import 'generated/l10n.dart';
 import 'more_page.dart';
 import 'move_finder.dart';
-import 'settings_service.dart';
 import 'start_screen.dart';
 import 'styling.dart';
+import 'theme_controller.dart';
 import 'thinking_indicator.dart';
 
 /// Main function for the app. Turns off the system overlays and locks portrait
@@ -53,6 +58,18 @@ void main() {
         await PurchaseService.instance.init();
       } catch (error) {
         print('PurchaseService init failed: $error');
+      }
+
+      try {
+        await ThemeController.instance.load();
+      } catch (error) {
+        print('ThemeController load failed: $error');
+      }
+
+      try {
+        await FeedbackService.instance.init();
+      } catch (error) {
+        print('FeedbackService init failed: $error');
       }
 
       if (AdsManager.adsEnabled) {
@@ -180,6 +197,7 @@ class _GameScreenState extends State<GameScreen> {
 
   AppOpenAdManager? _appOpenAdManager;
   AppLifecycleReactor? _appLifecycleReactor;
+  final RewardedAdHelper _rewardedAdHelper = RewardedAdHelper();
 
   // The square the most recently placed piece landed on, so it can be
   // highlighted and is easy to spot (especially after the CPU moves).
@@ -191,35 +209,43 @@ class _GameScreenState extends State<GameScreen> {
   final List<GameModel> _historyStack = [];
   bool _canUndo = false;
 
+  /// Extra undo charges earned via rewarded ads (Hard mode).
+  int _rewardedUndoCharges = 0;
+
+  /// Legal-move hints unlocked for this game via rewarded ad.
+  bool _hintsUnlocked = false;
+
+  bool _gameOverSheetVisible = false;
+
   PieceType get _computerColor => widget.settings.twoPlayerMode
       ? PieceType.empty
       : getOpponent(widget.settings.humanColor);
 
+  bool get _freeUndoAllowed =>
+      widget.settings.twoPlayerMode ||
+      widget.settings.difficulty != Difficulty.hard;
+
   bool get _undoAllowed =>
-      _canUndo &&
-      (widget.settings.twoPlayerMode ||
-          widget.settings.difficulty != Difficulty.hard);
+      _canUndo && (_freeUndoAllowed || _rewardedUndoCharges > 0);
+
+  bool get _showHints {
+    if (widget.settings.twoPlayerMode) {
+      return false;
+    }
+    if (widget.settings.difficulty == Difficulty.easy) {
+      return true;
+    }
+    return _hintsUnlocked;
+  }
+
+  GameModel _initialModel() {
+    return GameModel.initial(
+      board: widget.settings.initialBoard,
+      player: widget.settings.initialPlayer,
+    );
+  }
 
   // Below is the combination of streams that controls the flow of the game.
-  // There are two streams of models produced by player interaction (either by
-  // restarting the game, which produces a brand new game model and sends it
-  // downstream, or tapping on one of the board locations to play a piece, and
-  // which creates a new board model with the result of the move and sends it
-  // downstream. The StreamGroup combines these into a single stream, then
-  // does a little trick with asyncExpand.
-  //
-  // The function used in asyncExpand checks to see if it's the CPU's turn,
-  // and if so creates a [MoveFinder] to look for the best move. It awaits the
-  // calculation, and then creates a new [GameModel] with the result of that
-  // move and sends it downstream by yielding it. If it's still the CPU's turn
-  // after making that move (which can happen in reversi), this is repeated.
-  // In 2-player mode there is no CPU, so this loop never runs.
-  //
-  // The final stream of models that exits the asyncExpand call is a
-  // combination of "new game" models, models with the results of player
-  // moves, and models with the results of CPU moves. These are fed into the
-  // StreamBuilder in [build], and used to create the widgets that comprise
-  // the game's display.
   void _setUpModelStream() {
     _modelStream = StreamGroup.merge([
       _userMovesController.stream,
@@ -237,10 +263,18 @@ class _GameScreenState extends State<GameScreen> {
           // A brief pause makes the CPU's move visible and easy to follow
           // instead of feeling instant.
           await Future.delayed(const Duration(milliseconds: 600));
+          final previousBoard = newModel.board;
           final updatedModel = newModel.updateForMove(move.x, move.y);
           if (updatedModel == null) {
             break;
           }
+          final flipped = GameBoard.flippedPositions(
+            previousBoard,
+            updatedModel.board,
+            move,
+          );
+          FeedbackService.instance
+              .moveFeedback(flippedCount: flipped.length);
           newModel = updatedModel;
           _lastMove = move;
           yield newModel;
@@ -259,12 +293,25 @@ class _GameScreenState extends State<GameScreen> {
     // Kick off the very first turn. If the computer is meant to move first,
     // this is what triggers that opening move; otherwise it just seeds the
     // stream with the starting position.
-    _restartController.add(GameModel(board: GameBoard()));
+    _restartController.add(_initialModel());
+
+    // Ads-removed users get Hard undo / hints without watching ads.
+    if (PurchaseService.instance.isAdsRemoved) {
+      _rewardedUndoCharges = 1;
+      _hintsUnlocked = true;
+    }
 
     PurchaseService.instance.addListener(_onPurchaseEntitlementChanged);
+    ThemeController.instance.addListener(_onThemeChanged);
 
     if (!kIsWeb && AdsManager.adsEnabled) {
       _setupAds();
+    }
+  }
+
+  void _onThemeChanged() {
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -274,7 +321,10 @@ class _GameScreenState extends State<GameScreen> {
     }
     if (PurchaseService.instance.isAdsRemoved) {
       _tearDownAds();
-      setState(() {});
+      setState(() {
+        _rewardedUndoCharges = max(_rewardedUndoCharges, 1);
+        _hintsUnlocked = true;
+      });
     }
   }
 
@@ -316,6 +366,7 @@ class _GameScreenState extends State<GameScreen> {
       _appLifecycleReactor =
           AppLifecycleReactor(appOpenAdManager: _appOpenAdManager!);
       _appLifecycleReactor?.listenToAppStateChanges();
+      _rewardedAdHelper.load();
     } catch (error) {
       print('Ad setup failed: $error');
     }
@@ -326,6 +377,7 @@ class _GameScreenState extends State<GameScreen> {
     _appLifecycleReactor = null;
     _appOpenAdManager?.dispose();
     _appOpenAdManager = null;
+    _rewardedAdHelper.dispose();
     _ad?.dispose();
     _ad = null;
     _isAdLoaded = false;
@@ -335,6 +387,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void dispose() {
     PurchaseService.instance.removeListener(_onPurchaseEntitlementChanged);
+    ThemeController.instance.removeListener(_onThemeChanged);
     _tearDownAds();
     _userMovesController.close();
     _restartController.close();
@@ -345,21 +398,24 @@ class _GameScreenState extends State<GameScreen> {
   /// details to _buildWidgets.
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<GameModel>(
-      stream: _modelStream,
-      builder: (context, snapshot) {
-        final model =
-            snapshot.hasData ? snapshot.data! : GameModel(board: GameBoard());
-        _handleGameOverIfNeeded(model);
-        return _buildWidgets(context, model);
+    return ListenableBuilder(
+      listenable: ThemeController.instance,
+      builder: (context, _) {
+        return StreamBuilder<GameModel>(
+          stream: _modelStream,
+          builder: (context, snapshot) {
+            final model = snapshot.hasData
+                ? snapshot.data!
+                : _initialModel();
+            _handleGameOverIfNeeded(model);
+            return _buildWidgets(context, model);
+          },
+        );
       },
     );
   }
 
-  // Records the win/loss record and, the very first time the player ever
-  // wins, prompts for a store review at that high point. Single-player only:
-  // 2-player local matches aren't attributed to either side. Guarded so it
-  // only fires once per game, right as it ends.
+  // Records stats/achievements and shows the end-of-game sheet once per game.
   bool _gameOverHandled = false;
 
   void _handleGameOverIfNeeded(GameModel model) {
@@ -367,30 +423,81 @@ class _GameScreenState extends State<GameScreen> {
       _gameOverHandled = false;
       return;
     }
-    if (_gameOverHandled || widget.settings.twoPlayerMode) {
+    if (_gameOverHandled) {
       return;
     }
     _gameOverHandled = true;
 
-    if (model.blackScore == model.whiteScore) {
-      return;
-    }
+    () async {
+      List<AchievementId> unlocked = const [];
+      bool? humanWon;
+      final isTie = model.blackScore == model.whiteScore;
 
-    final humanWon = model.blackScore > model.whiteScore
-        ? widget.settings.humanColor == PieceType.black
-        : widget.settings.humanColor == PieceType.white;
+      if (!widget.settings.twoPlayerMode) {
+        if (!isTie) {
+          humanWon = model.blackScore > model.whiteScore
+              ? widget.settings.humanColor == PieceType.black
+              : widget.settings.humanColor == PieceType.white;
+        }
+        unlocked = await AchievementsService.instance.recordGameOver(
+          model: model,
+          settings: widget.settings,
+        );
 
-    if (humanWon) {
-      SettingsService.incrementWins();
-      SettingsService.getHasWonOnce().then((hasWonOnce) {
-        if (!hasWonOnce) {
-          SettingsService.setHasWonOnce();
+        if (unlocked.contains(AchievementId.firstWin)) {
           InAppReviewHelper.requestReviewAfterFirstWin();
         }
+      }
+
+      await FeedbackService.instance.gameOverFeedback(
+        humanWon: humanWon == true,
+        tie: isTie || widget.settings.twoPlayerMode,
+      );
+
+      if (!mounted || _gameOverSheetVisible) {
+        return;
+      }
+
+      final sheetModel = model;
+      final sheetUnlocked = unlocked;
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!mounted || _gameOverSheetVisible) {
+          return;
+        }
+        _gameOverSheetVisible = true;
+        await showGameOverSheet(
+          context: context,
+          model: sheetModel,
+          settings: widget.settings,
+          theme: ThemeController.instance.theme,
+          newAchievements: sheetUnlocked,
+          onRematch: _rematch,
+          onHome: () {
+            Navigator.of(context).pushReplacement(
+              fadeRoute((context) => const StartScreen()),
+            );
+          },
+        );
+        _gameOverSheetVisible = false;
       });
-    } else {
-      SettingsService.incrementLosses();
-    }
+    }();
+  }
+
+  void _rematch() {
+    setState(() {
+      _historyStack.clear();
+      _canUndo = false;
+      _lastMove = null;
+      _gameOverHandled = false;
+      _gameOverSheetVisible = false;
+      if (!PurchaseService.instance.isAdsRemoved) {
+        _rewardedUndoCharges = 0;
+        if (widget.settings.difficulty != Difficulty.easy) {
+          _hintsUnlocked = false;
+        }
+      }
+    });
+    _restartController.add(_initialModel());
   }
 
   // Called when the user taps on the game's board display. If it's the player's
@@ -404,21 +511,122 @@ class _GameScreenState extends State<GameScreen> {
       _historyStack.add(model);
       _canUndo = true;
       _lastMove = Position(x, y);
+      final previousBoard = model.board;
       final updatedModel = model.updateForMove(x, y);
       if (updatedModel != null) {
+        final flipped = GameBoard.flippedPositions(
+          previousBoard,
+          updatedModel.board,
+          Position(x, y),
+        );
+        FeedbackService.instance.moveFeedback(flippedCount: flipped.length);
         _userMovesController.add(updatedModel);
       }
     }
   }
 
   void _undoLastMove() {
-    if (!_undoAllowed || _historyStack.isEmpty) {
+    if (!_canUndo || _historyStack.isEmpty) {
       return;
+    }
+    if (!_freeUndoAllowed) {
+      if (_rewardedUndoCharges <= 0) {
+        _requestRewardedUndo();
+        return;
+      }
+      _rewardedUndoCharges -= 1;
     }
     final previousModel = _historyStack.removeLast();
     _canUndo = false;
     _lastMove = null;
+    setState(() {});
     _restartController.add(previousModel);
+  }
+
+  Future<void> _requestRewardedUndo() async {
+    final s = S.of(context);
+    final proceed = await _confirmWatchAd(s.WatchAdForUndo);
+    if (proceed != true || !mounted) {
+      return;
+    }
+    final ok = await _rewardedAdHelper.show(onUserEarnedReward: () {
+      _rewardedUndoCharges += 1;
+    });
+    if (!mounted) {
+      return;
+    }
+    if (!ok) {
+      _showMessage(s.AdFailed);
+      return;
+    }
+    setState(() {});
+    _undoLastMove();
+  }
+
+  Future<void> _requestRewardedHints() async {
+    if (_hintsUnlocked) {
+      return;
+    }
+    final s = S.of(context);
+    final proceed = await _confirmWatchAd(s.WatchAdForHint);
+    if (proceed != true || !mounted) {
+      return;
+    }
+    final ok = await _rewardedAdHelper.show(onUserEarnedReward: () {
+      _hintsUnlocked = true;
+    });
+    if (!mounted) {
+      return;
+    }
+    if (!ok) {
+      _showMessage(s.AdFailed);
+      return;
+    }
+    setState(() {});
+    _showMessage(s.HintsEnabled);
+  }
+
+  Future<bool?> _confirmWatchAd(String message) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(S.of(context).WatchAd),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(S.of(context).Cancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(S.of(context).Watch),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showMessage(String message) {
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    if (messenger != null) {
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(SnackBar(content: Text(message)));
+      return;
+    }
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   static final ButtonStyle _circleButtonStyle = ElevatedButton.styleFrom(
@@ -430,43 +638,45 @@ class _GameScreenState extends State<GameScreen> {
     elevation: 0,
   );
 
-  String _gameResultString(BuildContext context, GameModel model) {
-    if (model.blackScore > model.whiteScore) {
-      return S.of(context).BlackWins;
-    } else if (model.whiteScore > model.blackScore) {
-      return S.of(context).WhiteWins;
-    } else {
-      return S.of(context).Tie;
-    }
-  }
-
-  Widget _buildScoreBox(PieceType player, GameModel model) {
-    var label = player == PieceType.black ? S.of(context).Black : S.of(context).White;
+  Widget _buildScoreBox(PieceType player, GameModel model, AppTheme theme) {
+    var label =
+        player == PieceType.black ? S.of(context).Black : S.of(context).White;
     var scoreText = player == PieceType.black
         ? '${model.blackScore}'
         : '${model.whiteScore}';
 
+    final labelStyle = player == PieceType.black
+        ? Styling.scoreLabelTextBlack.copyWith(color: theme.scoreBlack)
+        : Styling.scoreLabelText.copyWith(color: theme.scoreWhite);
+    final scoreStyle = player == PieceType.black
+        ? Styling.scoreTextBlack.copyWith(color: theme.scoreBlack)
+        : Styling.scoreText.copyWith(color: theme.scoreWhite);
+
     return DecoratedBox(
       decoration: (model.player == player)
           ? (player == PieceType.black
-              ? Styling.activePlayerIndicatorBlack
-              : Styling.activePlayerIndicator)
+              ? BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(width: 2.0, color: theme.scoreBlack),
+                  ),
+                )
+              : BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(width: 2.0, color: theme.scoreWhite),
+                  ),
+                ))
           : Styling.inactivePlayerIndicator,
       child: Column(
         children: <Widget>[
           Text(
             label,
             textAlign: TextAlign.center,
-            style: player == PieceType.black
-                ? Styling.scoreLabelTextBlack
-                : Styling.scoreLabelText,
+            style: labelStyle,
           ),
           Text(
             scoreText,
             textAlign: TextAlign.center,
-            style: player == PieceType.black
-                ? Styling.scoreTextBlack
-                : Styling.scoreText,
+            style: scoreStyle,
           )
         ],
       ),
@@ -474,16 +684,14 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   List<Widget> _buildGameBoardDisplay(
-      BuildContext context, GameModel model, double boxWidth) {
+      BuildContext context, GameModel model, double boxWidth, AppTheme theme) {
     final rows = <Widget>[];
 
     double lineMargin = boxWidth > 40 ? 2.0 : 1.0;
 
-    // On Easy difficulty (single-player only), show a subtle marker on every
-    // legal move so beginners can learn the rules without getting stuck.
-    final showLegalMoveHints = !widget.settings.twoPlayerMode &&
-        widget.settings.difficulty == Difficulty.easy;
-    final legalMoveHints = showLegalMoveHints && model.player != _computerColor
+    final showLegalMoveHints =
+        _showHints && model.player != _computerColor && !model.gameIsOver;
+    final legalMoveHints = showLegalMoveHints
         ? model.board.getMovesForPlayer(model.player)
         : const <Position>[];
 
@@ -496,17 +704,13 @@ class _GameScreenState extends State<GameScreen> {
         final isLegalMoveHint = type == PieceType.empty &&
             legalMoveHints.any((p) => p.x == x && p.y == y);
 
-        // The outer Container is deliberately NOT animated: it defines the
-        // grid geometry (cell size, margins, the translucent square
-        // background), which must stay rock-solid while pieces animate.
-        // Only the inner AnimatedContainer - the piece overlay - animates,
-        // so a mid-animation frame can never shift or distort the grid.
         spots.add(Container(
+          key: ValueKey('cell-$x-$y'),
           margin: EdgeInsets.all(lineMargin),
           width: boxWidth,
           height: boxWidth,
           decoration: BoxDecoration(
-            gradient: Styling.pieceGradients[PieceType.empty],
+            gradient: theme.pieceGradients[PieceType.empty],
           ),
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
@@ -516,29 +720,19 @@ class _GameScreenState extends State<GameScreen> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                AnimatedContainer(
-                  duration: Duration(milliseconds: 500),
-                  decoration: BoxDecoration(
-                    gradient: type == PieceType.empty
-                        ? null
-                        : Styling.pieceGradients[type],
-                    border: isLastMove && type != PieceType.empty
-                        ? Border.all(
-                            color: Color(0xffFFC107),
-                            width: max(boxWidth * 0.08, 3),
-                            strokeAlign: BorderSide.strokeAlignInside,
-                          )
-                        : null,
-                    borderRadius: BorderRadius.all(Radius.circular(
-                        type == PieceType.empty ? 0 : boxWidth)),
-                  ),
+                FlipPiece(
+                  type: type,
+                  size: boxWidth,
+                  isLastMove: isLastMove,
+                  theme: theme,
+                  duration: Styling.pieceFlipDuration,
                 ),
                 if (isLegalMoveHint)
                   Container(
                     width: boxWidth * 0.3,
                     height: boxWidth * 0.3,
                     decoration: BoxDecoration(
-                      color: Color(0x60ffffff),
+                      color: theme.hintDot,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -559,15 +753,22 @@ class _GameScreenState extends State<GameScreen> {
 
   // Builds out the Widget tree using the most recent GameModel from the stream.
   Widget _buildWidgets(BuildContext context, GameModel model) {
+    final theme = ThemeController.instance.theme;
     // Fixed-height chrome that always surrounds the board, used to work out
     // how much vertical space is actually left for the board itself so it
     // never gets clipped or pushed off screen on smaller devices.
     const headerHeight = 90.0;
     const spacingHeight = 20.0 + 10.0 + 20.0;
-    const resultTextHeight = 70.0;
+    const resultTextHeight = 20.0;
     // Only reserve banner space when ads can actually show.
     final adReservedHeight = AdsManager.adsEnabled ? 60.0 : 0.0;
     const verticalPadding = 30.0 + 20.0;
+
+    final needsHintButton = !widget.settings.twoPlayerMode &&
+        widget.settings.difficulty != Difficulty.easy &&
+        !_hintsUnlocked;
+    final needsRewardedUndo = !widget.settings.twoPlayerMode &&
+        widget.settings.difficulty == Difficulty.hard;
 
     return Container(
       padding: EdgeInsets.only(top: 30.0, left: 15.0, right: 15.0),
@@ -576,8 +777,8 @@ class _GameScreenState extends State<GameScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Styling.backgroundStartColor,
-            Styling.backgroundFinishColor,
+            theme.backgroundStart,
+            theme.backgroundFinish,
           ],
         ),
       ),
@@ -587,10 +788,9 @@ class _GameScreenState extends State<GameScreen> {
           double sideMargin = max(width * 0.08, 15);
           double widthBasedBoxWidth = (width - sideMargin * 2 - 7) / 8;
 
-          // Always reserve space for the result text and (when enabled) the
-          // banner ad, even before they appear: the board must keep the exact
-          // same size for the whole game, never resizing mid-play when the ad
-          // loads or the game ends (a resizing grid mid-game looks broken).
+          // Always reserve space for (when enabled) the banner ad, even before
+          // it appears: the board must keep the exact same size for the whole
+          // game, never resizing mid-play when the ad loads.
           double reservedHeight = headerHeight +
               spacingHeight +
               verticalPadding +
@@ -602,30 +802,65 @@ class _GameScreenState extends State<GameScreen> {
           double boxWidth = min(widthBasedBoxWidth, heightBasedBoxWidth)
               .clamp(20.0, widthBasedBoxWidth);
 
+          final undoEnabled = _canUndo &&
+              (_freeUndoAllowed ||
+                  _rewardedUndoCharges > 0 ||
+                  needsRewardedUndo);
+
           return SingleChildScrollView(
             child: Column(
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildScoreBox(PieceType.black, model),
-                    _buildScoreBox(PieceType.white, model),
+                    _buildScoreBox(PieceType.black, model, theme),
+                    _buildScoreBox(PieceType.white, model, theme),
                     SizedBox(
-                      width: 56,
-                      height: 56,
+                      width: 52,
+                      height: 52,
                       child: ElevatedButton(
-                        onPressed: _undoAllowed ? _undoLastMove : null,
+                        onPressed: undoEnabled
+                            ? () {
+                                if (_undoAllowed) {
+                                  _undoLastMove();
+                                } else if (needsRewardedUndo && _canUndo) {
+                                  _requestRewardedUndo();
+                                }
+                              }
+                            : null,
                         child: Icon(
                           CupertinoIcons.arrow_uturn_left,
-                          size: 22,
+                          size: 20,
                           color: Color(0xffffffff),
                         ),
-                        style: _circleButtonStyle,
+                        style: _circleButtonStyle.copyWith(
+                          backgroundColor:
+                              WidgetStatePropertyAll(theme.buttonFill),
+                        ),
                       ),
                     ),
+                    if (needsHintButton)
+                      SizedBox(
+                        width: 52,
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed: model.gameIsOver
+                              ? null
+                              : _requestRewardedHints,
+                          child: Icon(
+                            CupertinoIcons.lightbulb,
+                            size: 20,
+                            color: Color(0xffffffff),
+                          ),
+                          style: _circleButtonStyle.copyWith(
+                            backgroundColor:
+                                WidgetStatePropertyAll(theme.buttonFill),
+                          ),
+                        ),
+                      ),
                     SizedBox(
-                      width: 56,
-                      height: 56,
+                      width: 52,
+                      height: 52,
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pushReplacement(
@@ -634,15 +869,18 @@ class _GameScreenState extends State<GameScreen> {
                         },
                         child: Icon(
                           CupertinoIcons.refresh_bold,
-                          size: 22,
+                          size: 20,
                           color: Color(0xffffffff),
                         ),
-                        style: _circleButtonStyle,
+                        style: _circleButtonStyle.copyWith(
+                          backgroundColor:
+                              WidgetStatePropertyAll(theme.buttonFill),
+                        ),
                       ),
                     ),
                     SizedBox(
-                      width: 56,
-                      height: 56,
+                      width: 52,
+                      height: 52,
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.push(
@@ -652,31 +890,26 @@ class _GameScreenState extends State<GameScreen> {
                         },
                         child: Icon(
                           CupertinoIcons.question,
-                          size: 22,
+                          size: 20,
                           color: Color(0xffffffff),
                         ),
-                        style: _circleButtonStyle,
+                        style: _circleButtonStyle.copyWith(
+                          backgroundColor:
+                              WidgetStatePropertyAll(theme.buttonFill),
+                        ),
                       ),
                     )
                   ],
                 ),
                 SizedBox(height: 20),
                 ThinkingIndicator(
-                  color: Styling.thinkingColor,
+                  color: theme.thinking,
                   height: Styling.thinkingSize,
                   visible: model.player == _computerColor,
                 ),
                 SizedBox(height: 10),
-                ..._buildGameBoardDisplay(context, model, boxWidth),
+                ..._buildGameBoardDisplay(context, model, boxWidth, theme),
                 SizedBox(height: 20),
-                if (model.gameIsOver)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
-                    child: Text(
-                      _gameResultString(context, model),
-                      style: Styling.resultText,
-                    ),
-                  ),
                 // The banner ad sits below the board in normal document
                 // flow so it can never overlap or block board taps.
                 if (_isAdLoaded)
