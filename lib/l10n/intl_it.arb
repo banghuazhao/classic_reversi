@@ -87,5 +87,9 @@
   "OK": "OK",
   "Undo": "Annulla",
   "RestartGame": "Riavvia partita",
-  "Help": "Aiuto"
+  "Help": "Aiuto",
+  "PrivacyPolicy": "Informativa sulla privacy",
+  "PrivacyPolicySubtitle": "Come gestiamo dati e annunci",
+  "PrivacyOptions": "Opzioni privacy",
+  "PrivacyOptionsSubtitle": "Aggiorna le tue scelte sulla privacy degli annunci"
 }

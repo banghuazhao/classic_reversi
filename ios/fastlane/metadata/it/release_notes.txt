@@ -1,1 +1,8 @@
-Miglioramenti delle prestazioni e correzioni di bug.
+Novità:
+• Sfida giornaliera, statistiche e traguardi
+• Temi, effetti sonori e feedback aptico
+• Modalità Super Easy su scacchiera più piccola
+• Suggerimenti e annulla mossa con premio
+• Acquisto Rimuovi annunci
+• Guida Come si gioca
+• Consenso privacy migliorato per gli annunci

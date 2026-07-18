@@ -89,6 +89,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Chơi cùng bạn bè trên thiết bị này",
     ),
+    "PrivacyOptions": MessageLookupByLibrary.simpleMessage(
+      "Tùy chọn quyền riêng tư",
+    ),
+    "PrivacyOptionsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Cập nhật lựa chọn quyền riêng tư quảng cáo",
+    ),
+    "PrivacyPolicy": MessageLookupByLibrary.simpleMessage(
+      "Chính sách quyền riêng tư",
+    ),
+    "PrivacyPolicySubtitle": MessageLookupByLibrary.simpleMessage(
+      "Cách chúng tôi xử lý dữ liệu và quảng cáo",
+    ),
     "PurchaseAlreadyOwned": MessageLookupByLibrary.simpleMessage(
       "Bạn đã sở hữu Gỡ quảng cáo.",
     ),

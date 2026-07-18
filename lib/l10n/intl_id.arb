@@ -87,5 +87,9 @@
   "OK": "OK",
   "Undo": "Urungkan",
   "RestartGame": "Mulai ulang permainan",
-  "Help": "Bantuan"
+  "Help": "Bantuan",
+  "PrivacyPolicy": "Kebijakan Privasi",
+  "PrivacyPolicySubtitle": "Cara kami menangani data dan iklan",
+  "PrivacyOptions": "Opsi privasi",
+  "PrivacyOptionsSubtitle": "Perbarui pilihan privasi iklan Anda"
 }

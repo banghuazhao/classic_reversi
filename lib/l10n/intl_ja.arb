@@ -96,5 +96,9 @@
   "OK": "OK",
   "Undo": "待った",
   "RestartGame": "対局をやり直す",
-  "Help": "ヘルプ"
+  "Help": "ヘルプ",
+  "PrivacyPolicy": "プライバシーポリシー",
+  "PrivacyPolicySubtitle": "データと広告の取り扱いについて",
+  "PrivacyOptions": "プライバシー設定",
+  "PrivacyOptionsSubtitle": "広告のプライバシー選択を更新"
 }

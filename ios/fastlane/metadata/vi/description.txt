@@ -1,12 +1,12 @@
-Cờ Lật Cổ Điển (còn gọi là Othello) là trò chơi cờ bàn chiến thuật dành cho hai người chơi, trên bàn cờ 8×8.
+Classic Reversi là trò chơi bàn cờ chiến thuật cho hai người trên bàn 8×8.
 
 Tính năng:
-- Ba cấp độ khó: Dễ, Trung bình và Khó.
-- Chơi với máy tính hoặc bạn bè (chế độ 2 người chơi trên cùng thiết bị).
-- Chọn ai đi trước.
-- Đi lại nước cờ (undo).
-- Gợi ý nước đi hợp lệ ở cấp độ Dễ.
-- Theo dõi số trận thắng/thua.
-- Thiết kế responsive cho điện thoại và máy tính bảng.
+- Nhiều mức độ khó, gồm Super Easy trên bàn nhỏ hơn
+- Chơi với máy hoặc 2 người trên cùng thiết bị
+- Thử thách hàng ngày, thống kê và thành tựu
+- Chủ đề, âm thanh và rung cảm ứng
+- Gợi ý và hoàn tác tùy chọn (xem quảng cáo nhận thưởng)
+- Mua một lần để gỡ quảng cáo
+- Hướng dẫn cách chơi
 
-Tận hưởng chiến thuật kinh điển của cờ lật với giao diện gọn gàng, hiện đại!
+Thưởng thức chiến thuật Reversi cổ điển với giao diện gọn gàng, hiện đại.

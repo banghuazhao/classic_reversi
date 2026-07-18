@@ -11,6 +11,7 @@ import 'purchase_service.dart';
 class AdsManager {
   static bool disableAllAdsForScreenshot = false;
   static bool _mobileAdsInitialized = false;
+  static bool _consentFlowCompleted = false;
 
   /// Whether any ads should initialize, load, or show.
   static bool get adsEnabled => !disableAllAdsForScreenshot && shouldShowAds;
@@ -19,6 +20,97 @@ class AdsManager {
 
   static void markMobileAdsInitialized() {
     _mobileAdsInitialized = true;
+  }
+
+  /// Gathers UMP consent (EEA/UK), applies ad content rating, then initializes
+  /// the Mobile Ads SDK only when [ConsentInformation.canRequestAds] is true.
+  static Future<void> initializeWithConsent() async {
+    if (!adsEnabled || _mobileAdsInitialized) {
+      return;
+    }
+
+    try {
+      await MobileAds.instance.updateRequestConfiguration(
+        RequestConfiguration(
+          maxAdContentRating: MaxAdContentRating.t,
+          tagForChildDirectedTreatment: TagForChildDirectedTreatment.no,
+          tagForUnderAgeOfConsent: TagForUnderAgeOfConsent.unspecified,
+        ),
+      );
+    } catch (error) {
+      if (kDebugMode) {
+        print('RequestConfiguration update failed: $error');
+      }
+    }
+
+    try {
+      await _requestConsentInfoUpdate();
+      await ConsentForm.loadAndShowConsentFormIfRequired((_) {});
+    } catch (error) {
+      if (kDebugMode) {
+        print('UMP consent flow failed: $error');
+      }
+    } finally {
+      _consentFlowCompleted = true;
+    }
+
+    await _initializeMobileAdsIfAllowed();
+  }
+
+  static Future<void> _requestConsentInfoUpdate() async {
+    final completer = Completer<void>();
+    ConsentInformation.instance.requestConsentInfoUpdate(
+      ConsentRequestParameters(),
+      () {
+        if (!completer.isCompleted) completer.complete();
+      },
+      (FormError error) {
+        if (kDebugMode) {
+          print('Consent info update failed: ${error.message}');
+        }
+        if (!completer.isCompleted) completer.complete();
+      },
+    );
+    await completer.future.timeout(
+      const Duration(seconds: 12),
+      onTimeout: () {},
+    );
+  }
+
+  static Future<void> _initializeMobileAdsIfAllowed() async {
+    if (!adsEnabled || _mobileAdsInitialized) {
+      return;
+    }
+    try {
+      final canRequest = await ConsentInformation.instance.canRequestAds();
+      if (!canRequest) {
+        return;
+      }
+      await MobileAds.instance.initialize();
+      markMobileAdsInitialized();
+    } catch (error) {
+      if (kDebugMode) {
+        print('MobileAds initialization failed: $error');
+      }
+    }
+  }
+
+  /// Whether Settings should show a privacy-options entry point.
+  static Future<bool> isPrivacyOptionsRequired() async {
+    if (!_consentFlowCompleted) {
+      return false;
+    }
+    try {
+      final status =
+          await ConsentInformation.instance.getPrivacyOptionsRequirementStatus();
+      return status == PrivacyOptionsRequirementStatus.required;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static Future<void> showPrivacyOptionsForm() async {
+    await ConsentForm.showPrivacyOptionsForm((_) {});
   }
 
   static TargetPlatform get _targetPlatform => defaultTargetPlatform;
@@ -59,25 +151,21 @@ class AdsManager {
 
   static String get rewardedAdUnitId {
     if (_targetPlatform == TargetPlatform.android) {
-      if (kDebugMode) {
-        return AdsIdsDebug.rewardedAdUnitIdAndroid;
-      }
-      final id = AdsIdsRelease.rewardedAdUnitIdAndroid;
-      return id.isEmpty ? AdsIdsDebug.rewardedAdUnitIdAndroid : id;
+      return kDebugMode
+          ? AdsIdsDebug.rewardedAdUnitIdAndroid
+          : AdsIdsRelease.rewardedAdUnitIdAndroid;
     } else if (_targetPlatform == TargetPlatform.iOS) {
-      if (kDebugMode) {
-        return AdsIdsDebug.rewardedAdUnitIdIOS;
-      }
-      final id = AdsIdsRelease.rewardedAdUnitIdIOS;
-      return id.isEmpty ? AdsIdsDebug.rewardedAdUnitIdIOS : id;
+      return kDebugMode
+          ? AdsIdsDebug.rewardedAdUnitIdIOS
+          : AdsIdsRelease.rewardedAdUnitIdIOS;
     } else {
       throw UnsupportedError("Unsupported platform");
     }
   }
 
   static void debugPrintID() {
+    if (!kDebugMode) return;
     print("bannerAdUnitId: ${AdsManager.bannerAdUnitId}");
-    // print("openAdUnitID: ${AdsManager.openAdUnitID}");
   }
 }
 

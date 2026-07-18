@@ -1,12 +1,12 @@
-Classic Reversi (also known as Othello) is a strategic board game for two players, played on an 8×8 uncheckered board.
+Classic Reversi is a strategic board game for two players on an 8×8 board.
 
 Features:
-- Three difficulty levels: Easy, Medium, and Hard.
-- Play against the computer or a friend (local 2-player mode).
-- Choose who goes first.
-- Undo moves.
-- Legal move hints on Easy difficulty.
-- Track your wins and losses.
-- Responsive design for phones and tablets.
+- Multiple difficulty levels, including Super Easy on a smaller board
+- Play vs computer or local 2-player
+- Daily challenge, stats, and achievements
+- Themes, sound, and haptics
+- Optional hints and undo (rewarded)
+- One-time Remove Ads purchase
+- How to Play guide
 
-Enjoy the timeless strategy of Reversi with a clean and modern interface!
+Enjoy timeless Reversi strategy with a clean, modern interface.

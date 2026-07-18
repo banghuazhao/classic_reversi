@@ -1,1 +1,8 @@
-Peningkatan performa dan perbaikan bug.
+Yang baru:
+• Tantangan harian, statistik, dan pencapaian
+• Tema, efek suara, dan haptik
+• Mode Super Easy di papan lebih kecil
+• Petunjuk dan undo berhadiah
+• Pembelian Hapus Iklan
+• Panduan cara bermain
+• Persetujuan privasi iklan yang lebih baik

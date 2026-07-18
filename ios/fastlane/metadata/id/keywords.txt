@@ -1,1 +1,1 @@
-reversi,othello,board game,strategi,klasik,puzzle,teka-teki,multiplayer
+reversi,permainan papan,strategi,klasik,puzzle,teka-teki,multiplayer,ubin

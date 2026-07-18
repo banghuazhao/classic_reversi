@@ -94,6 +94,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "OK": MessageLookupByLibrary.simpleMessage("OK"),
     "PerfectWins": MessageLookupByLibrary.simpleMessage("パーフェクト勝ち"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage("この端末で友達と対戦する"),
+    "PrivacyOptions": MessageLookupByLibrary.simpleMessage("プライバシー設定"),
+    "PrivacyOptionsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "広告のプライバシー選択を更新",
+    ),
+    "PrivacyPolicy": MessageLookupByLibrary.simpleMessage("プライバシーポリシー"),
+    "PrivacyPolicySubtitle": MessageLookupByLibrary.simpleMessage(
+      "データと広告の取り扱いについて",
+    ),
     "PurchaseAlreadyOwned": MessageLookupByLibrary.simpleMessage(
       "広告削除はすでに購入済みです。",
     ),

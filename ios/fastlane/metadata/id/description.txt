@@ -1,12 +1,12 @@
-Classic Reversi (juga dikenal sebagai Othello) adalah permainan papan strategi untuk dua pemain, dimainkan di papan 8×8.
+Classic Reversi adalah permainan papan strategi untuk dua pemain di papan 8×8.
 
 Fitur:
-- Tiga tingkat kesulitan: Mudah, Sedang, dan Sulit.
-- Bermain melawan komputer atau teman (mode 2 pemain lokal).
-- Pilih siapa yang jalan duluan.
-- Batalkan langkah (undo).
-- Petunjuk langkah sah di tingkat Mudah.
-- Catat kemenangan dan kekalahan Anda.
-- Desain responsif untuk ponsel dan tablet.
+- Beberapa tingkat kesulitan, termasuk Super Easy di papan lebih kecil
+- Main lawan komputer atau 2 pemain lokal
+- Tantangan harian, statistik, dan pencapaian
+- Tema, suara, dan haptik
+- Petunjuk dan undo opsional (dengan iklan berhadiah)
+- Pembelian sekali untuk hapus iklan
+- Panduan cara bermain
 
-Nikmati strategi klasik Reversi dengan antarmuka yang bersih dan modern!
+Nikmati strategi Reversi klasik dengan antarmuka yang bersih dan modern.

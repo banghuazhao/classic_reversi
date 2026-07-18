@@ -89,6 +89,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "OK": MessageLookupByLibrary.simpleMessage("好的"),
     "PerfectWins": MessageLookupByLibrary.simpleMessage("完勝"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage("與好友在本裝置上對戰"),
+    "PrivacyOptions": MessageLookupByLibrary.simpleMessage("私隱選項"),
+    "PrivacyOptionsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "更新你的廣告私隱選擇",
+    ),
+    "PrivacyPolicy": MessageLookupByLibrary.simpleMessage("私隱政策"),
+    "PrivacyPolicySubtitle": MessageLookupByLibrary.simpleMessage(
+      "了解我們如何處理資料與廣告",
+    ),
     "PurchaseAlreadyOwned": MessageLookupByLibrary.simpleMessage("你已擁有移除廣告。"),
     "PurchaseCancelled": MessageLookupByLibrary.simpleMessage("已取消購買。"),
     "PurchaseFailed": MessageLookupByLibrary.simpleMessage("購買失敗，請再試一次。"),

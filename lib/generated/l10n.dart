@@ -1063,6 +1063,46 @@ class S {
   String get Help {
     return Intl.message('Help', name: 'Help', desc: '', args: []);
   }
+
+  /// `Privacy Policy`
+  String get PrivacyPolicy {
+    return Intl.message(
+      'Privacy Policy',
+      name: 'PrivacyPolicy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How we handle data and ads`
+  String get PrivacyPolicySubtitle {
+    return Intl.message(
+      'How we handle data and ads',
+      name: 'PrivacyPolicySubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy options`
+  String get PrivacyOptions {
+    return Intl.message(
+      'Privacy options',
+      name: 'PrivacyOptions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update your ad privacy choices`
+  String get PrivacyOptionsSubtitle {
+    return Intl.message(
+      'Update your ad privacy choices',
+      name: 'PrivacyOptionsSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

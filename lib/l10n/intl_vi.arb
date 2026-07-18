@@ -87,5 +87,9 @@
   "OK": "OK",
   "Undo": "Hoàn tác",
   "RestartGame": "Chơi lại ván này",
-  "Help": "Trợ giúp"
+  "Help": "Trợ giúp",
+  "PrivacyPolicy": "Chính sách quyền riêng tư",
+  "PrivacyPolicySubtitle": "Cách chúng tôi xử lý dữ liệu và quảng cáo",
+  "PrivacyOptions": "Tùy chọn quyền riêng tư",
+  "PrivacyOptionsSubtitle": "Cập nhật lựa chọn quyền riêng tư quảng cáo"
 }

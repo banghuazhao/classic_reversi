@@ -138,5 +138,9 @@
   "OK": "OK",
   "Undo": "Undo",
   "RestartGame": "Restart game",
-  "Help": "Help"
+  "Help": "Help",
+  "PrivacyPolicy": "Privacy Policy",
+  "PrivacyPolicySubtitle": "How we handle data and ads",
+  "PrivacyOptions": "Privacy options",
+  "PrivacyOptionsSubtitle": "Update your ad privacy choices"
 }

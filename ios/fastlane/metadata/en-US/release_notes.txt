@@ -1,1 +1,8 @@
-Performance improvements and bug fixes.
+What's new:
+• Daily challenge, stats, and achievements
+• Themes, sound effects, and haptics
+• Super Easy mode on a smaller board
+• Rewarded hints and undo
+• Remove Ads purchase
+• How to Play guide
+• Improved privacy consent for ads

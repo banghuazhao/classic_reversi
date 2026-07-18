@@ -112,5 +112,9 @@
   "OK": "好的",
   "Undo": "悔棋",
   "RestartGame": "重新开始本局",
-  "Help": "帮助"
+  "Help": "帮助",
+  "PrivacyPolicy": "隐私政策",
+  "PrivacyPolicySubtitle": "了解我们如何处理数据和广告",
+  "PrivacyOptions": "隐私选项",
+  "PrivacyOptionsSubtitle": "更新你的广告隐私选择"
 }

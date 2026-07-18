@@ -91,6 +91,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Main melawan teman di perangkat ini",
     ),
+    "PrivacyOptions": MessageLookupByLibrary.simpleMessage("Opsi privasi"),
+    "PrivacyOptionsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Perbarui pilihan privasi iklan Anda",
+    ),
+    "PrivacyPolicy": MessageLookupByLibrary.simpleMessage("Kebijakan Privasi"),
+    "PrivacyPolicySubtitle": MessageLookupByLibrary.simpleMessage(
+      "Cara kami menangani data dan iklan",
+    ),
     "PurchaseAlreadyOwned": MessageLookupByLibrary.simpleMessage(
       "Anda sudah memiliki Hapus Iklan.",
     ),

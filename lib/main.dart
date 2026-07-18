@@ -71,14 +71,14 @@ void main() {
         print('FeedbackService init failed: $error');
       }
 
-      if (AdsManager.adsEnabled) {
-        try {
-          await MobileAds.instance.initialize();
-          AdsManager.markMobileAdsInitialized();
-        } catch (error) {
-          print('MobileAds initialization failed: $error');
-        }
+      // UMP consent must complete before ads initialize / load.
+      try {
+        await AdsManager.initializeWithConsent();
+      } catch (error) {
+        print('Ads consent/init failed: $error');
+      }
 
+      if (kDebugMode) {
         try {
           AdsManager.debugPrintID();
         } catch (error) {
@@ -147,11 +147,8 @@ class _MyAppState extends State<MyApp> {
     _appOpenAdManager = manager;
     _appLifecycleReactor = AppLifecycleReactor(appOpenAdManager: manager)
       ..listenToAppStateChanges();
-
-    // Restore the initial foreground request that the old native notifier
-    // supplied. If loading is still in progress, the manager safely shows the
-    // ad as soon as it becomes available.
-    manager.showAdIfAvailable();
+    // Preload only. Showing is reserved for true background→foreground
+    // transitions so cold start is not interrupted by an app-open ad.
   }
 
   void _onPurchaseEntitlementChanged() {

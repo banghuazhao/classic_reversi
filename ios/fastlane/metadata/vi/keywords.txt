@@ -1,1 +1,1 @@
-cờ lật,othello,cờ bàn,chiến thuật,cổ điển,giải đố,trò chơi trí tuệ,nhiều người chơi
+cờ lật,cờ bàn,chiến thuật,cổ điển,giải đố,trò chơi trí tuệ,nhiều người chơi

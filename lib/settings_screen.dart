@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import 'Tools/ads_manager.dart';
 import 'app_chrome.dart';
 import 'app_theme.dart';
 import 'feedback_service.dart';
@@ -11,6 +13,8 @@ import 'more_page.dart';
 import 'purchase_screen.dart';
 import 'settings_service.dart';
 import 'theme_controller.dart';
+
+const _privacyPolicyUri = 'https://appsbay.com/privacy';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -23,6 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _sound = true;
   bool _haptics = true;
   BoardThemeId _theme = BoardThemeId.classic;
+  bool _privacyOptionsRequired = false;
 
   @override
   void initState() {
@@ -34,12 +39,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final sound = await SettingsService.getSoundEnabled();
     final haptics = await SettingsService.getHapticsEnabled();
     final theme = await SettingsService.getBoardTheme();
+    final privacyOptions = await AdsManager.isPrivacyOptionsRequired();
     if (!mounted) return;
     setState(() {
       _sound = sound;
       _haptics = haptics;
       _theme = theme;
+      _privacyOptionsRequired = privacyOptions;
     });
+  }
+
+  Future<void> _openPrivacyPolicy() async {
+    final uri = Uri.parse(_privacyPolicyUri);
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   Future<void> _setSound(bool value) async {
@@ -176,6 +188,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: s.MoreApps,
                 onTap: () => _open((context) => const MorePage()),
               ),
+              AppMenuRow(
+                icon: CupertinoIcons.doc_text_fill,
+                title: s.PrivacyPolicy,
+                subtitle: s.PrivacyPolicySubtitle,
+                onTap: _openPrivacyPolicy,
+              ),
+              if (_privacyOptionsRequired)
+                AppMenuRow(
+                  icon: CupertinoIcons.shield_fill,
+                  title: s.PrivacyOptions,
+                  subtitle: s.PrivacyOptionsSubtitle,
+                  onTap: () => AdsManager.showPrivacyOptionsForm(),
+                ),
             ],
           ),
         );

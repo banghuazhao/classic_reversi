@@ -87,6 +87,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Gioca con un amico su questo dispositivo",
     ),
+    "PrivacyOptions": MessageLookupByLibrary.simpleMessage("Opzioni privacy"),
+    "PrivacyOptionsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Aggiorna le tue scelte sulla privacy degli annunci",
+    ),
+    "PrivacyPolicy": MessageLookupByLibrary.simpleMessage(
+      "Informativa sulla privacy",
+    ),
+    "PrivacyPolicySubtitle": MessageLookupByLibrary.simpleMessage(
+      "Come gestiamo dati e annunci",
+    ),
     "PurchaseAlreadyOwned": MessageLookupByLibrary.simpleMessage(
       "Possiedi già Rimuovi annunci.",
     ),
