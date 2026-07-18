@@ -67,12 +67,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "DifficultyEasy": MessageLookupByLibrary.simpleMessage("Mudah"),
     "DifficultyHard": MessageLookupByLibrary.simpleMessage("Sulit"),
     "DifficultyMedium": MessageLookupByLibrary.simpleMessage("Sedang"),
+    "DifficultySuperEasy": MessageLookupByLibrary.simpleMessage("Sangat Mudah"),
     "FirstPlayerComputer": MessageLookupByLibrary.simpleMessage("Komputer"),
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Pemain"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Acak"),
     "GameOver": MessageLookupByLibrary.simpleMessage("Permainan Selesai"),
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("Permainan dimainkan"),
     "Haptics": MessageLookupByLibrary.simpleMessage("Getar"),
+    "Help": MessageLookupByLibrary.simpleMessage("Bantuan"),
     "Hint": MessageLookupByLibrary.simpleMessage("Petunjuk"),
     "HintsEnabled": MessageLookupByLibrary.simpleMessage(
       "Petunjuk diaktifkan untuk permainan ini.",
@@ -84,6 +86,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "More": MessageLookupByLibrary.simpleMessage("Lainnya"),
     "MoreApps": MessageLookupByLibrary.simpleMessage("Aplikasi Lainnya"),
+    "OK": MessageLookupByLibrary.simpleMessage("OK"),
     "PerfectWins": MessageLookupByLibrary.simpleMessage("Menang sempurna"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Main melawan teman di perangkat ini",
@@ -108,6 +111,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "Rematch": MessageLookupByLibrary.simpleMessage("Ulangi"),
     "RemoveAds": MessageLookupByLibrary.simpleMessage("Hapus Iklan"),
+    "RestartGame": MessageLookupByLibrary.simpleMessage(
+      "Mulai ulang permainan",
+    ),
     "RestoreNothing": MessageLookupByLibrary.simpleMessage(
       "Tidak ada pembelian untuk dipulihkan.",
     ),
@@ -132,6 +138,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "TwoPlayersMode": MessageLookupByLibrary.simpleMessage(
       "2 Pemain (main bergantian)",
     ),
+    "Undo": MessageLookupByLibrary.simpleMessage("Urungkan"),
     "Watch": MessageLookupByLibrary.simpleMessage("Tonton"),
     "WatchAd": MessageLookupByLibrary.simpleMessage("Tonton Iklan"),
     "WatchAdForHint": MessageLookupByLibrary.simpleMessage(

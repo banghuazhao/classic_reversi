@@ -15,6 +15,9 @@ void main() {
 
     await SettingsService.setDifficulty(Difficulty.easy);
     expect(await SettingsService.getDifficulty(), Difficulty.easy);
+
+    await SettingsService.setDifficulty(Difficulty.superEasy);
+    expect(await SettingsService.getDifficulty(), Difficulty.superEasy);
   });
 
   test('first player defaults to human and round-trips', () async {
@@ -58,6 +61,13 @@ void main() {
     await SettingsService.setHapticsEnabled(false);
     expect(await SettingsService.getSoundEnabled(), isFalse);
     expect(await SettingsService.getHapticsEnabled(), isFalse);
+  });
+
+  test('home how-to dismissal persists', () async {
+    expect(await SettingsService.getHomeHowToPlayDismissed(), isFalse);
+
+    await SettingsService.dismissHomeHowToPlay();
+    expect(await SettingsService.getHomeHowToPlayDismissed(), isTrue);
   });
 
   test('board theme defaults to classic and round-trips', () async {

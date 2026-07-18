@@ -18,7 +18,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  async: ^2.13.1
   cupertino_icons: ^1.0.9
+  intl: ^0.20.2
 
   shared_preferences: ^2.5.5
   app_tracking_transparency: ^2.0.7
@@ -60,13 +62,6 @@ flutter:
     - assets/
     - assets/app_icons/
     - assets/sounds/
-
-  fonts:
-    - family: Roboto
-      fonts:
-        - asset: assets/fonts/Roboto-Thin.ttf
-        - asset: assets/fonts/Roboto-ThinItalic.ttf
-          style: italic
 
 flutter_intl:
   enabled: true

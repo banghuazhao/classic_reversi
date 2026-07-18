@@ -5,6 +5,7 @@
   "How_to_play": "Cách chơi?",
   "How_to_play_explain": "Trong trò chơi, tất cả các quân của đối phương nằm trên một đường thẳng và bị kẹp giữa quân vừa đặt và một quân khác của người chơi hiện tại sẽ được lật sang màu của người chơi hiện tại. Mục tiêu của trò chơi là có nhiều quân mang màu của mình nhất khi ô trống có thể chơi cuối cùng được lấp đầy.",
   "Difficulty": "Độ khó",
+  "DifficultySuperEasy": "Siêu dễ",
   "DifficultyEasy": "Dễ",
   "DifficultyMedium": "Trung bình",
   "DifficultyHard": "Khó",
@@ -82,5 +83,9 @@
   "AchPerfectGame": "Ván hoàn hảo",
   "AchDailyChallenge": "Nhà vô địch ngày",
   "AchGames10": "Đã chơi 10 ván",
-  "AchGames50": "Đã chơi 50 ván"
+  "AchGames50": "Đã chơi 50 ván",
+  "OK": "OK",
+  "Undo": "Hoàn tác",
+  "RestartGame": "Chơi lại ván này",
+  "Help": "Trợ giúp"
 }

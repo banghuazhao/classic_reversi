@@ -50,6 +50,7 @@ class PlayerStats {
   final int gamesPlayed;
   final int currentStreak;
   final int bestStreak;
+  final int winsSuperEasy;
   final int winsEasy;
   final int winsMedium;
   final int winsHard;
@@ -64,6 +65,7 @@ class PlayerStats {
     required this.gamesPlayed,
     required this.currentStreak,
     required this.bestStreak,
+    required this.winsSuperEasy,
     required this.winsEasy,
     required this.winsMedium,
     required this.winsHard,
@@ -94,6 +96,8 @@ class AchievementsService {
       gamesPlayed: await SettingsService.getGamesPlayed(),
       currentStreak: await SettingsService.getCurrentStreak(),
       bestStreak: await SettingsService.getBestStreak(),
+      winsSuperEasy:
+          await SettingsService.getWinsForDifficulty(Difficulty.superEasy),
       winsEasy: await SettingsService.getWinsForDifficulty(Difficulty.easy),
       winsMedium: await SettingsService.getWinsForDifficulty(Difficulty.medium),
       winsHard: await SettingsService.getWinsForDifficulty(Difficulty.hard),
@@ -109,6 +113,13 @@ class AchievementsService {
     required GameSettings settings,
   }) async {
     if (settings.twoPlayerMode) {
+      return const [];
+    }
+
+    // Rematches of an already-cleared Daily Challenge shouldn't inflate
+    // streaks / win counts for the same puzzle.
+    if (settings.isDailyChallenge &&
+        await SettingsService.isDailyCompletedToday()) {
       return const [];
     }
 

@@ -24,9 +24,14 @@ class Position {
 
 /// An immutable representation of a reversi game's board.
 class GameBoard {
-  static final int height = 8;
-  static final int width = 8;
+  static const int standardSize = 8;
+  static const int compactSize = 6;
+
+  final int size;
   final List<List<PieceType>> rows;
+
+  int get height => size;
+  int get width => size;
 
   // Because calculating out all the available moves for a player can be
   // expensive, they're cached here.
@@ -34,17 +39,42 @@ class GameBoard {
 
   /// Default constructor, which creates a board with pieces in starting
   /// position.
-  GameBoard() : rows = _copyRows(_emptyBoard);
+  GameBoard({this.size = standardSize})
+      : assert(size >= 4 && size.isEven),
+        rows =
+            size == standardSize ? _copyRows(_emptyBoard) : _startingRows(size);
 
-  /// Builds a board from an explicit 8×8 grid (used by Daily Challenge).
-  GameBoard.fromRows(List<List<PieceType>> source) : rows = _copyRows(source);
+  /// Builds a square board from an explicit grid (used by tests and Daily
+  /// Challenge).
+  GameBoard.fromRows(List<List<PieceType>> source)
+      : assert(source.length >= 4 && source.length.isEven),
+        assert(source.every((row) => row.length == source.length)),
+        size = source.length,
+        rows = _copyRows(source);
 
   /// Copy constructor.
   GameBoard.fromGameBoard(GameBoard other)
-      : rows = List.generate(height, (i) => List.from(other.rows[i]));
+      : size = other.size,
+        rows = List.generate(
+          other.height,
+          (i) => List<PieceType>.from(other.rows[i]),
+        );
 
   static List<List<PieceType>> _copyRows(List<List<PieceType>> source) {
-    return List.generate(height, (i) => List<PieceType>.from(source[i]));
+    return source.map((row) => List<PieceType>.from(row)).toList();
+  }
+
+  static List<List<PieceType>> _startingRows(int size) {
+    final rows = List.generate(
+      size,
+      (_) => List<PieceType>.filled(size, PieceType.empty),
+    );
+    final center = size ~/ 2;
+    rows[center - 1][center - 1] = PieceType.black;
+    rows[center - 1][center] = PieceType.white;
+    rows[center][center - 1] = PieceType.white;
+    rows[center][center] = PieceType.black;
+    return rows;
   }
 
   /// Cells that changed color between [before] and [after], excluding [placed].
@@ -54,8 +84,9 @@ class GameBoard {
     Position placed,
   ) {
     final flipped = <Position>[];
-    for (var y = 0; y < height; y++) {
-      for (var x = 0; x < width; x++) {
+    assert(before.size == after.size);
+    for (var y = 0; y < before.height; y++) {
+      for (var x = 0; x < before.width; x++) {
         if (x == placed.x && y == placed.y) {
           continue;
         }
@@ -98,7 +129,7 @@ class GameBoard {
 
     final legalMoves = <Position>[];
     for (var x = 0; x < width; x++) {
-      for (var y = 0; y < width; y++) {
+      for (var y = 0; y < height; y++) {
         if (isLegalMove(x, y, player)) {
           legalMoves.add(Position(x, y));
         }

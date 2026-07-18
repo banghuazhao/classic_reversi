@@ -14,6 +14,7 @@
   "How_to_play": "遊び方紹介",
   "How_to_play_explain": "ゲームでは、それぞれ黒と白を担当する2人のプレイヤーが交互に盤面へ石を打っていき、最終的に盤上の石が多かったほうが勝ちとなる。相手の石を自分の石で挟んだときは、相手の石を裏返すことで、自分の石にする。最後にプレイ可能な空のマスがいっぱいになったときに、ディスクの大部分を自分の色で表示するようにすることです.",
   "Difficulty": "難易度",
+  "DifficultySuperEasy": "とてもかんたん",
   "DifficultyEasy": "かんたん",
   "DifficultyMedium": "ふつう",
   "DifficultyHard": "むずかしい",
@@ -91,5 +92,9 @@
   "AchPerfectGame": "パーフェクトゲーム",
   "AchDailyChallenge": "デイリーチャンピオン",
   "AchGames10": "10対局",
-  "AchGames50": "50対局"
+  "AchGames50": "50対局",
+  "OK": "OK",
+  "Undo": "待った",
+  "RestartGame": "対局をやり直す",
+  "Help": "ヘルプ"
 }

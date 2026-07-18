@@ -117,6 +117,7 @@ class MoveFinder {
   }
 
   /// Picks a move for [player] according to [difficulty]:
+  ///  - Super Easy deliberately favors weak, risky moves on a smaller board.
   ///  - Easy plays a uniformly random legal move, so beginners can win.
   ///  - Medium greedily picks whichever move scores best right away, with no
   ///    lookahead, so it's beatable but still plays sensibly.
@@ -128,6 +129,36 @@ class MoveFinder {
     }
 
     switch (difficulty) {
+      case Difficulty.superEasy:
+        Position? worstMove;
+        var worstScore = GameBoardScorer.maxScore;
+        final beforeCount = initialBoard.getPieceCount(player);
+        final last = initialBoard.size - 1;
+
+        for (final move in availableMoves) {
+          final newBoard = initialBoard.updateForMove(move.x, move.y, player);
+          final piecesGained = newBoard.getPieceCount(player) - beforeCount;
+          final opponentMobility =
+              newBoard.getMovesForPlayer(getOpponent(player)).length;
+          final isCorner = (move.x == 0 || move.x == last) &&
+              (move.y == 0 || move.y == last);
+          final besideCorner = (move.x <= 1 || move.x >= last - 1) &&
+              (move.y <= 1 || move.y >= last - 1) &&
+              !isCorner;
+
+          // Low scores are intentionally bad: flip as little as possible,
+          // give the human lots of replies, avoid safe corners, and prefer
+          // the dangerous squares beside an open corner.
+          final weakMoveScore = piecesGained * 20 -
+              opponentMobility * 5 +
+              (isCorner ? 10000 : 0) -
+              (besideCorner ? 10000 : 0);
+          if (worstMove == null || weakMoveScore < worstScore) {
+            worstScore = weakMoveScore;
+            worstMove = move;
+          }
+        }
+        return worstMove;
       case Difficulty.easy:
         return availableMoves[Random().nextInt(availableMoves.length)];
       case Difficulty.medium:

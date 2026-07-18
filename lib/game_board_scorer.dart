@@ -49,16 +49,40 @@ class GameBoardScorer {
       }
     }
 
-    for (var y = 0; y < GameBoard.height; y++) {
-      for (var x = 0; x < GameBoard.width; x++) {
+    for (var y = 0; y < board.height; y++) {
+      for (var x = 0; x < board.width; x++) {
+        final positionValue = board.size == GameBoard.standardSize
+            ? _positionValues[y][x]
+            : _compactPositionValue(x, y);
         if (board.getPieceAtLocation(x, y) == player) {
-          score += _positionValues[y][x];
+          score += positionValue;
         } else if (board.getPieceAtLocation(x, y) == opponent) {
-          score -= _positionValues[y][x];
+          score -= positionValue;
         }
       }
     }
 
     return score;
+  }
+
+  int _compactPositionValue(int x, int y) {
+    final last = board.size - 1;
+    final onLeftOrRight = x == 0 || x == last;
+    final onTopOrBottom = y == 0 || y == last;
+    if (onLeftOrRight && onTopOrBottom) {
+      return 10000;
+    }
+
+    final besideHorizontalEdge = x == 1 || x == last - 1;
+    final besideVerticalEdge = y == 1 || y == last - 1;
+    if ((besideHorizontalEdge && onTopOrBottom) ||
+        (besideVerticalEdge && onLeftOrRight) ||
+        (besideHorizontalEdge && besideVerticalEdge)) {
+      return -1000;
+    }
+    if (onLeftOrRight || onTopOrBottom) {
+      return 100;
+    }
+    return 10;
   }
 }

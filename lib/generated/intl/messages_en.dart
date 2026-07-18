@@ -74,10 +74,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "DailyCompleted": MessageLookupByLibrary.simpleMessage(
       "Completed today — play again for fun",
     ),
+    "DailyCompletions": MessageLookupByLibrary.simpleMessage(
+      "Daily challenges completed",
+    ),
     "Difficulty": MessageLookupByLibrary.simpleMessage("Difficulty"),
     "DifficultyEasy": MessageLookupByLibrary.simpleMessage("Easy"),
     "DifficultyHard": MessageLookupByLibrary.simpleMessage("Hard"),
     "DifficultyMedium": MessageLookupByLibrary.simpleMessage("Medium"),
+    "DifficultySuperEasy": MessageLookupByLibrary.simpleMessage("Super Easy"),
     "FirstPlayerComputer": MessageLookupByLibrary.simpleMessage("Computer"),
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Player"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Random"),
@@ -89,28 +93,62 @@ class MessageLookup extends MessageLookupByLibrary {
       "Garden: Catch Bugs",
     ),
     "Haptics": MessageLookupByLibrary.simpleMessage("Haptics"),
+    "Help": MessageLookupByLibrary.simpleMessage("Help"),
     "Hint": MessageLookupByLibrary.simpleMessage("Hint"),
     "HintsEnabled": MessageLookupByLibrary.simpleMessage(
       "Hints enabled for this game.",
     ),
     "Home": MessageLookupByLibrary.simpleMessage("Home"),
+    "HowToControlsBody": MessageLookupByLibrary.simpleMessage(
+      "Undo returns to the position before your last move. Hint highlights legal squares. Restart begins the same game setup again. Settings changes sound, haptics, and theme. Home returns to the beginning screen.",
+    ),
+    "HowToControlsTitle": MessageLookupByLibrary.simpleMessage("Game controls"),
+    "HowToLearnMore": MessageLookupByLibrary.simpleMessage(
+      "Rules, controls, strategy tips, and app instructions",
+    ),
+    "HowToMoveBody": MessageLookupByLibrary.simpleMessage(
+      "Place a disk on an empty square so that one or more opposing disks are trapped in a straight horizontal, vertical, or diagonal line between your new disk and another one of your disks. All trapped disks flip to your color.",
+    ),
+    "HowToMoveTitle": MessageLookupByLibrary.simpleMessage("Make a move"),
+    "HowToTipsBody": MessageLookupByLibrary.simpleMessage(
+      "Corners can never be flipped, so work toward them carefully. Avoid giving away squares beside an open corner. Mobility matters: try to keep several legal moves available while limiting your opponent\'s choices.",
+    ),
+    "HowToTipsTitle": MessageLookupByLibrary.simpleMessage("Strategy tips"),
+    "HowToTurnsBody": MessageLookupByLibrary.simpleMessage(
+      "Black moves first. If a player has no legal move, their turn is passed automatically. The game continues until neither player can move.",
+    ),
+    "HowToTurnsTitle": MessageLookupByLibrary.simpleMessage("Take turns"),
+    "HowToWinBody": MessageLookupByLibrary.simpleMessage(
+      "The game ends when the board is full or neither side has a legal move. The player with more disks on the board wins.",
+    ),
+    "HowToWinTitle": MessageLookupByLibrary.simpleMessage(
+      "Finish with the most disks",
+    ),
     "How_to_play": MessageLookupByLibrary.simpleMessage("How to play?"),
     "How_to_play_explain": MessageLookupByLibrary.simpleMessage(
       "In the game, any disks of the opponent\'s color that are in a straight line and bounded by the disk just placed and another disk of the current player\'s color are turned over to the current player\'s color. The objective of the game is to have the majority of disks turned to display one\'s color when the last playable empty square is filled.",
     ),
     "Image_Guru": MessageLookupByLibrary.simpleMessage("Image Guru"),
     "Instant_Face": MessageLookupByLibrary.simpleMessage("Instant Face"),
+    "Losses": MessageLookupByLibrary.simpleMessage("Losses"),
     "Mint_Translate": MessageLookupByLibrary.simpleMessage("Mint Translate"),
     "Money_Tracker": MessageLookupByLibrary.simpleMessage("Money Tracker"),
     "More": MessageLookupByLibrary.simpleMessage("More"),
     "MoreApps": MessageLookupByLibrary.simpleMessage("More Apps"),
+    "MoreAppsUnavailable": MessageLookupByLibrary.simpleMessage(
+      "More apps are available in the iOS and Android versions.",
+    ),
     "Novels_Hub": MessageLookupByLibrary.simpleMessage("Novels Hub"),
+    "OK": MessageLookupByLibrary.simpleMessage("OK"),
     "PerfectWins": MessageLookupByLibrary.simpleMessage("Perfect wins"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Play against a friend on this device",
     ),
     "PurchaseAlreadyOwned": MessageLookupByLibrary.simpleMessage(
       "You already own Remove Ads.",
+    ),
+    "PurchaseBenefits": MessageLookupByLibrary.simpleMessage(
+      "A one-time purchase removes banner and app-open ads. The purchase is linked to your App Store account and can be restored on your other devices.",
     ),
     "PurchaseCancelled": MessageLookupByLibrary.simpleMessage(
       "Purchase cancelled.",
@@ -121,6 +159,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "PurchasePending": MessageLookupByLibrary.simpleMessage(
       "Purchase pending approval…",
     ),
+    "PurchaseSettingsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "See purchase benefits or restore an existing purchase",
+    ),
     "PurchaseSuccess": MessageLookupByLibrary.simpleMessage(
       "Ads have been removed. Thank you!",
     ),
@@ -130,8 +171,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "Relaxing_Up": MessageLookupByLibrary.simpleMessage("Relaxing Up"),
     "Rematch": MessageLookupByLibrary.simpleMessage("Rematch"),
     "RemoveAds": MessageLookupByLibrary.simpleMessage("Remove Ads"),
+    "RestartGame": MessageLookupByLibrary.simpleMessage("Restart game"),
     "RestoreNothing": MessageLookupByLibrary.simpleMessage(
       "No purchases to restore.",
+    ),
+    "RestorePurchaseHelp": MessageLookupByLibrary.simpleMessage(
+      "Already purchased? Restore it from your App Store account.",
     ),
     "RestorePurchases": MessageLookupByLibrary.simpleMessage(
       "Restore Purchases",
@@ -163,6 +208,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "TwoPlayersMode": MessageLookupByLibrary.simpleMessage(
       "2 Players (pass & play)",
     ),
+    "Undo": MessageLookupByLibrary.simpleMessage("Undo"),
     "Watch": MessageLookupByLibrary.simpleMessage("Watch"),
     "WatchAd": MessageLookupByLibrary.simpleMessage("Watch Ad"),
     "WatchAdForHint": MessageLookupByLibrary.simpleMessage(
@@ -176,6 +222,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "WhiteWins": MessageLookupByLibrary.simpleMessage("White wins"),
     "WhoGoesFirst": MessageLookupByLibrary.simpleMessage("Who goes first?"),
     "WinRate": MessageLookupByLibrary.simpleMessage("Win rate"),
+    "Wins": MessageLookupByLibrary.simpleMessage("Wins"),
     "WinsByDifficulty": MessageLookupByLibrary.simpleMessage(
       "Wins by difficulty",
     ),

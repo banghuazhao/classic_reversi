@@ -30,6 +30,7 @@
   "How_to_play_explain": "游戏开局时，棋盘正中央的4格先置放黑白相隔的4枚棋子（亦有求变化相邻放置）。通常黑子先行。双方轮流落子。只要落子和棋盘上任一枚己方的棋子在一条在线（横、直、斜线皆可）夹着对方棋子，就能将对方的这些棋子转变为我己方（翻面即可）。游戏的目标是当最后一个可玩的空方块被填满时，占有大多数棋盘的棋子获胜.",
   "Classic_Reversi": "经典黑白棋",
   "Difficulty": "难度",
+  "DifficultySuperEasy": "超简单",
   "DifficultyEasy": "简单",
   "DifficultyMedium": "中等",
   "DifficultyHard": "困难",
@@ -107,5 +108,9 @@
   "AchPerfectGame": "完美对局",
   "AchDailyChallenge": "每日冠军",
   "AchGames10": "完成 10 局",
-  "AchGames50": "完成 50 局"
+  "AchGames50": "完成 50 局",
+  "OK": "好的",
+  "Undo": "悔棋",
+  "RestartGame": "重新开始本局",
+  "Help": "帮助"
 }

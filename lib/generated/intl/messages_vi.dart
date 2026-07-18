@@ -65,12 +65,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "DifficultyEasy": MessageLookupByLibrary.simpleMessage("Dễ"),
     "DifficultyHard": MessageLookupByLibrary.simpleMessage("Khó"),
     "DifficultyMedium": MessageLookupByLibrary.simpleMessage("Trung bình"),
+    "DifficultySuperEasy": MessageLookupByLibrary.simpleMessage("Siêu dễ"),
     "FirstPlayerComputer": MessageLookupByLibrary.simpleMessage("Máy tính"),
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Người chơi"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Ngẫu nhiên"),
     "GameOver": MessageLookupByLibrary.simpleMessage("Kết thúc"),
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("Số ván đã chơi"),
     "Haptics": MessageLookupByLibrary.simpleMessage("Rung"),
+    "Help": MessageLookupByLibrary.simpleMessage("Trợ giúp"),
     "Hint": MessageLookupByLibrary.simpleMessage("Gợi ý"),
     "HintsEnabled": MessageLookupByLibrary.simpleMessage(
       "Đã bật gợi ý cho ván này.",
@@ -82,6 +84,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "More": MessageLookupByLibrary.simpleMessage("Thêm"),
     "MoreApps": MessageLookupByLibrary.simpleMessage("Ứng dụng khác"),
+    "OK": MessageLookupByLibrary.simpleMessage("OK"),
     "PerfectWins": MessageLookupByLibrary.simpleMessage("Thắng tuyệt đối"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Chơi cùng bạn bè trên thiết bị này",
@@ -106,6 +109,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "Rematch": MessageLookupByLibrary.simpleMessage("Chơi lại"),
     "RemoveAds": MessageLookupByLibrary.simpleMessage("Gỡ quảng cáo"),
+    "RestartGame": MessageLookupByLibrary.simpleMessage("Chơi lại ván này"),
     "RestoreNothing": MessageLookupByLibrary.simpleMessage(
       "Không có giao dịch nào để khôi phục.",
     ),
@@ -130,6 +134,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "TwoPlayersMode": MessageLookupByLibrary.simpleMessage(
       "2 người chơi (chơi lần lượt)",
     ),
+    "Undo": MessageLookupByLibrary.simpleMessage("Hoàn tác"),
     "Watch": MessageLookupByLibrary.simpleMessage("Xem"),
     "WatchAd": MessageLookupByLibrary.simpleMessage("Xem quảng cáo"),
     "WatchAdForHint": MessageLookupByLibrary.simpleMessage(

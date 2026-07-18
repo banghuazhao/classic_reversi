@@ -11,7 +11,6 @@ import 'package:async/async.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show SystemChrome, DeviceOrientation;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart'
     if (dart.library.io) 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -29,8 +28,8 @@ import 'game_model.dart';
 import 'game_over_sheet.dart';
 import 'game_settings.dart';
 import 'generated/l10n.dart';
-import 'more_page.dart';
 import 'move_finder.dart';
+import 'settings_screen.dart';
 import 'start_screen.dart';
 import 'styling.dart';
 import 'theme_controller.dart';
@@ -75,6 +74,7 @@ void main() {
       if (AdsManager.adsEnabled) {
         try {
           await MobileAds.instance.initialize();
+          AdsManager.markMobileAdsInitialized();
         } catch (error) {
           print('MobileAds initialization failed: $error');
         }
@@ -86,16 +86,10 @@ void main() {
         }
       }
 
-      try {
-        await SystemChrome.setPreferredOrientations(
-            [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-      } catch (error) {
-        print('setPreferredOrientations failed: $error');
-      }
-      runApp(MyApp());
+      runApp(const MyApp());
     }();
   } else {
-    runApp(MyApp());
+    runApp(const MyApp());
   }
 }
 
@@ -116,14 +110,131 @@ Route<T> fadeRoute<T>(WidgetBuilder builder) {
   );
 }
 
-/// The App class. Unlike many Flutter apps, this one does not use Material
-/// widgets, so there's no [MaterialApp] or [Theme] objects.
-class MyApp extends StatelessWidget {
+/// App shell. Uses [MaterialApp] so dialogs, snackbars, and tooltips work
+/// reliably across the custom game screens. It also owns the app-open ad so
+/// the ad is preloaded on the home screen and survives route changes.
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  AppOpenAdManager? _appOpenAdManager;
+  AppLifecycleReactor? _appLifecycleReactor;
+
+  @override
+  void initState() {
+    super.initState();
+    PurchaseService.instance.addListener(_onPurchaseEntitlementChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _setupAppOpenAds();
+      }
+    });
+  }
+
+  void _setupAppOpenAds() {
+    if (kIsWeb ||
+        !AdsManager.adsEnabled ||
+        !AdsManager.mobileAdsInitialized ||
+        _appOpenAdManager != null) {
+      return;
+    }
+
+    final manager = AppOpenAdManager()..loadAd();
+    _appOpenAdManager = manager;
+    _appLifecycleReactor = AppLifecycleReactor(appOpenAdManager: manager)
+      ..listenToAppStateChanges();
+
+    // Restore the initial foreground request that the old native notifier
+    // supplied. If loading is still in progress, the manager safely shows the
+    // ad as soon as it becomes available.
+    manager.showAdIfAvailable();
+  }
+
+  void _onPurchaseEntitlementChanged() {
+    if (PurchaseService.instance.isAdsRemoved) {
+      _tearDownAppOpenAds();
+    }
+  }
+
+  void _tearDownAppOpenAds() {
+    _appLifecycleReactor?.dispose();
+    _appLifecycleReactor = null;
+    _appOpenAdManager?.dispose();
+    _appOpenAdManager = null;
+  }
+
+  @override
+  void dispose() {
+    PurchaseService.instance.removeListener(_onPurchaseEntitlementChanged);
+    _tearDownAppOpenAds();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return WidgetsApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      color: Color(0xffffffff), // Mandatory background color.
+      theme: ThemeData(
+        useMaterial3: true,
+        fontFamily: 'Roboto',
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xffAE561B),
+          brightness: Brightness.light,
+        ),
+        splashFactory: NoSplash.splashFactory,
+        dialogTheme: DialogThemeData(
+          backgroundColor: const Color(0xff2b1b12),
+          surfaceTintColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+            side: const BorderSide(color: Color(0x40ffffff)),
+          ),
+          titleTextStyle: const TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: 20,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+          ),
+          contentTextStyle: const TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: 16,
+            height: 1.4,
+            color: Color(0xe6ffffff),
+          ),
+        ),
+        snackBarTheme: const SnackBarThemeData(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Color(0xff241710),
+          contentTextStyle: TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: 15,
+            color: Colors.white,
+          ),
+        ),
+        tooltipTheme: TooltipThemeData(
+          decoration: BoxDecoration(
+            color: const Color(0xff241710),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          textStyle: const TextStyle(
+            fontFamily: 'Roboto',
+            color: Colors.white,
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: const Color(0xffffd45c),
+            textStyle: const TextStyle(
+              fontFamily: 'Roboto',
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+      ),
       localizationsDelegates: [
         S.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -195,8 +306,6 @@ class _GameScreenState extends State<GameScreen> {
 
   bool _isAdLoaded = false;
 
-  AppOpenAdManager? _appOpenAdManager;
-  AppLifecycleReactor? _appLifecycleReactor;
   final RewardedAdHelper _rewardedAdHelper = RewardedAdHelper();
 
   // The square the most recently placed piece landed on, so it can be
@@ -216,14 +325,22 @@ class _GameScreenState extends State<GameScreen> {
   bool _hintsUnlocked = false;
 
   bool _gameOverSheetVisible = false;
+  bool _rewardFlowBusy = false;
+
+  /// Bumped to cancel an in-flight CPU think/move when the user undoes.
+  int _turnGeneration = 0;
 
   PieceType get _computerColor => widget.settings.twoPlayerMode
       ? PieceType.empty
       : getOpponent(widget.settings.humanColor);
 
+  bool get _adsRemovedOrDisabled =>
+      !AdsManager.adsEnabled || PurchaseService.instance.isAdsRemoved;
+
   bool get _freeUndoAllowed =>
       widget.settings.twoPlayerMode ||
-      widget.settings.difficulty != Difficulty.hard;
+      widget.settings.difficulty != Difficulty.hard ||
+      _adsRemovedOrDisabled;
 
   bool get _undoAllowed =>
       _canUndo && (_freeUndoAllowed || _rewardedUndoCharges > 0);
@@ -232,7 +349,9 @@ class _GameScreenState extends State<GameScreen> {
     if (widget.settings.twoPlayerMode) {
       return false;
     }
-    if (widget.settings.difficulty == Difficulty.easy) {
+    if (widget.settings.difficulty == Difficulty.easy ||
+        widget.settings.difficulty == Difficulty.superEasy ||
+        _adsRemovedOrDisabled) {
       return true;
     }
     return _hintsUnlocked;
@@ -242,6 +361,7 @@ class _GameScreenState extends State<GameScreen> {
     return GameModel.initial(
       board: widget.settings.initialBoard,
       player: widget.settings.initialPlayer,
+      boardSize: widget.settings.boardSize,
     );
   }
 
@@ -254,15 +374,25 @@ class _GameScreenState extends State<GameScreen> {
       yield model;
 
       var newModel = model;
+      final generation = _turnGeneration;
 
       while (newModel.player == _computerColor) {
+        if (generation != _turnGeneration) {
+          break;
+        }
         final finder = MoveFinder(newModel.board);
         final move =
             await finder.findMove(newModel.player, widget.settings.difficulty);
+        if (generation != _turnGeneration) {
+          break;
+        }
         if (move != null) {
           // A brief pause makes the CPU's move visible and easy to follow
           // instead of feeling instant.
           await Future.delayed(const Duration(milliseconds: 600));
+          if (generation != _turnGeneration) {
+            break;
+          }
           final previousBoard = newModel.board;
           final updatedModel = newModel.updateForMove(move.x, move.y);
           if (updatedModel == null) {
@@ -273,8 +403,7 @@ class _GameScreenState extends State<GameScreen> {
             updatedModel.board,
             move,
           );
-          FeedbackService.instance
-              .moveFeedback(flippedCount: flipped.length);
+          FeedbackService.instance.moveFeedback(flippedCount: flipped.length);
           newModel = updatedModel;
           _lastMove = move;
           yield newModel;
@@ -296,8 +425,7 @@ class _GameScreenState extends State<GameScreen> {
     _restartController.add(_initialModel());
 
     // Ads-removed users get Hard undo / hints without watching ads.
-    if (PurchaseService.instance.isAdsRemoved) {
-      _rewardedUndoCharges = 1;
+    if (_adsRemovedOrDisabled) {
       _hintsUnlocked = true;
     }
 
@@ -322,7 +450,6 @@ class _GameScreenState extends State<GameScreen> {
     if (PurchaseService.instance.isAdsRemoved) {
       _tearDownAds();
       setState(() {
-        _rewardedUndoCharges = max(_rewardedUndoCharges, 1);
         _hintsUnlocked = true;
       });
     }
@@ -362,10 +489,6 @@ class _GameScreenState extends State<GameScreen> {
 
       _ad?.load();
 
-      _appOpenAdManager = AppOpenAdManager()..loadAd();
-      _appLifecycleReactor =
-          AppLifecycleReactor(appOpenAdManager: _appOpenAdManager!);
-      _appLifecycleReactor?.listenToAppStateChanges();
       _rewardedAdHelper.load();
     } catch (error) {
       print('Ad setup failed: $error');
@@ -373,10 +496,6 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void _tearDownAds() {
-    _appLifecycleReactor?.dispose();
-    _appLifecycleReactor = null;
-    _appOpenAdManager?.dispose();
-    _appOpenAdManager = null;
     _rewardedAdHelper.dispose();
     _ad?.dispose();
     _ad = null;
@@ -404,9 +523,7 @@ class _GameScreenState extends State<GameScreen> {
         return StreamBuilder<GameModel>(
           stream: _modelStream,
           builder: (context, snapshot) {
-            final model = snapshot.hasData
-                ? snapshot.data!
-                : _initialModel();
+            final model = snapshot.hasData ? snapshot.data! : _initialModel();
             _handleGameOverIfNeeded(model);
             return _buildWidgets(context, model);
           },
@@ -428,11 +545,25 @@ class _GameScreenState extends State<GameScreen> {
     }
     _gameOverHandled = true;
 
-    () async {
-      List<AchievementId> unlocked = const [];
-      bool? humanWon;
-      final isTie = model.blackScore == model.whiteScore;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _runGameOverFlow(model);
+    });
+  }
 
+  Future<void> _runGameOverFlow(GameModel model) async {
+    if (!mounted || _gameOverSheetVisible) {
+      return;
+    }
+
+    List<AchievementId> unlocked = const [];
+    bool? humanWon;
+    final isTie = model.blackScore == model.whiteScore;
+    var requestReview = false;
+
+    try {
       if (!widget.settings.twoPlayerMode) {
         if (!isTie) {
           humanWon = model.blackScore > model.whiteScore
@@ -443,58 +574,61 @@ class _GameScreenState extends State<GameScreen> {
           model: model,
           settings: widget.settings,
         );
-
-        if (unlocked.contains(AchievementId.firstWin)) {
-          InAppReviewHelper.requestReviewAfterFirstWin();
-        }
+        requestReview = unlocked.contains(AchievementId.firstWin);
       }
 
       await FeedbackService.instance.gameOverFeedback(
         humanWon: humanWon == true,
-        tie: isTie || widget.settings.twoPlayerMode,
+        tie: isTie,
       );
+    } catch (error) {
+      print('Game-over bookkeeping failed: $error');
+    }
 
-      if (!mounted || _gameOverSheetVisible) {
-        return;
-      }
+    if (!mounted || _gameOverSheetVisible) {
+      return;
+    }
 
-      final sheetModel = model;
-      final sheetUnlocked = unlocked;
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        if (!mounted || _gameOverSheetVisible) {
-          return;
-        }
-        _gameOverSheetVisible = true;
-        await showGameOverSheet(
-          context: context,
-          model: sheetModel,
-          settings: widget.settings,
-          theme: ThemeController.instance.theme,
-          newAchievements: sheetUnlocked,
-          onRematch: _rematch,
-          onHome: () {
-            Navigator.of(context).pushReplacement(
-              fadeRoute((context) => const StartScreen()),
-            );
-          },
-        );
-        _gameOverSheetVisible = false;
-      });
-    }();
+    _gameOverSheetVisible = true;
+    try {
+      await showGameOverSheet(
+        context: context,
+        model: model,
+        settings: widget.settings,
+        theme: ThemeController.instance.theme,
+        newAchievements: unlocked,
+        onRematch: _rematch,
+        onHome: () {
+          Navigator.of(context).pushReplacement(
+            fadeRoute((context) => const StartScreen()),
+          );
+        },
+      );
+    } finally {
+      _gameOverSheetVisible = false;
+    }
+
+    // Ask for a review after the result sheet, not on top of it.
+    if (requestReview) {
+      InAppReviewHelper.requestReviewAfterFirstWin();
+    }
   }
 
   void _rematch() {
+    _turnGeneration++;
     setState(() {
       _historyStack.clear();
       _canUndo = false;
       _lastMove = null;
       _gameOverHandled = false;
       _gameOverSheetVisible = false;
-      if (!PurchaseService.instance.isAdsRemoved) {
-        _rewardedUndoCharges = 0;
-        if (widget.settings.difficulty != Difficulty.easy) {
-          _hintsUnlocked = false;
-        }
+      _rewardedUndoCharges = 0;
+      if (!_adsRemovedOrDisabled &&
+          widget.settings.difficulty != Difficulty.easy &&
+          widget.settings.difficulty != Difficulty.superEasy) {
+        _hintsUnlocked = false;
+      } else if (_adsRemovedOrDisabled) {
+        _hintsUnlocked = true;
       }
     });
     _restartController.add(_initialModel());
@@ -525,13 +659,18 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
-  void _undoLastMove() {
+  void _undoLastMove({GameModel? currentModel}) {
     if (!_canUndo || _historyStack.isEmpty) {
+      return;
+    }
+    // Don't undo while the CPU is thinking — the stream would still finish
+    // the in-flight move first and burn a rewarded charge.
+    if (currentModel != null && currentModel.player == _computerColor) {
       return;
     }
     if (!_freeUndoAllowed) {
       if (_rewardedUndoCharges <= 0) {
-        _requestRewardedUndo();
+        _requestRewardedUndo(currentModel: currentModel);
         return;
       }
       _rewardedUndoCharges -= 1;
@@ -539,51 +678,74 @@ class _GameScreenState extends State<GameScreen> {
     final previousModel = _historyStack.removeLast();
     _canUndo = false;
     _lastMove = null;
+    _turnGeneration++;
     setState(() {});
     _restartController.add(previousModel);
   }
 
-  Future<void> _requestRewardedUndo() async {
+  Future<void> _requestRewardedUndo({GameModel? currentModel}) async {
+    if (_rewardFlowBusy || !_canUndo || _historyStack.isEmpty) {
+      return;
+    }
+    if (currentModel != null && currentModel.player == _computerColor) {
+      return;
+    }
+    _rewardFlowBusy = true;
     final s = S.of(context);
-    final proceed = await _confirmWatchAd(s.WatchAdForUndo);
-    if (proceed != true || !mounted) {
-      return;
+    try {
+      if (!_adsRemovedOrDisabled) {
+        final proceed = await _confirmWatchAd(s.WatchAdForUndo);
+        if (proceed != true || !mounted) {
+          return;
+        }
+        _showMessage(s.AdLoading);
+      }
+      final ok = await _rewardedAdHelper.show(onUserEarnedReward: () {
+        _rewardedUndoCharges += 1;
+      });
+      if (!mounted) {
+        return;
+      }
+      if (!ok) {
+        _showMessage(s.AdFailed);
+        return;
+      }
+      setState(() {});
+      _undoLastMove(currentModel: currentModel);
+    } finally {
+      _rewardFlowBusy = false;
     }
-    final ok = await _rewardedAdHelper.show(onUserEarnedReward: () {
-      _rewardedUndoCharges += 1;
-    });
-    if (!mounted) {
-      return;
-    }
-    if (!ok) {
-      _showMessage(s.AdFailed);
-      return;
-    }
-    setState(() {});
-    _undoLastMove();
   }
 
   Future<void> _requestRewardedHints() async {
-    if (_hintsUnlocked) {
+    if (_hintsUnlocked || _rewardFlowBusy) {
       return;
     }
+    _rewardFlowBusy = true;
     final s = S.of(context);
-    final proceed = await _confirmWatchAd(s.WatchAdForHint);
-    if (proceed != true || !mounted) {
-      return;
+    try {
+      if (!_adsRemovedOrDisabled) {
+        final proceed = await _confirmWatchAd(s.WatchAdForHint);
+        if (proceed != true || !mounted) {
+          return;
+        }
+        _showMessage(s.AdLoading);
+      }
+      final ok = await _rewardedAdHelper.show(onUserEarnedReward: () {
+        _hintsUnlocked = true;
+      });
+      if (!mounted) {
+        return;
+      }
+      if (!ok) {
+        _showMessage(s.AdFailed);
+        return;
+      }
+      setState(() {});
+      _showMessage(s.HintsEnabled);
+    } finally {
+      _rewardFlowBusy = false;
     }
-    final ok = await _rewardedAdHelper.show(onUserEarnedReward: () {
-      _hintsUnlocked = true;
-    });
-    if (!mounted) {
-      return;
-    }
-    if (!ok) {
-      _showMessage(s.AdFailed);
-      return;
-    }
-    setState(() {});
-    _showMessage(s.HintsEnabled);
   }
 
   Future<bool?> _confirmWatchAd(String message) {
@@ -622,9 +784,55 @@ class _GameScreenState extends State<GameScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: Text(S.of(context).OK),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _circleActionButton({
+    required String tooltip,
+    required IconData icon,
+    required VoidCallback? onPressed,
+    required AppTheme theme,
+  }) {
+    return Semantics(
+      label: tooltip,
+      button: true,
+      enabled: onPressed != null,
+      child: ExcludeSemantics(
+        child: Tooltip(
+          message: tooltip,
+          child: SizedBox(
+            width: 52,
+            height: 52,
+            child: ElevatedButton(
+              onPressed: onPressed,
+              style: _circleButtonStyle.copyWith(
+                backgroundColor: WidgetStateProperty.resolveWith(
+                  (states) => states.contains(WidgetState.disabled)
+                      ? const Color(0x33000000)
+                      : theme.buttonFill,
+                ),
+                side: WidgetStatePropertyAll(
+                  BorderSide(
+                    color: onPressed == null
+                        ? const Color(0x24ffffff)
+                        : const Color(0x40ffffff),
+                  ),
+                ),
+              ),
+              child: Icon(
+                icon,
+                size: 20,
+                color: onPressed == null
+                    ? const Color(0x70ffffff)
+                    : const Color(0xffffffff),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -695,10 +903,10 @@ class _GameScreenState extends State<GameScreen> {
         ? model.board.getMovesForPlayer(model.player)
         : const <Position>[];
 
-    for (var y = 0; y < GameBoard.height; y++) {
+    for (var y = 0; y < model.board.height; y++) {
       final spots = <Widget>[];
 
-      for (var x = 0; x < GameBoard.width; x++) {
+      for (var x = 0; x < model.board.width; x++) {
         PieceType type = model.board.getPieceAtLocation(x, y);
         final isLastMove = _lastMove?.x == x && _lastMove?.y == y;
         final isLegalMoveHint = type == PieceType.empty &&
@@ -757,172 +965,171 @@ class _GameScreenState extends State<GameScreen> {
     // Fixed-height chrome that always surrounds the board, used to work out
     // how much vertical space is actually left for the board itself so it
     // never gets clipped or pushed off screen on smaller devices.
-    const headerHeight = 90.0;
+    const headerHeight = 152.0;
     const spacingHeight = 20.0 + 10.0 + 20.0;
     const resultTextHeight = 20.0;
     // Only reserve banner space when ads can actually show.
     final adReservedHeight = AdsManager.adsEnabled ? 60.0 : 0.0;
     const verticalPadding = 30.0 + 20.0;
 
+    final s = S.of(context);
+    final cpuThinking = model.player == _computerColor;
     final needsHintButton = !widget.settings.twoPlayerMode &&
         widget.settings.difficulty != Difficulty.easy &&
-        !_hintsUnlocked;
+        widget.settings.difficulty != Difficulty.superEasy &&
+        !_showHints;
     final needsRewardedUndo = !widget.settings.twoPlayerMode &&
-        widget.settings.difficulty == Difficulty.hard;
+        widget.settings.difficulty == Difficulty.hard &&
+        !_freeUndoAllowed;
 
-    return Container(
-      padding: EdgeInsets.only(top: 30.0, left: 15.0, right: 15.0),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            theme.backgroundStart,
-            theme.backgroundFinish,
-          ],
+    return Scaffold(
+      backgroundColor: theme.backgroundFinish,
+      body: Container(
+        padding: EdgeInsets.only(top: 30.0, left: 15.0, right: 15.0),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              theme.backgroundStart,
+              theme.backgroundFinish,
+            ],
+          ),
         ),
-      ),
-      child: SafeArea(
-        child: LayoutBuilder(builder: (context, constraints) {
-          double width = constraints.maxWidth;
-          double sideMargin = max(width * 0.08, 15);
-          double widthBasedBoxWidth = (width - sideMargin * 2 - 7) / 8;
+        child: SafeArea(
+          child: LayoutBuilder(builder: (context, constraints) {
+            double width = constraints.maxWidth;
+            double sideMargin = max(width * 0.08, 15);
+            // Size cells against the classic 8×8 footprint. A 6×6 Super Easy
+            // board therefore keeps comfortable tap targets while appearing
+            // visibly smaller instead of stretching to fill the same area.
+            const sizingGrid = GameBoard.standardSize;
+            double widthBasedBoxWidth =
+                (width - sideMargin * 2 - (sizingGrid - 1)) / sizingGrid;
 
-          // Always reserve space for (when enabled) the banner ad, even before
-          // it appears: the board must keep the exact same size for the whole
-          // game, never resizing mid-play when the ad loads.
-          double reservedHeight = headerHeight +
-              spacingHeight +
-              verticalPadding +
-              resultTextHeight +
-              adReservedHeight;
-          double availableBoardHeight = constraints.maxHeight - reservedHeight;
-          double heightBasedBoxWidth = (availableBoardHeight - 7) / 8;
+            // Always reserve space for (when enabled) the banner ad, even before
+            // it appears: the board must keep the exact same size for the whole
+            // game, never resizing mid-play when the ad loads.
+            double reservedHeight = headerHeight +
+                spacingHeight +
+                verticalPadding +
+                resultTextHeight +
+                adReservedHeight;
+            double availableBoardHeight =
+                constraints.maxHeight - reservedHeight;
+            double heightBasedBoxWidth =
+                (availableBoardHeight - (sizingGrid - 1)) / sizingGrid;
 
-          double boxWidth = min(widthBasedBoxWidth, heightBasedBoxWidth)
-              .clamp(20.0, widthBasedBoxWidth);
+            double boxWidth = min(widthBasedBoxWidth, heightBasedBoxWidth)
+                .clamp(20.0, widthBasedBoxWidth);
 
-          final undoEnabled = _canUndo &&
-              (_freeUndoAllowed ||
-                  _rewardedUndoCharges > 0 ||
-                  needsRewardedUndo);
+            final undoEnabled = !cpuThinking &&
+                !model.gameIsOver &&
+                _canUndo &&
+                (_undoAllowed || needsRewardedUndo);
 
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildScoreBox(PieceType.black, model, theme),
-                    _buildScoreBox(PieceType.white, model, theme),
-                    SizedBox(
-                      width: 52,
-                      height: 52,
-                      child: ElevatedButton(
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildScoreBox(PieceType.black, model, theme),
+                      _buildScoreBox(PieceType.white, model, theme),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: [
+                      _circleActionButton(
+                        tooltip: s.Undo,
+                        icon: CupertinoIcons.arrow_uturn_left,
+                        theme: theme,
                         onPressed: undoEnabled
                             ? () {
                                 if (_undoAllowed) {
-                                  _undoLastMove();
-                                } else if (needsRewardedUndo && _canUndo) {
-                                  _requestRewardedUndo();
+                                  _undoLastMove(currentModel: model);
+                                } else if (needsRewardedUndo) {
+                                  _requestRewardedUndo(currentModel: model);
                                 }
                               }
                             : null,
-                        child: Icon(
-                          CupertinoIcons.arrow_uturn_left,
-                          size: 20,
-                          color: Color(0xffffffff),
-                        ),
-                        style: _circleButtonStyle.copyWith(
-                          backgroundColor:
-                              WidgetStatePropertyAll(theme.buttonFill),
-                        ),
                       ),
-                    ),
-                    if (needsHintButton)
-                      SizedBox(
-                        width: 52,
-                        height: 52,
-                        child: ElevatedButton(
-                          onPressed: model.gameIsOver
-                              ? null
-                              : _requestRewardedHints,
-                          child: Icon(
-                            CupertinoIcons.lightbulb,
-                            size: 20,
-                            color: Color(0xffffffff),
-                          ),
-                          style: _circleButtonStyle.copyWith(
-                            backgroundColor:
-                                WidgetStatePropertyAll(theme.buttonFill),
-                          ),
-                        ),
+                      _circleActionButton(
+                        tooltip: s.Hint,
+                        icon: CupertinoIcons.lightbulb,
+                        theme: theme,
+                        onPressed:
+                            needsHintButton && !model.gameIsOver && !cpuThinking
+                                ? _requestRewardedHints
+                                : null,
                       ),
-                    SizedBox(
-                      width: 52,
-                      height: 52,
-                      child: ElevatedButton(
+                      _circleActionButton(
+                        tooltip: s.RestartGame,
+                        icon: CupertinoIcons.refresh_bold,
+                        theme: theme,
+                        onPressed: _rematch,
+                      ),
+                      _circleActionButton(
+                        tooltip: s.Settings,
+                        icon: CupertinoIcons.settings,
+                        theme: theme,
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            fadeRoute((context) => const SettingsScreen()),
+                          );
+                        },
+                      ),
+                      _circleActionButton(
+                        tooltip: s.Home,
+                        icon: CupertinoIcons.house_fill,
+                        theme: theme,
                         onPressed: () {
                           Navigator.of(context).pushReplacement(
                             fadeRoute((context) => const StartScreen()),
                           );
                         },
-                        child: Icon(
-                          CupertinoIcons.refresh_bold,
-                          size: 20,
-                          color: Color(0xffffffff),
-                        ),
-                        style: _circleButtonStyle.copyWith(
-                          backgroundColor:
-                              WidgetStatePropertyAll(theme.buttonFill),
-                        ),
+                      ),
+                    ],
+                  ),
+                  if (widget.settings.isDailyChallenge) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      s.DailyChallenge,
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: theme.lastMoveBorder,
                       ),
                     ),
-                    SizedBox(
-                      width: 52,
-                      height: 52,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                  builder: (context) => const MorePage()));
-                        },
-                        child: Icon(
-                          CupertinoIcons.question,
-                          size: 20,
-                          color: Color(0xffffffff),
-                        ),
-                        style: _circleButtonStyle.copyWith(
-                          backgroundColor:
-                              WidgetStatePropertyAll(theme.buttonFill),
-                        ),
-                      ),
-                    )
                   ],
-                ),
-                SizedBox(height: 20),
-                ThinkingIndicator(
-                  color: theme.thinking,
-                  height: Styling.thinkingSize,
-                  visible: model.player == _computerColor,
-                ),
-                SizedBox(height: 10),
-                ..._buildGameBoardDisplay(context, model, boxWidth, theme),
-                SizedBox(height: 20),
-                // The banner ad sits below the board in normal document
-                // flow so it can never overlap or block board taps.
-                if (_isAdLoaded)
-                  Container(
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                    height: 50.0,
-                    child: AdWidget(ad: _ad!),
+                  SizedBox(height: 20),
+                  ThinkingIndicator(
+                    color: theme.thinking,
+                    height: Styling.thinkingSize,
+                    visible: model.player == _computerColor,
                   ),
-              ],
-            ),
-          );
-        }),
+                  SizedBox(height: 10),
+                  ..._buildGameBoardDisplay(context, model, boxWidth, theme),
+                  SizedBox(height: 20),
+                  // The banner ad sits below the board in normal document
+                  // flow so it can never overlap or block board taps.
+                  if (_isAdLoaded)
+                    Container(
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                      height: 50.0,
+                      child: AdWidget(ad: _ad!),
+                    ),
+                ],
+              ),
+            );
+          }),
+        ),
       ),
     );
   }

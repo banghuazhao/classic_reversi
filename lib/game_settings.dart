@@ -8,11 +8,16 @@ import 'game_board.dart';
 import 'generated/l10n.dart';
 
 /// How strong the CPU opponent plays. Only relevant outside of 2-player mode.
-enum Difficulty { easy, medium, hard }
+///
+/// [superEasy] is intentionally last so the stored indexes for the original
+/// three difficulties remain backward compatible.
+enum Difficulty { easy, medium, hard, superEasy }
 
 extension DifficultyLabel on Difficulty {
   String label(BuildContext context) {
     switch (this) {
+      case Difficulty.superEasy:
+        return S.of(context).DifficultySuperEasy;
       case Difficulty.easy:
         return S.of(context).DifficultyEasy;
       case Difficulty.medium:
@@ -21,6 +26,10 @@ extension DifficultyLabel on Difficulty {
         return S.of(context).DifficultyHard;
     }
   }
+
+  int get boardSize => this == Difficulty.superEasy
+      ? GameBoard.compactSize
+      : GameBoard.standardSize;
 }
 
 /// Which side the human plays when there's a single human player.
@@ -59,4 +68,6 @@ class GameSettings {
     this.initialBoard,
     this.initialPlayer,
   });
+
+  int get boardSize => initialBoard?.size ?? difficulty.boardSize;
 }

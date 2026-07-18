@@ -5,6 +5,7 @@
   "How_to_play": "Come si gioca?",
   "How_to_play_explain": "Nel gioco, tutti i dischi dell'avversario allineati e compresi tra il disco appena posizionato e un altro disco del giocatore corrente vengono capovolti nel colore del giocatore corrente. L'obiettivo del gioco è avere la maggioranza dei dischi del proprio colore quando l'ultima casella vuota giocabile viene riempita.",
   "Difficulty": "Difficoltà",
+  "DifficultySuperEasy": "Facilissimo",
   "DifficultyEasy": "Facile",
   "DifficultyMedium": "Medio",
   "DifficultyHard": "Difficile",
@@ -82,5 +83,9 @@
   "AchPerfectGame": "Partita perfetta",
   "AchDailyChallenge": "Campione giornaliero",
   "AchGames10": "10 partite",
-  "AchGames50": "50 partite"
+  "AchGames50": "50 partite",
+  "OK": "OK",
+  "Undo": "Annulla",
+  "RestartGame": "Riavvia partita",
+  "Help": "Aiuto"
 }

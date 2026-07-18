@@ -11,8 +11,8 @@ void main() {
     final b = DailyChallenge.generate(date);
 
     expect(a.player, b.player);
-    for (var y = 0; y < GameBoard.height; y++) {
-      for (var x = 0; x < GameBoard.width; x++) {
+    for (var y = 0; y < a.board.height; y++) {
+      for (var x = 0; x < a.board.width; x++) {
         expect(
           a.board.getPieceAtLocation(x, y),
           b.board.getPieceAtLocation(x, y),

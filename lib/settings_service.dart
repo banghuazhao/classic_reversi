@@ -23,6 +23,7 @@ class SettingsService {
   static const _gamesPlayedKey = 'gamesPlayed';
   static const _currentStreakKey = 'currentStreak';
   static const _bestStreakKey = 'bestStreak';
+  static const _winsSuperEasyKey = 'winsSuperEasy';
   static const _winsEasyKey = 'winsEasy';
   static const _winsMediumKey = 'winsMedium';
   static const _winsHardKey = 'winsHard';
@@ -30,6 +31,7 @@ class SettingsService {
   static const _dailyCompletedDateKey = 'dailyCompletedDate';
   static const _dailyCompletionsKey = 'dailyCompletions';
   static const _unlockedAchievementsKey = 'unlockedAchievements';
+  static const _homeHowToPlayDismissedKey = 'homeHowToPlayDismissed';
 
   static Future<Difficulty> getDifficulty() async {
     final prefs = await SharedPreferences.getInstance();
@@ -125,11 +127,20 @@ class SettingsService {
     await prefs.setBool(_hapticsEnabledKey, value);
   }
 
+  static Future<bool> getHomeHowToPlayDismissed() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_homeHowToPlayDismissedKey) ?? false;
+  }
+
+  static Future<void> dismissHomeHowToPlay() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_homeHowToPlayDismissedKey, true);
+  }
+
   static Future<BoardThemeId> getBoardTheme() async {
     final prefs = await SharedPreferences.getInstance();
     final index = prefs.getInt(_boardThemeKey) ?? BoardThemeId.classic.index;
-    return BoardThemeId
-        .values[index.clamp(0, BoardThemeId.values.length - 1)];
+    return BoardThemeId.values[index.clamp(0, BoardThemeId.values.length - 1)];
   }
 
   static Future<void> setBoardTheme(BoardThemeId theme) async {
@@ -144,7 +155,8 @@ class SettingsService {
 
   static Future<void> incrementGamesPlayed() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_gamesPlayedKey, (prefs.getInt(_gamesPlayedKey) ?? 0) + 1);
+    await prefs.setInt(
+        _gamesPlayedKey, (prefs.getInt(_gamesPlayedKey) ?? 0) + 1);
   }
 
   static Future<int> getCurrentStreak() async {
@@ -175,6 +187,8 @@ class SettingsService {
   static Future<int> getWinsForDifficulty(Difficulty difficulty) async {
     final prefs = await SharedPreferences.getInstance();
     switch (difficulty) {
+      case Difficulty.superEasy:
+        return prefs.getInt(_winsSuperEasyKey) ?? 0;
       case Difficulty.easy:
         return prefs.getInt(_winsEasyKey) ?? 0;
       case Difficulty.medium:
@@ -187,6 +201,7 @@ class SettingsService {
   static Future<void> incrementWinsForDifficulty(Difficulty difficulty) async {
     final prefs = await SharedPreferences.getInstance();
     final key = switch (difficulty) {
+      Difficulty.superEasy => _winsSuperEasyKey,
       Difficulty.easy => _winsEasyKey,
       Difficulty.medium => _winsMediumKey,
       Difficulty.hard => _winsHardKey,
@@ -201,7 +216,8 @@ class SettingsService {
 
   static Future<void> incrementPerfectWins() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_perfectWinsKey, (prefs.getInt(_perfectWinsKey) ?? 0) + 1);
+    await prefs.setInt(
+        _perfectWinsKey, (prefs.getInt(_perfectWinsKey) ?? 0) + 1);
   }
 
   static String todayKey([DateTime? date]) {
@@ -238,7 +254,8 @@ class SettingsService {
 
   static Future<bool> unlockAchievement(String id) async {
     final prefs = await SharedPreferences.getInstance();
-    final current = (prefs.getStringList(_unlockedAchievementsKey) ?? []).toSet();
+    final current =
+        (prefs.getStringList(_unlockedAchievementsKey) ?? []).toSet();
     if (current.contains(id)) {
       return false;
     }

@@ -78,4 +78,32 @@ void main() {
     expect(stats.gamesPlayed, 0);
     expect(stats.wins, 0);
   });
+
+  test('daily rematch after completion does not inflate wins', () async {
+    final first = await AchievementsService.instance.recordGameOver(
+      model: _modelWithScores(black: 40, white: 24),
+      settings: const GameSettings(
+        difficulty: Difficulty.hard,
+        twoPlayerMode: false,
+        humanColor: PieceType.black,
+        isDailyChallenge: true,
+      ),
+    );
+    expect(first, isNotEmpty);
+
+    final rematch = await AchievementsService.instance.recordGameOver(
+      model: _modelWithScores(black: 40, white: 24),
+      settings: const GameSettings(
+        difficulty: Difficulty.hard,
+        twoPlayerMode: false,
+        humanColor: PieceType.black,
+        isDailyChallenge: true,
+      ),
+    );
+    expect(rematch, isEmpty);
+
+    final stats = await AchievementsService.instance.loadStats();
+    expect(stats.wins, 1);
+    expect(stats.gamesPlayed, 1);
+  });
 }

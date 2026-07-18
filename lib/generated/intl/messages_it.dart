@@ -63,12 +63,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "DifficultyEasy": MessageLookupByLibrary.simpleMessage("Facile"),
     "DifficultyHard": MessageLookupByLibrary.simpleMessage("Difficile"),
     "DifficultyMedium": MessageLookupByLibrary.simpleMessage("Medio"),
+    "DifficultySuperEasy": MessageLookupByLibrary.simpleMessage("Facilissimo"),
     "FirstPlayerComputer": MessageLookupByLibrary.simpleMessage("Computer"),
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Giocatore"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Casuale"),
     "GameOver": MessageLookupByLibrary.simpleMessage("Fine partita"),
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("Partite giocate"),
     "Haptics": MessageLookupByLibrary.simpleMessage("Vibrazione"),
+    "Help": MessageLookupByLibrary.simpleMessage("Aiuto"),
     "Hint": MessageLookupByLibrary.simpleMessage("Suggerimento"),
     "HintsEnabled": MessageLookupByLibrary.simpleMessage(
       "Suggerimenti attivati per questa partita.",
@@ -80,6 +82,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "More": MessageLookupByLibrary.simpleMessage("Altro"),
     "MoreApps": MessageLookupByLibrary.simpleMessage("Altre App"),
+    "OK": MessageLookupByLibrary.simpleMessage("OK"),
     "PerfectWins": MessageLookupByLibrary.simpleMessage("Vittorie perfette"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Gioca con un amico su questo dispositivo",
@@ -104,6 +107,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "Rematch": MessageLookupByLibrary.simpleMessage("Rivincita"),
     "RemoveAds": MessageLookupByLibrary.simpleMessage("Rimuovi annunci"),
+    "RestartGame": MessageLookupByLibrary.simpleMessage("Riavvia partita"),
     "RestoreNothing": MessageLookupByLibrary.simpleMessage(
       "Nessun acquisto da ripristinare.",
     ),
@@ -128,6 +132,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "TwoPlayersMode": MessageLookupByLibrary.simpleMessage(
       "2 giocatori (a turno)",
     ),
+    "Undo": MessageLookupByLibrary.simpleMessage("Annulla"),
     "Watch": MessageLookupByLibrary.simpleMessage("Guarda"),
     "WatchAd": MessageLookupByLibrary.simpleMessage("Guarda annuncio"),
     "WatchAdForHint": MessageLookupByLibrary.simpleMessage(

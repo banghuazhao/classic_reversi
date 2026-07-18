@@ -19,9 +19,10 @@ class GameModel {
   factory GameModel.initial({
     GameBoard? board,
     PieceType? player,
+    int boardSize = GameBoard.standardSize,
   }) {
     return GameModel(
-      board: board ?? GameBoard(),
+      board: board ?? GameBoard(size: boardSize),
       player: player ?? PieceType.black,
     );
   }

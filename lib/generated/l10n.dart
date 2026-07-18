@@ -64,6 +64,16 @@ class S {
     return Intl.message('More Apps', name: 'MoreApps', desc: '', args: []);
   }
 
+  /// `More apps are available in the iOS and Android versions.`
+  String get MoreAppsUnavailable {
+    return Intl.message(
+      'More apps are available in the iOS and Android versions.',
+      name: 'MoreAppsUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Falling Block Puzzle`
   String get falling_block_puzzle {
     return Intl.message(
@@ -304,6 +314,116 @@ class S {
     );
   }
 
+  /// `Make a move`
+  String get HowToMoveTitle {
+    return Intl.message(
+      'Make a move',
+      name: 'HowToMoveTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Place a disk on an empty square so that one or more opposing disks are trapped in a straight horizontal, vertical, or diagonal line between your new disk and another one of your disks. All trapped disks flip to your color.`
+  String get HowToMoveBody {
+    return Intl.message(
+      'Place a disk on an empty square so that one or more opposing disks are trapped in a straight horizontal, vertical, or diagonal line between your new disk and another one of your disks. All trapped disks flip to your color.',
+      name: 'HowToMoveBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Take turns`
+  String get HowToTurnsTitle {
+    return Intl.message(
+      'Take turns',
+      name: 'HowToTurnsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Black moves first. If a player has no legal move, their turn is passed automatically. The game continues until neither player can move.`
+  String get HowToTurnsBody {
+    return Intl.message(
+      'Black moves first. If a player has no legal move, their turn is passed automatically. The game continues until neither player can move.',
+      name: 'HowToTurnsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finish with the most disks`
+  String get HowToWinTitle {
+    return Intl.message(
+      'Finish with the most disks',
+      name: 'HowToWinTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The game ends when the board is full or neither side has a legal move. The player with more disks on the board wins.`
+  String get HowToWinBody {
+    return Intl.message(
+      'The game ends when the board is full or neither side has a legal move. The player with more disks on the board wins.',
+      name: 'HowToWinBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Strategy tips`
+  String get HowToTipsTitle {
+    return Intl.message(
+      'Strategy tips',
+      name: 'HowToTipsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Corners can never be flipped, so work toward them carefully. Avoid giving away squares beside an open corner. Mobility matters: try to keep several legal moves available while limiting your opponent's choices.`
+  String get HowToTipsBody {
+    return Intl.message(
+      'Corners can never be flipped, so work toward them carefully. Avoid giving away squares beside an open corner. Mobility matters: try to keep several legal moves available while limiting your opponent\'s choices.',
+      name: 'HowToTipsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Game controls`
+  String get HowToControlsTitle {
+    return Intl.message(
+      'Game controls',
+      name: 'HowToControlsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Undo returns to the position before your last move. Hint highlights legal squares. Restart begins the same game setup again. Settings changes sound, haptics, and theme. Home returns to the beginning screen.`
+  String get HowToControlsBody {
+    return Intl.message(
+      'Undo returns to the position before your last move. Hint highlights legal squares. Restart begins the same game setup again. Settings changes sound, haptics, and theme. Home returns to the beginning screen.',
+      name: 'HowToControlsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rules, controls, strategy tips, and app instructions`
+  String get HowToLearnMore {
+    return Intl.message(
+      'Rules, controls, strategy tips, and app instructions',
+      name: 'HowToLearnMore',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Classic Reversi`
   String get Classic_Reversi {
     return Intl.message(
@@ -317,6 +437,16 @@ class S {
   /// `Difficulty`
   String get Difficulty {
     return Intl.message('Difficulty', name: 'Difficulty', desc: '', args: []);
+  }
+
+  /// `Super Easy`
+  String get DifficultySuperEasy {
+    return Intl.message(
+      'Super Easy',
+      name: 'DifficultySuperEasy',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Easy`
@@ -529,6 +659,36 @@ class S {
     );
   }
 
+  /// `A one-time purchase removes banner and app-open ads. The purchase is linked to your App Store account and can be restored on your other devices.`
+  String get PurchaseBenefits {
+    return Intl.message(
+      'A one-time purchase removes banner and app-open ads. The purchase is linked to your App Store account and can be restored on your other devices.',
+      name: 'PurchaseBenefits',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Already purchased? Restore it from your App Store account.`
+  String get RestorePurchaseHelp {
+    return Intl.message(
+      'Already purchased? Restore it from your App Store account.',
+      name: 'RestorePurchaseHelp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `See purchase benefits or restore an existing purchase`
+  String get PurchaseSettingsSubtitle {
+    return Intl.message(
+      'See purchase benefits or restore an existing purchase',
+      name: 'PurchaseSettingsSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Settings`
   String get Settings {
     return Intl.message('Settings', name: 'Settings', desc: '', args: []);
@@ -704,6 +864,16 @@ class S {
     return Intl.message('Stats', name: 'Stats', desc: '', args: []);
   }
 
+  /// `Wins`
+  String get Wins {
+    return Intl.message('Wins', name: 'Wins', desc: '', args: []);
+  }
+
+  /// `Losses`
+  String get Losses {
+    return Intl.message('Losses', name: 'Losses', desc: '', args: []);
+  }
+
   /// `Achievements`
   String get Achievements {
     return Intl.message(
@@ -774,6 +944,16 @@ class S {
     return Intl.message(
       'Perfect wins',
       name: 'PerfectWins',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Daily challenges completed`
+  String get DailyCompletions {
+    return Intl.message(
+      'Daily challenges completed',
+      name: 'DailyCompletions',
       desc: '',
       args: [],
     );
@@ -857,6 +1037,31 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `OK`
+  String get OK {
+    return Intl.message('OK', name: 'OK', desc: '', args: []);
+  }
+
+  /// `Undo`
+  String get Undo {
+    return Intl.message('Undo', name: 'Undo', desc: '', args: []);
+  }
+
+  /// `Restart game`
+  String get RestartGame {
+    return Intl.message(
+      'Restart game',
+      name: 'RestartGame',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Help`
+  String get Help {
+    return Intl.message('Help', name: 'Help', desc: '', args: []);
   }
 }
 

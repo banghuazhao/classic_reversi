@@ -5,6 +5,7 @@
   "How_to_play": "Cara bermain?",
   "How_to_play_explain": "Dalam permainan ini, semua keping lawan yang berada dalam satu garis lurus dan diapit oleh keping yang baru diletakkan dan keping lain milik pemain saat ini akan dibalik menjadi warna pemain saat ini. Tujuan permainan adalah memiliki mayoritas keping dengan warna Anda saat kotak kosong terakhir yang bisa dimainkan terisi.",
   "Difficulty": "Tingkat Kesulitan",
+  "DifficultySuperEasy": "Sangat Mudah",
   "DifficultyEasy": "Mudah",
   "DifficultyMedium": "Sedang",
   "DifficultyHard": "Sulit",
@@ -82,5 +83,9 @@
   "AchPerfectGame": "Permainan sempurna",
   "AchDailyChallenge": "Juara harian",
   "AchGames10": "10 permainan",
-  "AchGames50": "50 permainan"
+  "AchGames50": "50 permainan",
+  "OK": "OK",
+  "Undo": "Urungkan",
+  "RestartGame": "Mulai ulang permainan",
+  "Help": "Bantuan"
 }

@@ -31,6 +31,7 @@ class _FlipPieceState extends State<FlipPiece>
   late AnimationController _controller;
   late PieceType _displayType;
   PieceType? _pendingType;
+  bool _playAppear = false;
 
   @override
   void initState() {
@@ -63,16 +64,23 @@ class _FlipPieceState extends State<FlipPiece>
 
     final becameEmpty = widget.type == PieceType.empty;
     final wasEmpty = oldWidget.type == PieceType.empty;
-    final colorFlip = !wasEmpty &&
-        !becameEmpty &&
-        widget.type != oldWidget.type;
+    final colorFlip =
+        !wasEmpty && !becameEmpty && widget.type != oldWidget.type;
 
     if (colorFlip) {
+      _playAppear = false;
       _pendingType = widget.type;
       _controller.forward(from: 0);
-    } else {
-      // Place or clear: update immediately (placement uses a short scale).
+    } else if (wasEmpty && !becameEmpty) {
+      // Newly placed piece: one-shot scale-in.
       _pendingType = null;
+      _controller.reset();
+      _playAppear = true;
+      setState(() => _displayType = widget.type);
+    } else {
+      // Cleared (undo) or other instant change.
+      _pendingType = null;
+      _playAppear = false;
       _controller.reset();
       setState(() => _displayType = widget.type);
     }
@@ -90,6 +98,38 @@ class _FlipPieceState extends State<FlipPiece>
       return const SizedBox.expand();
     }
 
+    final disc = Container(
+      decoration: BoxDecoration(
+        gradient: widget.theme.pieceGradients[_displayType],
+        border: widget.isLastMove && _displayType != PieceType.empty
+            ? Border.all(
+                color: widget.theme.lastMoveBorder,
+                width: math.max(widget.size * 0.08, 3),
+                strokeAlign: BorderSide.strokeAlignInside,
+              )
+            : null,
+        borderRadius: BorderRadius.all(Radius.circular(widget.size)),
+      ),
+    );
+
+    if (_playAppear) {
+      return TweenAnimationBuilder<double>(
+        key: ValueKey('appear-${identityHashCode(this)}-$_displayType'),
+        tween: Tween(begin: 0.85, end: 1.0),
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOutBack,
+        onEnd: () {
+          if (mounted) {
+            setState(() => _playAppear = false);
+          }
+        },
+        builder: (context, scale, child) {
+          return Transform.scale(scale: scale, child: child);
+        },
+        child: disc,
+      );
+    }
+
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
@@ -97,41 +137,17 @@ class _FlipPieceState extends State<FlipPiece>
         final scaleX = _controller.isAnimating
             ? (t < 0.5 ? 1 - t * 2 : (t - 0.5) * 2)
             : 1.0;
-
-        final appear = widget.type != PieceType.empty &&
-            _displayType != PieceType.empty &&
-            !_controller.isAnimating;
-
-        return TweenAnimationBuilder<double>(
-          tween: Tween(begin: appear ? 0.85 : 1.0, end: 1.0),
-          duration: appear ? const Duration(milliseconds: 180) : Duration.zero,
-          curve: Curves.easeOutBack,
-          builder: (context, scale, _) {
-            final sx = scale * scaleX.clamp(0.05, 1.0);
-            return Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.001)
-                ..rotateY((1 - scaleX) * math.pi * 0.5)
-                ..scaleByDouble(sx, scale, 1.0, 1.0),
-              child: child,
-            );
-          },
+        final sx = scaleX.clamp(0.05, 1.0);
+        return Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.001)
+            ..rotateY((1 - scaleX) * math.pi * 0.5)
+            ..scaleByDouble(sx, 1.0, 1.0, 1.0),
+          child: child,
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: widget.theme.pieceGradients[_displayType],
-          border: widget.isLastMove && _displayType != PieceType.empty
-              ? Border.all(
-                  color: widget.theme.lastMoveBorder,
-                  width: math.max(widget.size * 0.08, 3),
-                  strokeAlign: BorderSide.strokeAlignInside,
-                )
-              : null,
-          borderRadius: BorderRadius.all(Radius.circular(widget.size)),
-        ),
-      ),
+      child: disc,
     );
   }
 }

@@ -1,9 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:classic_reversi/main.dart';
 
 void main() {
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
+  testWidgets('difficulty is hidden in two-player mode', (tester) async {
+    await tester.pumpWidget(MyApp());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Difficulty'), findsOneWidget);
+    expect(find.text('Hard'), findsOneWidget);
+
+    final friendMode = find.text('Play against a friend on this device');
+    await tester.ensureVisible(friendMode);
+    await tester.tap(friendMode);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Difficulty'), findsNothing);
+    expect(find.text('Easy'), findsNothing);
+    expect(find.text('Medium'), findsNothing);
+    expect(find.text('Hard'), findsNothing);
+
+    await tester.tap(friendMode);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Difficulty'), findsOneWidget);
+    expect(find.text('Hard'), findsOneWidget);
+  });
+
   testWidgets('start screen leads into a playable game', (tester) async {
     await tester.pumpWidget(MyApp());
     await tester.pumpAndSettle();
@@ -48,5 +77,22 @@ void main() {
     final undoButton =
         tester.widget<ElevatedButton>(find.byType(ElevatedButton).first);
     expect(undoButton.onPressed, isNull);
+  });
+
+  testWidgets('super easy uses a smaller board', (tester) async {
+    await tester.pumpWidget(MyApp());
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Super Easy'));
+    await tester.tap(find.text('Super Easy'));
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Start Game'));
+    await tester.tap(find.text('Start Game'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('cell-5-5')), findsOneWidget);
+    expect(find.byKey(const ValueKey('cell-6-0')), findsNothing);
+    expect(find.byKey(const ValueKey('cell-0-6')), findsNothing);
   });
 }

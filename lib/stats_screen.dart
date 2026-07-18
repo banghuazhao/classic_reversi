@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'achievements_service.dart';
+import 'app_chrome.dart';
 import 'generated/l10n.dart';
 import 'theme_controller.dart';
 
@@ -30,155 +31,379 @@ class _StatsScreenState extends State<StatsScreen> {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final theme = ThemeController.instance.theme;
-    final stats = _stats;
-
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [theme.backgroundStart, theme.backgroundFinish],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(CupertinoIcons.back,
-                          color: Color(0xffffffff)),
-                    ),
-                    Expanded(
-                      child: Text(
-                        s.Stats,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontFamily: 'Roboto',
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xffffffff),
+    return ListenableBuilder(
+      listenable: ThemeController.instance,
+      builder: (context, _) {
+        final stats = _stats;
+        return AppGradientScaffold(
+          title: s.Stats,
+          child: stats == null
+              ? const Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                )
+              : RefreshIndicator(
+                  onRefresh: _load,
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+                    children: [
+                      _SummaryCard(stats: stats),
+                      const SizedBox(height: 22),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final columns = constraints.maxWidth >= 620 ? 3 : 2;
+                          final width =
+                              (constraints.maxWidth - (columns - 1) * 12) /
+                                  columns;
+                          final cards = [
+                            _MetricCard(
+                              label: s.Wins,
+                              value: '${stats.wins}',
+                              icon: CupertinoIcons.hand_thumbsup_fill,
+                            ),
+                            _MetricCard(
+                              label: s.Losses,
+                              value: '${stats.losses}',
+                              icon: CupertinoIcons.hand_thumbsdown_fill,
+                            ),
+                            _MetricCard(
+                              label: s.Ties,
+                              value: '${stats.ties}',
+                              icon: CupertinoIcons.equal_circle_fill,
+                            ),
+                            _MetricCard(
+                              label: s.CurrentStreak,
+                              value: '${stats.currentStreak}',
+                              icon: CupertinoIcons.flame_fill,
+                            ),
+                            _MetricCard(
+                              label: s.BestStreak,
+                              value: '${stats.bestStreak}',
+                              icon: CupertinoIcons.bolt_fill,
+                            ),
+                            _MetricCard(
+                              label: s.PerfectWins,
+                              value: '${stats.perfectWins}',
+                              icon: CupertinoIcons.sparkles,
+                            ),
+                          ];
+                          return Wrap(
+                            spacing: 12,
+                            runSpacing: 12,
+                            children: cards
+                                .map((card) =>
+                                    SizedBox(width: width, child: card))
+                                .toList(),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      AppSectionTitle(s.WinsByDifficulty),
+                      AppInfoCard(
+                        child: Row(
+                          children: [
+                            _DifficultyStat(
+                              label: s.DifficultySuperEasy,
+                              value: stats.winsSuperEasy,
+                            ),
+                            _DifficultyStat(
+                              label: s.DifficultyEasy,
+                              value: stats.winsEasy,
+                            ),
+                            _DifficultyStat(
+                              label: s.DifficultyMedium,
+                              value: stats.winsMedium,
+                            ),
+                            _DifficultyStat(
+                              label: s.DifficultyHard,
+                              value: stats.winsHard,
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 48),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: stats == null
-                    ? const Center(
-                        child: CircularProgressIndicator(color: Colors.white),
-                      )
-                    : ListView(
-                        padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                      const SizedBox(height: 24),
+                      AppSectionTitle(s.DailyChallenge),
+                      _WideMetricCard(
+                        value: '${stats.dailyCompletions}',
+                        label: s.DailyCompletions,
+                        icon: CupertinoIcons.calendar_badge_plus,
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
                         children: [
-                          _statCard(s.WinsLosses(stats.wins, stats.losses)),
-                          _statCard('${s.Ties}: ${stats.ties}'),
-                          _statCard(
-                              '${s.GamesPlayed}: ${stats.gamesPlayed}'),
-                          _statCard(
-                            '${s.WinRate}: ${(stats.winRate * 100).toStringAsFixed(0)}%',
-                          ),
-                          _statCard(
-                              '${s.CurrentStreak}: ${stats.currentStreak}'),
-                          _statCard('${s.BestStreak}: ${stats.bestStreak}'),
-                          _statCard(
-                            '${s.WinsByDifficulty}: '
-                            '${s.DifficultyEasy} ${stats.winsEasy} · '
-                            '${s.DifficultyMedium} ${stats.winsMedium} · '
-                            '${s.DifficultyHard} ${stats.winsHard}',
-                          ),
-                          _statCard(
-                              '${s.PerfectWins}: ${stats.perfectWins}'),
-                          _statCard(
-                            '${s.DailyChallenge}: ${stats.dailyCompletions}',
-                          ),
-                          const SizedBox(height: 18),
-                          Text(
-                            s.Achievements,
-                            style: const TextStyle(
-                              fontFamily: 'Roboto',
-                              fontSize: 18,
-                              fontWeight: FontWeight.w900,
-                              color: Color(0xffffffff),
+                          Expanded(child: AppSectionTitle(s.Achievements)),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              '${stats.unlockedAchievements.length}/${AchievementId.values.length}',
+                              style: const TextStyle(
+                                fontFamily: 'Roboto',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                color: AppChrome.secondaryText,
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 10),
-                          ...AchievementId.values.map((id) {
-                            final unlocked = stats.unlockedAchievements
-                                .contains(id.storageKey);
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 10),
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 14),
-                              decoration: BoxDecoration(
-                                color: unlocked
-                                    ? const Color(0x50ffffff)
-                                    : const Color(0x28ffffff),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    unlocked
-                                        ? CupertinoIcons.star_fill
-                                        : CupertinoIcons.star,
-                                    color: unlocked
-                                        ? theme.lastMoveBorder
-                                        : const Color(0x80ffffff),
-                                    size: 20,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      id.title(context),
-                                      style: TextStyle(
-                                        fontFamily: 'Roboto',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                        color: unlocked
-                                            ? const Color(0xffffffff)
-                                            : const Color(0x90ffffff),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }),
                         ],
                       ),
-              ),
-            ],
+                      ...AchievementId.values.map(
+                        (id) => _AchievementRow(
+                          title: id.title(context),
+                          unlocked: stats.unlockedAchievements
+                              .contains(id.storageKey),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+        );
+      },
+    );
+  }
+}
+
+class _SummaryCard extends StatelessWidget {
+  const _SummaryCard({required this.stats});
+
+  final PlayerStats stats;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final palette = ThemeController.instance.theme;
+    final percent = (stats.winRate * 100).round();
+    return AppInfoCard(
+      child: Row(
+        children: [
+          SizedBox(
+            width: 82,
+            height: 82,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox.expand(
+                  child: CircularProgressIndicator(
+                    value: stats.gamesPlayed == 0 ? 0 : stats.winRate,
+                    strokeWidth: 8,
+                    backgroundColor: const Color(0x2EFFFFFF),
+                    color: palette.lastMoveBorder,
+                  ),
+                ),
+                Text(
+                  '$percent%',
+                  style: const TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    color: AppChrome.primaryText,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+          const SizedBox(width: 18),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  s.WinRate,
+                  style: const TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: AppChrome.primaryText,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  '${s.GamesPlayed}: ${stats.gamesPlayed}',
+                  style: const TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 14,
+                    color: AppChrome.secondaryText,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
+}
 
-  Widget _statCard(String text) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-      decoration: BoxDecoration(
-        color: const Color(0x40ffffff),
-        borderRadius: BorderRadius.circular(12),
+class _MetricCard extends StatelessWidget {
+  const _MetricCard({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
+
+  final String label;
+  final String value;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = ThemeController.instance.theme;
+    return AppInfoCard(
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20, color: palette.lastMoveBorder),
+          const SizedBox(height: 10),
+          Text(
+            value,
+            style: const TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 26,
+              fontWeight: FontWeight.w900,
+              color: AppChrome.primaryText,
+            ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 13,
+              color: AppChrome.secondaryText,
+            ),
+          ),
+        ],
       ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontFamily: 'Roboto',
-          fontSize: 15,
-          fontWeight: FontWeight.w700,
-          color: Color(0xffffffff),
+    );
+  }
+}
+
+class _DifficultyStat extends StatelessWidget {
+  const _DifficultyStat({required this.label, required this.value});
+
+  final String label;
+  final int value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        children: [
+          Text(
+            '$value',
+            style: const TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
+              color: AppChrome.primaryText,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 13,
+              color: AppChrome.secondaryText,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WideMetricCard extends StatelessWidget {
+  const _WideMetricCard({
+    required this.value,
+    required this.label,
+    required this.icon,
+  });
+
+  final String value;
+  final String label;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = ThemeController.instance.theme;
+    return AppInfoCard(
+      child: Row(
+        children: [
+          Icon(icon, color: palette.lastMoveBorder, size: 28),
+          const SizedBox(width: 14),
+          Text(
+            value,
+            style: const TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 26,
+              fontWeight: FontWeight.w900,
+              color: AppChrome.primaryText,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 14,
+                color: AppChrome.secondaryText,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AchievementRow extends StatelessWidget {
+  const _AchievementRow({required this.title, required this.unlocked});
+
+  final String title;
+  final bool unlocked;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = ThemeController.instance.theme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: unlocked ? AppChrome.cardColor : AppChrome.subtleCardColor,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppChrome.borderColor),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Icon(
+                unlocked ? CupertinoIcons.star_fill : CupertinoIcons.lock_fill,
+                color:
+                    unlocked ? palette.lastMoveBorder : AppChrome.secondaryText,
+                size: 20,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: unlocked
+                        ? AppChrome.primaryText
+                        : AppChrome.secondaryText,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

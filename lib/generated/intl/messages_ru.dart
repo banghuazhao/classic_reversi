@@ -63,12 +63,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "DifficultyEasy": MessageLookupByLibrary.simpleMessage("Лёгкий"),
     "DifficultyHard": MessageLookupByLibrary.simpleMessage("Сложный"),
     "DifficultyMedium": MessageLookupByLibrary.simpleMessage("Средний"),
+    "DifficultySuperEasy": MessageLookupByLibrary.simpleMessage("Очень лёгкий"),
     "FirstPlayerComputer": MessageLookupByLibrary.simpleMessage("Компьютер"),
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Игрок"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Случайно"),
     "GameOver": MessageLookupByLibrary.simpleMessage("Игра окончена"),
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("Сыграно партий"),
     "Haptics": MessageLookupByLibrary.simpleMessage("Вибрация"),
+    "Help": MessageLookupByLibrary.simpleMessage("Справка"),
     "Hint": MessageLookupByLibrary.simpleMessage("Подсказка"),
     "HintsEnabled": MessageLookupByLibrary.simpleMessage(
       "Подсказки включены для этой игры.",
@@ -80,6 +82,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "More": MessageLookupByLibrary.simpleMessage("Ещё"),
     "MoreApps": MessageLookupByLibrary.simpleMessage("Другие приложения"),
+    "OK": MessageLookupByLibrary.simpleMessage("OK"),
     "PerfectWins": MessageLookupByLibrary.simpleMessage("Идеальные победы"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Играть с другом на этом устройстве",
@@ -104,6 +107,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "Rematch": MessageLookupByLibrary.simpleMessage("Ещё раз"),
     "RemoveAds": MessageLookupByLibrary.simpleMessage("Убрать рекламу"),
+    "RestartGame": MessageLookupByLibrary.simpleMessage("Перезапустить игру"),
     "RestoreNothing": MessageLookupByLibrary.simpleMessage(
       "Нет покупок для восстановления.",
     ),
@@ -128,6 +132,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "TwoPlayersMode": MessageLookupByLibrary.simpleMessage(
       "2 игрока (по очереди)",
     ),
+    "Undo": MessageLookupByLibrary.simpleMessage("Отменить"),
     "Watch": MessageLookupByLibrary.simpleMessage("Смотреть"),
     "WatchAd": MessageLookupByLibrary.simpleMessage("Смотреть рекламу"),
     "WatchAdForHint": MessageLookupByLibrary.simpleMessage(
