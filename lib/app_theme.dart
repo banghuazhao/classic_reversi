@@ -32,6 +32,18 @@ class AppTheme {
   final Color buttonFill;
   final Color scoreWhite;
   final Color scoreBlack;
+  final Color tableGrainLight;
+  final Color tableGrainDark;
+  final Color boardFrameLight;
+  final Color boardFrameMid;
+  final Color boardFrameDark;
+  final Color boardFrameHighlight;
+  final Color boardSurfaceLight;
+  final Color boardSurfaceDark;
+  final Color boardCellLight;
+  final Color boardCellDark;
+  final Color boardGrooveLight;
+  final Color boardGrooveDark;
   final Map<PieceType, LinearGradient> pieceGradients;
 
   const AppTheme({
@@ -43,6 +55,18 @@ class AppTheme {
     required this.buttonFill,
     required this.scoreWhite,
     required this.scoreBlack,
+    required this.tableGrainLight,
+    required this.tableGrainDark,
+    required this.boardFrameLight,
+    required this.boardFrameMid,
+    required this.boardFrameDark,
+    required this.boardFrameHighlight,
+    required this.boardSurfaceLight,
+    required this.boardSurfaceDark,
+    required this.boardCellLight,
+    required this.boardCellDark,
+    required this.boardGrooveLight,
+    required this.boardGrooveDark,
     required this.pieceGradients,
   });
 
@@ -55,16 +79,30 @@ class AppTheme {
     buttonFill: Color(0x60421E08),
     scoreWhite: Color(0xffffffff),
     scoreBlack: Color(0xff000000),
+    tableGrainLight: Color(0xffffd9a1),
+    tableGrainDark: Color(0xff4a1e09),
+    boardFrameLight: Color(0xffa76736),
+    boardFrameMid: Color(0xff70401f),
+    boardFrameDark: Color(0xff32170a),
+    boardFrameHighlight: Color(0xffffcc85),
+    boardSurfaceLight: Color(0xff397658),
+    boardSurfaceDark: Color(0xff174330),
+    boardCellLight: Color(0xffa3e2bd),
+    boardCellDark: Color(0xff082a1e),
+    boardGrooveLight: Color(0xff75b993),
+    boardGrooveDark: Color(0xff071d15),
     pieceGradients: {
       PieceType.black: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xff101010), Color(0xff303030)],
+        colors: [Color(0xff353638), Color(0xff050607), Color(0xff191a1c)],
+        stops: [0, 0.62, 1],
       ),
       PieceType.white: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xffffffff), Color(0xffe0e0e0)],
+        colors: [Color(0xffffffff), Color(0xffd9d5ca), Color(0xfff4efe4)],
+        stops: [0, 0.68, 1],
       ),
       PieceType.empty: LinearGradient(
         begin: Alignment.topLeft,
@@ -83,16 +121,30 @@ class AppTheme {
     buttonFill: Color(0x60304050),
     scoreWhite: Color(0xffffffff),
     scoreBlack: Color(0xffB0BEC5),
+    tableGrainLight: Color(0xff718aa2),
+    tableGrainDark: Color(0xff03070c),
+    boardFrameLight: Color(0xff3d5062),
+    boardFrameMid: Color(0xff243342),
+    boardFrameDark: Color(0xff0a1119),
+    boardFrameHighlight: Color(0xff9ab3ca),
+    boardSurfaceLight: Color(0xff28575a),
+    boardSurfaceDark: Color(0xff0e2930),
+    boardCellLight: Color(0xff79b7b4),
+    boardCellDark: Color(0xff041a20),
+    boardGrooveLight: Color(0xff518b8d),
+    boardGrooveDark: Color(0xff020e13),
     pieceGradients: {
       PieceType.black: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xff0A0A0A), Color(0xff2A2A2A)],
+        colors: [Color(0xff34383c), Color(0xff040506), Color(0xff15191c)],
+        stops: [0, 0.62, 1],
       ),
       PieceType.white: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xffF5F5F5), Color(0xffCFD8DC)],
+        colors: [Color(0xffffffff), Color(0xffc9d2d5), Color(0xffedf2f2)],
+        stops: [0, 0.68, 1],
       ),
       PieceType.empty: LinearGradient(
         begin: Alignment.topLeft,
@@ -111,16 +163,30 @@ class AppTheme {
     buttonFill: Color(0x80000000),
     scoreWhite: Color(0xffffffff),
     scoreBlack: Color(0xff000000),
+    tableGrainLight: Color(0xff8ddf94),
+    tableGrainDark: Color(0xff031807),
+    boardFrameLight: Color(0xff405943),
+    boardFrameMid: Color(0xff223c26),
+    boardFrameDark: Color(0xff061409),
+    boardFrameHighlight: Color(0xffbce9b7),
+    boardSurfaceLight: Color(0xff36a150),
+    boardSurfaceDark: Color(0xff0c5724),
+    boardCellLight: Color(0xffb5f3bd),
+    boardCellDark: Color(0xff02290d),
+    boardGrooveLight: Color(0xff8adb96),
+    boardGrooveDark: Color(0xff001c08),
     pieceGradients: {
       PieceType.black: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xff000000), Color(0xff222222)],
+        colors: [Color(0xff3a3a3a), Color(0xff000000), Color(0xff171717)],
+        stops: [0, 0.6, 1],
       ),
       PieceType.white: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xffffffff), Color(0xffeeeeee)],
+        colors: [Color(0xffffffff), Color(0xffd7d7d7), Color(0xffffffff)],
+        stops: [0, 0.68, 1],
       ),
       PieceType.empty: LinearGradient(
         begin: Alignment.topLeft,

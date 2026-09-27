@@ -24,6 +24,7 @@ import 'app_theme.dart';
 import 'feedback_service.dart';
 import 'flip_piece.dart';
 import 'game_board.dart';
+import 'game_materials.dart';
 import 'game_model.dart';
 import 'game_over_sheet.dart';
 import 'game_settings.dart';
@@ -217,10 +218,7 @@ class _MyAppState extends State<MyApp> {
             color: const Color(0xff241710),
             borderRadius: BorderRadius.circular(8),
           ),
-          textStyle: const TextStyle(
-            fontFamily: 'Roboto',
-            color: Colors.white,
-          ),
+          textStyle: const TextStyle(fontFamily: 'Roboto', color: Colors.white),
         ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
@@ -309,6 +307,11 @@ class _GameScreenState extends State<GameScreen> {
   // highlighted and is easy to spot (especially after the CPU moves).
   Position? _lastMove;
 
+  // Visual-only event counter and strength for one-shot board feedback. They
+  // never participate in move validation or game state.
+  int _moveImpactId = 0;
+  int _lastFlippedCount = 0;
+
   // Snapshots of the board from just before each human move, used to
   // support taking a move back. Cleared on undo so only one undo can be
   // used per turn until another move is made.
@@ -378,8 +381,10 @@ class _GameScreenState extends State<GameScreen> {
           break;
         }
         final finder = MoveFinder(newModel.board);
-        final move =
-            await finder.findMove(newModel.player, widget.settings.difficulty);
+        final move = await finder.findMove(
+          newModel.player,
+          widget.settings.difficulty,
+        );
         if (generation != _turnGeneration) {
           break;
         }
@@ -400,9 +405,13 @@ class _GameScreenState extends State<GameScreen> {
             updatedModel.board,
             move,
           );
-          FeedbackService.instance.moveFeedback(flippedCount: flipped.length);
+          FeedbackService.instance.moveFeedback(
+            flippedCount: flipped.length,
+          );
           newModel = updatedModel;
           _lastMove = move;
+          _lastFlippedCount = flipped.length;
+          _moveImpactId++;
           yield newModel;
         } else {
           break;
@@ -479,7 +488,8 @@ class _GameScreenState extends State<GameScreen> {
             ad.dispose();
 
             print(
-                'Ad load failed (code=${error.code} message=${error.message})');
+              'Ad load failed (code=${error.code} message=${error.message})',
+            );
           },
         ),
       );
@@ -596,9 +606,8 @@ class _GameScreenState extends State<GameScreen> {
         newAchievements: unlocked,
         onRematch: _rematch,
         onHome: () {
-          Navigator.of(context).pushReplacement(
-            fadeRoute((context) => const StartScreen()),
-          );
+          Navigator.of(context)
+              .pushReplacement(fadeRoute((context) => const StartScreen()));
         },
       );
     } finally {
@@ -617,6 +626,8 @@ class _GameScreenState extends State<GameScreen> {
       _historyStack.clear();
       _canUndo = false;
       _lastMove = null;
+      _moveImpactId = 0;
+      _lastFlippedCount = 0;
       _gameOverHandled = false;
       _gameOverSheetVisible = false;
       _rewardedUndoCharges = 0;
@@ -651,6 +662,8 @@ class _GameScreenState extends State<GameScreen> {
           Position(x, y),
         );
         FeedbackService.instance.moveFeedback(flippedCount: flipped.length);
+        _lastFlippedCount = flipped.length;
+        _moveImpactId++;
         _userMovesController.add(updatedModel);
       }
     }
@@ -697,9 +710,11 @@ class _GameScreenState extends State<GameScreen> {
         }
         _showMessage(s.AdLoading);
       }
-      final ok = await _rewardedAdHelper.show(onUserEarnedReward: () {
-        _rewardedUndoCharges += 1;
-      });
+      final ok = await _rewardedAdHelper.show(
+        onUserEarnedReward: () {
+          _rewardedUndoCharges += 1;
+        },
+      );
       if (!mounted) {
         return;
       }
@@ -728,9 +743,11 @@ class _GameScreenState extends State<GameScreen> {
         }
         _showMessage(s.AdLoading);
       }
-      final ok = await _rewardedAdHelper.show(onUserEarnedReward: () {
-        _hintsUnlocked = true;
-      });
+      final ok = await _rewardedAdHelper.show(
+        onUserEarnedReward: () {
+          _hintsUnlocked = true;
+        },
+      );
       if (!mounted) {
         return;
       }
@@ -873,87 +890,112 @@ class _GameScreenState extends State<GameScreen> {
           : Styling.inactivePlayerIndicator,
       child: Column(
         children: <Widget>[
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: labelStyle,
+          Text(label, textAlign: TextAlign.center, style: labelStyle),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 240),
+            switchInCurve: Curves.easeOutBack,
+            switchOutCurve: Curves.easeInCubic,
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: ScaleTransition(
+                  scale: Tween(begin: 0.78, end: 1.0).animate(animation),
+                  child: child,
+                ),
+              );
+            },
+            child: Text(
+              scoreText,
+              key: ValueKey('$player-$scoreText'),
+              textAlign: TextAlign.center,
+              style: scoreStyle,
+            ),
           ),
-          Text(
-            scoreText,
-            textAlign: TextAlign.center,
-            style: scoreStyle,
-          )
         ],
       ),
     );
   }
 
-  List<Widget> _buildGameBoardDisplay(
-      BuildContext context, GameModel model, double boxWidth, AppTheme theme) {
-    final rows = <Widget>[];
-
-    double lineMargin = boxWidth > 40 ? 2.0 : 1.0;
-
+  Widget _buildGameBoardDisplay(
+    BuildContext context,
+    GameModel model,
+    double boxWidth,
+    AppTheme theme,
+  ) {
     final showLegalMoveHints =
         _showHints && model.player != _computerColor && !model.gameIsOver;
     final legalMoveHints = showLegalMoveHints
         ? model.board.getMovesForPlayer(model.player)
         : const <Position>[];
+    final cells = <Widget>[];
 
     for (var y = 0; y < model.board.height; y++) {
-      final spots = <Widget>[];
-
       for (var x = 0; x < model.board.width; x++) {
-        PieceType type = model.board.getPieceAtLocation(x, y);
+        final type = model.board.getPieceAtLocation(x, y);
         final isLastMove = _lastMove?.x == x && _lastMove?.y == y;
         final isLegalMoveHint = type == PieceType.empty &&
             legalMoveHints.any((p) => p.x == x && p.y == y);
+        final distanceFromMove = _lastMove == null
+            ? 0
+            : max((x - _lastMove!.x).abs(), (y - _lastMove!.y).abs());
+        final flipDelay = Duration(
+          milliseconds: (distanceFromMove * 46).clamp(0, 184),
+        );
 
-        spots.add(Container(
-          key: ValueKey('cell-$x-$y'),
-          margin: EdgeInsets.all(lineMargin),
-          width: boxWidth,
-          height: boxWidth,
-          decoration: BoxDecoration(
-            gradient: theme.pieceGradients[PieceType.empty],
-          ),
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              _attemptUserMove(model, x, y);
-            },
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                FlipPiece(
-                  type: type,
-                  size: boxWidth,
-                  isLastMove: isLastMove,
-                  theme: theme,
-                  duration: Styling.pieceFlipDuration,
-                ),
-                if (isLegalMoveHint)
-                  Container(
-                    width: boxWidth * 0.3,
-                    height: boxWidth * 0.3,
-                    decoration: BoxDecoration(
-                      color: theme.hintDot,
-                      shape: BoxShape.circle,
+        cells.add(
+          Positioned(
+            left: x * boxWidth,
+            top: y * boxWidth,
+            width: boxWidth,
+            height: boxWidth,
+            child: SizedBox.expand(
+              key: ValueKey('cell-$x-$y'),
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => _attemptUserMove(model, x, y),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    if (isLastMove && type != PieceType.empty)
+                      MoveImpactHalo(
+                        key: ValueKey('move-halo-$_moveImpactId'),
+                        size: boxWidth,
+                        color: theme.lastMoveBorder,
+                      ),
+                    FlipPiece(
+                      type: type,
+                      size: boxWidth,
+                      isLastMove: isLastMove,
+                      theme: theme,
+                      duration: Styling.pieceFlipDuration,
+                      delay: flipDelay,
                     ),
-                  ),
-              ],
+                    if (isLegalMoveHint)
+                      MaterialMoveHint(
+                        size: boxWidth * 0.28,
+                        color: theme.hintDot,
+                      ),
+                  ],
+                ),
+              ),
             ),
           ),
-        ));
+        );
       }
-
-      rows.add(Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: spots,
-      ));
     }
 
-    return rows;
+    final board = MaterialBoard(
+      boardSize: model.board.size,
+      cellSize: boxWidth,
+      theme: theme,
+      child: Stack(children: cells),
+    );
+
+    return BoardImpactAnimator(
+      impactId: _moveImpactId,
+      flippedCount: _lastFlippedCount,
+      child: board,
+    );
   }
 
   // Builds out the Widget tree using the most recent GameModel from the stream.
@@ -987,145 +1029,154 @@ class _GameScreenState extends State<GameScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              theme.backgroundStart,
-              theme.backgroundFinish,
-            ],
+            colors: [theme.backgroundStart, theme.backgroundFinish],
           ),
         ),
-        child: SafeArea(
-          child: LayoutBuilder(builder: (context, constraints) {
-            double width = constraints.maxWidth;
-            double sideMargin = max(width * 0.08, 15);
-            // Size cells against the classic 8×8 footprint. A 6×6 Super Easy
-            // board therefore keeps comfortable tap targets while appearing
-            // visibly smaller instead of stretching to fill the same area.
-            const sizingGrid = GameBoard.standardSize;
-            double widthBasedBoxWidth =
-                (width - sideMargin * 2 - (sizingGrid - 1)) / sizingGrid;
+        child: TabletopTexture(
+          theme: theme,
+          child: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                double width = constraints.maxWidth;
+                // The outer page padding already protects the screen edge; keep
+                // the board itself generous so the material and piece detail is
+                // readable and every square remains an easy tap target.
+                double sideMargin = max(width * 0.035, 6);
+                // Size cells against the classic 8×8 footprint. A 6×6 Super Easy
+                // board therefore keeps comfortable tap targets while appearing
+                // visibly smaller instead of stretching to fill the same area.
+                const sizingGrid = GameBoard.standardSize;
+                const boardFrameReserve = 20.0;
+                double widthBasedBoxWidth =
+                    (width - sideMargin * 2 - boardFrameReserve) / sizingGrid;
 
-            // Always reserve space for (when enabled) the banner ad, even before
-            // it appears: the board must keep the exact same size for the whole
-            // game, never resizing mid-play when the ad loads.
-            double reservedHeight = headerHeight +
-                spacingHeight +
-                verticalPadding +
-                resultTextHeight +
-                adReservedHeight;
-            double availableBoardHeight =
-                constraints.maxHeight - reservedHeight;
-            double heightBasedBoxWidth =
-                (availableBoardHeight - (sizingGrid - 1)) / sizingGrid;
+                // Always reserve space for (when enabled) the banner ad, even before
+                // it appears: the board must keep the exact same size for the whole
+                // game, never resizing mid-play when the ad loads.
+                double reservedHeight = headerHeight +
+                    spacingHeight +
+                    verticalPadding +
+                    resultTextHeight +
+                    adReservedHeight;
+                double availableBoardHeight =
+                    constraints.maxHeight - reservedHeight;
+                double heightBasedBoxWidth =
+                    (availableBoardHeight - boardFrameReserve) / sizingGrid;
 
-            double boxWidth = min(widthBasedBoxWidth, heightBasedBoxWidth)
-                .clamp(20.0, widthBasedBoxWidth);
+                double boxWidth = min(
+                  widthBasedBoxWidth,
+                  heightBasedBoxWidth,
+                ).clamp(20.0, widthBasedBoxWidth);
 
-            final undoEnabled = !cpuThinking &&
-                !model.gameIsOver &&
-                _canUndo &&
-                (_undoAllowed || needsRewardedUndo);
+                final undoEnabled = !cpuThinking &&
+                    !model.gameIsOver &&
+                    _canUndo &&
+                    (_undoAllowed || needsRewardedUndo);
 
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                return SingleChildScrollView(
+                  child: Column(
                     children: [
-                      _buildScoreBox(PieceType.black, model, theme),
-                      _buildScoreBox(PieceType.white, model, theme),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: [
-                      _circleActionButton(
-                        tooltip: s.Undo,
-                        icon: CupertinoIcons.arrow_uturn_left,
-                        theme: theme,
-                        onPressed: undoEnabled
-                            ? () {
-                                if (_undoAllowed) {
-                                  _undoLastMove(currentModel: model);
-                                } else if (needsRewardedUndo) {
-                                  _requestRewardedUndo(currentModel: model);
-                                }
-                              }
-                            : null,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _buildScoreBox(PieceType.black, model, theme),
+                          _buildScoreBox(PieceType.white, model, theme),
+                        ],
                       ),
-                      _circleActionButton(
-                        tooltip: s.Hint,
-                        icon: CupertinoIcons.lightbulb,
-                        theme: theme,
-                        onPressed:
-                            needsHintButton && !model.gameIsOver && !cpuThinking
+                      const SizedBox(height: 14),
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: [
+                          _circleActionButton(
+                            tooltip: s.Undo,
+                            icon: CupertinoIcons.arrow_uturn_left,
+                            theme: theme,
+                            onPressed: undoEnabled
+                                ? () {
+                                    if (_undoAllowed) {
+                                      _undoLastMove(currentModel: model);
+                                    } else if (needsRewardedUndo) {
+                                      _requestRewardedUndo(currentModel: model);
+                                    }
+                                  }
+                                : null,
+                          ),
+                          _circleActionButton(
+                            tooltip: s.Hint,
+                            icon: CupertinoIcons.lightbulb,
+                            theme: theme,
+                            onPressed: needsHintButton &&
+                                    !model.gameIsOver &&
+                                    !cpuThinking
                                 ? _requestRewardedHints
                                 : null,
+                          ),
+                          _circleActionButton(
+                            tooltip: s.RestartGame,
+                            icon: CupertinoIcons.refresh_bold,
+                            theme: theme,
+                            onPressed: _rematch,
+                          ),
+                          _circleActionButton(
+                            tooltip: s.Settings,
+                            icon: CupertinoIcons.settings,
+                            theme: theme,
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                fadeRoute((context) => const SettingsScreen()),
+                              );
+                            },
+                          ),
+                          _circleActionButton(
+                            tooltip: s.Home,
+                            icon: CupertinoIcons.house_fill,
+                            theme: theme,
+                            onPressed: () {
+                              Navigator.of(context).pushReplacement(
+                                fadeRoute((context) => const StartScreen()),
+                              );
+                            },
+                          ),
+                        ],
                       ),
-                      _circleActionButton(
-                        tooltip: s.RestartGame,
-                        icon: CupertinoIcons.refresh_bold,
-                        theme: theme,
-                        onPressed: _rematch,
+                      if (widget.settings.isDailyChallenge) ...[
+                        const SizedBox(height: 12),
+                        Text(
+                          s.DailyChallenge,
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: theme.lastMoveBorder,
+                          ),
+                        ),
+                      ],
+                      SizedBox(height: 20),
+                      ThinkingIndicator(
+                        color: theme.thinking,
+                        height: Styling.thinkingSize,
+                        visible: model.player == _computerColor,
                       ),
-                      _circleActionButton(
-                        tooltip: s.Settings,
-                        icon: CupertinoIcons.settings,
-                        theme: theme,
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            fadeRoute((context) => const SettingsScreen()),
-                          );
-                        },
-                      ),
-                      _circleActionButton(
-                        tooltip: s.Home,
-                        icon: CupertinoIcons.house_fill,
-                        theme: theme,
-                        onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                            fadeRoute((context) => const StartScreen()),
-                          );
-                        },
-                      ),
+                      SizedBox(height: 10),
+                      _buildGameBoardDisplay(context, model, boxWidth, theme),
+                      SizedBox(height: 20),
+                      // The banner ad sits below the board in normal document
+                      // flow so it can never overlap or block board taps.
+                      if (_isAdLoaded)
+                        Container(
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                          height: 50.0,
+                          child: AdWidget(ad: _ad!),
+                        ),
                     ],
                   ),
-                  if (widget.settings.isDailyChallenge) ...[
-                    const SizedBox(height: 12),
-                    Text(
-                      s.DailyChallenge,
-                      style: TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                        color: theme.lastMoveBorder,
-                      ),
-                    ),
-                  ],
-                  SizedBox(height: 20),
-                  ThinkingIndicator(
-                    color: theme.thinking,
-                    height: Styling.thinkingSize,
-                    visible: model.player == _computerColor,
-                  ),
-                  SizedBox(height: 10),
-                  ..._buildGameBoardDisplay(context, model, boxWidth, theme),
-                  SizedBox(height: 20),
-                  // The banner ad sits below the board in normal document
-                  // flow so it can never overlap or block board taps.
-                  if (_isAdLoaded)
-                    Container(
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                      height: 50.0,
-                      child: AdWidget(ad: _ad!),
-                    ),
-                ],
-              ),
-            );
-          }),
+                );
+              },
+            ),
+          ),
         ),
       ),
     );

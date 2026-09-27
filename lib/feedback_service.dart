@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -11,25 +13,48 @@ class FeedbackService {
   FeedbackService._();
   static final FeedbackService instance = FeedbackService._();
 
-  // Separate players so place + flip can overlap without cutting each other.
-  final AudioPlayer _primary = AudioPlayer();
-  final AudioPlayer _secondary = AudioPlayer();
+  // Pools keep the tiny placement/flip samples warm and allow a capture wave
+  // to overlap instead of cutting the previous tick short.
+  AudioPool? _placePool;
+  AudioPool? _flipPool;
+  final AudioPlayer _resultPlayer = AudioPlayer();
+  Future<void>? _initializing;
   bool _ready = false;
   bool _soundEnabled = true;
   bool _hapticsEnabled = true;
 
   Future<void> init() async {
-    if (kIsWeb) {
+    if (kIsWeb || _ready) {
       return;
     }
+    final initializing = _initializing;
+    if (initializing != null) {
+      return initializing;
+    }
+    _initializing = _initialize();
+    return _initializing;
+  }
+
+  Future<void> _initialize() async {
     try {
       _soundEnabled = await SettingsService.getSoundEnabled();
       _hapticsEnabled = await SettingsService.getHapticsEnabled();
-      await _primary.setReleaseMode(ReleaseMode.stop);
-      await _secondary.setReleaseMode(ReleaseMode.stop);
+      await _resultPlayer.setReleaseMode(ReleaseMode.stop);
+      _placePool = await AudioPool.createFromAsset(
+        path: 'sounds/place.wav',
+        minPlayers: 1,
+        maxPlayers: 2,
+      );
+      _flipPool = await AudioPool.createFromAsset(
+        path: 'sounds/flip.wav',
+        minPlayers: 2,
+        maxPlayers: 4,
+      );
       _ready = true;
     } catch (error) {
-      print('FeedbackService init failed: $error');
+      debugPrint('FeedbackService init failed: $error');
+    } finally {
+      _initializing = null;
     }
   }
 
@@ -43,7 +68,7 @@ class FeedbackService {
     await SettingsService.setHapticsEnabled(enabled);
   }
 
-  Future<void> play(GameSound sound, {bool secondary = false}) async {
+  Future<void> play(GameSound sound, {double volume = 1}) async {
     if (!_soundEnabled || kIsWeb) {
       return;
     }
@@ -51,11 +76,24 @@ class FeedbackService {
       if (!_ready) {
         await init();
       }
-      final player = secondary ? _secondary : _primary;
-      await player.stop();
-      await player.play(AssetSource('sounds/${sound.name}.wav'));
+      switch (sound) {
+        case GameSound.place:
+          await _placePool?.start(volume: volume);
+          break;
+        case GameSound.flip:
+          await _flipPool?.start(volume: volume);
+          break;
+        case GameSound.win:
+        case GameSound.lose:
+          await _resultPlayer.stop();
+          await _resultPlayer.play(
+            AssetSource('sounds/${sound.name}.wav'),
+            volume: volume,
+          );
+          break;
+      }
     } catch (error) {
-      print('FeedbackService play failed: $error');
+      debugPrint('FeedbackService play failed: $error');
     }
   }
 
@@ -74,12 +112,24 @@ class FeedbackService {
   }
 
   Future<void> moveFeedback({required int flippedCount}) async {
-    await hapticLight();
-    await play(GameSound.place);
-    if (flippedCount > 0) {
-      Future<void>.delayed(const Duration(milliseconds: 80), () {
-        play(GameSound.flip, secondary: true);
-      });
+    await Future.wait([
+      flippedCount >= 7 ? hapticMedium() : hapticLight(),
+      play(GameSound.place, volume: 0.82),
+    ]);
+
+    final flipTicks = switch (flippedCount) {
+      >= 7 => 3,
+      >= 3 => 2,
+      >= 1 => 1,
+      _ => 0,
+    };
+    for (var i = 0; i < flipTicks; i++) {
+      unawaited(
+        Future<void>.delayed(
+          Duration(milliseconds: 72 + i * 55),
+          () => play(GameSound.flip, volume: 0.48 - i * 0.06),
+        ),
+      );
     }
   }
 
@@ -96,8 +146,11 @@ class FeedbackService {
   }
 
   Future<void> dispose() async {
-    await _primary.dispose();
-    await _secondary.dispose();
+    await _placePool?.dispose();
+    await _flipPool?.dispose();
+    await _resultPlayer.dispose();
+    _placePool = null;
+    _flipPool = null;
     _ready = false;
   }
 }
