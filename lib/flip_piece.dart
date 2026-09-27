@@ -14,6 +14,8 @@ class FlipPiece extends StatefulWidget {
   final AppTheme theme;
   final Duration duration;
   final Duration delay;
+  final bool reduceMotion;
+  final double effectScale;
 
   const FlipPiece({
     super.key,
@@ -23,6 +25,8 @@ class FlipPiece extends StatefulWidget {
     required this.theme,
     this.duration = const Duration(milliseconds: 300),
     this.delay = Duration.zero,
+    this.reduceMotion = false,
+    this.effectScale = 1,
   });
 
   @override
@@ -78,7 +82,8 @@ class _FlipPieceState extends State<FlipPiece>
     final colorFlip =
         !wasEmpty && !becameEmpty && widget.type != oldWidget.type;
 
-    if (MediaQuery.maybeOf(context)?.disableAnimations ?? false) {
+    if (widget.reduceMotion ||
+        (MediaQuery.maybeOf(context)?.disableAnimations ?? false)) {
       _pendingType = null;
       _motion = _PieceMotion.idle;
       _controller.reset();
@@ -160,10 +165,14 @@ class _FlipPieceState extends State<FlipPiece>
     final t = _controller.value;
     final fall = Curves.easeOutCubic.transform(t);
     final settle = Curves.easeOutBack.transform(t);
+    final effect = widget.effectScale.clamp(0.55, 1.35);
     final landing = math.exp(-math.pow((t - 0.72) / 0.13, 2));
-    final scaleX = (0.72 + settle * 0.28) * (1 + landing * 0.09);
-    final scaleY = (0.72 + settle * 0.28) * (1 - landing * 0.08);
-    final drop = -widget.size * 0.34 * (1 - fall);
+    final startScale = 1 - 0.28 * effect;
+    final scaleX = (startScale + settle * (1 - startScale)) *
+        (1 + landing * 0.09 * effect);
+    final scaleY = (startScale + settle * (1 - startScale)) *
+        (1 - landing * 0.08 * effect);
+    final drop = -widget.size * 0.34 * effect * (1 - fall);
     final opacity = (t / 0.22).clamp(0.0, 1.0);
 
     return Opacity(
@@ -178,8 +187,9 @@ class _FlipPieceState extends State<FlipPiece>
   Widget _buildFlip(Widget child) {
     final t = _controller.value;
     final turn = Curves.easeInOutCubic.transform(t);
-    final lift = -math.sin(t * math.pi) * widget.size * 0.14;
-    final swell = 1 + math.sin(t * math.pi) * 0.045;
+    final effect = widget.effectScale.clamp(0.55, 1.35);
+    final lift = -math.sin(t * math.pi) * widget.size * 0.14 * effect;
+    final swell = 1 + math.sin(t * math.pi) * 0.045 * effect;
 
     return Transform.translate(
       offset: Offset(0, lift),

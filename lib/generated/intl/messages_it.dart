@@ -27,6 +27,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "Accessibility": MessageLookupByLibrary.simpleMessage("Accessibilità"),
     "AchDailyChallenge": MessageLookupByLibrary.simpleMessage(
       "Campione giornaliero",
     ),
@@ -64,6 +65,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "DifficultyHard": MessageLookupByLibrary.simpleMessage("Difficile"),
     "DifficultyMedium": MessageLookupByLibrary.simpleMessage("Medio"),
     "DifficultySuperEasy": MessageLookupByLibrary.simpleMessage("Facilissimo"),
+    "FeedbackBalanced": MessageLookupByLibrary.simpleMessage("Bilanciata"),
+    "FeedbackGentle": MessageLookupByLibrary.simpleMessage("Delicata"),
+    "FeedbackIntensity": MessageLookupByLibrary.simpleMessage(
+      "Intensità feedback",
+    ),
+    "FeedbackLively": MessageLookupByLibrary.simpleMessage("Vivace"),
     "FirstPlayerComputer": MessageLookupByLibrary.simpleMessage("Computer"),
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Giocatore"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Casuale"),
@@ -114,6 +121,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage(
       "Gli acquisti non sono al momento disponibili.",
+    ),
+    "ReduceMotion": MessageLookupByLibrary.simpleMessage("Riduci movimento"),
+    "ReduceMotionSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Riduce al minimo il movimento delle pedine e gli effetti di festa",
     ),
     "Rematch": MessageLookupByLibrary.simpleMessage("Rivincita"),
     "RemoveAds": MessageLookupByLibrary.simpleMessage("Rimuovi annunci"),

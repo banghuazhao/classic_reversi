@@ -27,6 +27,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "Accessibility": MessageLookupByLibrary.simpleMessage(
+      "Специальные возможности",
+    ),
     "AchDailyChallenge": MessageLookupByLibrary.simpleMessage("Чемпион дня"),
     "AchFirstWin": MessageLookupByLibrary.simpleMessage("Первая победа"),
     "AchGames10": MessageLookupByLibrary.simpleMessage("10 партий"),
@@ -64,6 +67,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "DifficultyHard": MessageLookupByLibrary.simpleMessage("Сложный"),
     "DifficultyMedium": MessageLookupByLibrary.simpleMessage("Средний"),
     "DifficultySuperEasy": MessageLookupByLibrary.simpleMessage("Очень лёгкий"),
+    "FeedbackBalanced": MessageLookupByLibrary.simpleMessage("Средняя"),
+    "FeedbackGentle": MessageLookupByLibrary.simpleMessage("Слабая"),
+    "FeedbackIntensity": MessageLookupByLibrary.simpleMessage(
+      "Интенсивность отклика",
+    ),
+    "FeedbackLively": MessageLookupByLibrary.simpleMessage("Яркая"),
     "FirstPlayerComputer": MessageLookupByLibrary.simpleMessage("Компьютер"),
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Игрок"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Случайно"),
@@ -116,6 +125,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage(
       "Покупки сейчас недоступны.",
+    ),
+    "ReduceMotion": MessageLookupByLibrary.simpleMessage("Уменьшить движение"),
+    "ReduceMotionSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Сводит к минимуму движение фишек и праздничные эффекты",
     ),
     "Rematch": MessageLookupByLibrary.simpleMessage("Ещё раз"),
     "RemoveAds": MessageLookupByLibrary.simpleMessage("Убрать рекламу"),

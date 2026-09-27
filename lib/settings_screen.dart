@@ -26,6 +26,8 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _sound = true;
   bool _haptics = true;
+  bool _reduceMotion = false;
+  FeedbackIntensity _feedbackIntensity = FeedbackIntensity.balanced;
   BoardThemeId _theme = BoardThemeId.classic;
   bool _privacyOptionsRequired = false;
 
@@ -38,12 +40,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _load() async {
     final sound = await SettingsService.getSoundEnabled();
     final haptics = await SettingsService.getHapticsEnabled();
+    final reduceMotion = await SettingsService.getReduceMotion();
+    final feedbackIntensity = await SettingsService.getFeedbackIntensity();
     final theme = await SettingsService.getBoardTheme();
     final privacyOptions = await AdsManager.isPrivacyOptionsRequired();
     if (!mounted) return;
     setState(() {
       _sound = sound;
       _haptics = haptics;
+      _reduceMotion = reduceMotion;
+      _feedbackIntensity = feedbackIntensity;
       _theme = theme;
       _privacyOptionsRequired = privacyOptions;
     });
@@ -64,6 +70,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await FeedbackService.instance.setHapticsEnabled(value);
   }
 
+  Future<void> _setReduceMotion(bool value) async {
+    setState(() => _reduceMotion = value);
+    await FeedbackService.instance.setReduceMotion(value);
+  }
+
+  Future<void> _setFeedbackIntensity(FeedbackIntensity value) async {
+    setState(() => _feedbackIntensity = value);
+    await FeedbackService.instance.setIntensity(value);
+  }
+
   void _open(WidgetBuilder builder) {
     Navigator.of(context).push(fadeRoute(builder));
   }
@@ -71,12 +87,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _switchRow({
     required IconData icon,
     required String label,
+    String? subtitle,
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
     return AppMenuRow(
       icon: icon,
       title: label,
+      subtitle: subtitle,
       onTap: () => onChanged(!value),
       trailing: Switch.adaptive(
         value: value,
@@ -86,6 +104,72 @@ class _SettingsScreenState extends State<SettingsScreen> {
         inactiveThumbColor: const Color(0xFFFFFFFF),
         onChanged: onChanged,
       ),
+    );
+  }
+
+  String _feedbackIntensityLabel(
+    BuildContext context,
+    FeedbackIntensity intensity,
+  ) {
+    final s = S.of(context);
+    return switch (intensity) {
+      FeedbackIntensity.gentle => s.FeedbackGentle,
+      FeedbackIntensity.balanced => s.FeedbackBalanced,
+      FeedbackIntensity.lively => s.FeedbackLively,
+    };
+  }
+
+  Widget _feedbackIntensitySelector(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Row(
+          children: FeedbackIntensity.values.map((intensity) {
+            final selected = intensity == _feedbackIntensity;
+            return Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Semantics(
+                  selected: selected,
+                  button: true,
+                  child: Material(
+                    color: selected
+                        ? const Color(0xFFFFFFFF)
+                        : AppChrome.cardColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: const BorderSide(color: AppChrome.borderColor),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: InkWell(
+                      onTap: () => _setFeedbackIntensity(intensity),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 14,
+                        ),
+                        child: Text(
+                          _feedbackIntensityLabel(context, intensity),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w800,
+                            fontSize: constraints.maxWidth < 340 ? 11 : 13,
+                            color: selected
+                                ? const Color(0xFF111111)
+                                : AppChrome.primaryText,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        );
+      },
     );
   }
 
@@ -115,6 +199,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onChanged: _setHaptics,
               ),
               const SizedBox(height: 8),
+              AppSectionTitle(s.Accessibility),
+              _switchRow(
+                icon: CupertinoIcons.eye_slash_fill,
+                label: s.ReduceMotion,
+                subtitle: s.ReduceMotionSubtitle,
+                value: _reduceMotion,
+                onChanged: _setReduceMotion,
+              ),
+              AppMenuRow(
+                icon: CupertinoIcons.speedometer,
+                title: s.FeedbackIntensity,
+                subtitle: _feedbackIntensityLabel(
+                  context,
+                  _feedbackIntensity,
+                ),
+                onTap: () {
+                  final next = FeedbackIntensity.values[
+                      (_feedbackIntensity.index + 1) %
+                          FeedbackIntensity.values.length];
+                  _setFeedbackIntensity(next);
+                },
+              ),
+              const SizedBox(height: 8),
+              _feedbackIntensitySelector(context),
+              const SizedBox(height: 16),
               AppSectionTitle(s.Theme),
               LayoutBuilder(
                 builder: (context, constraints) {

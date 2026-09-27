@@ -7,6 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'app_theme.dart';
 import 'game_settings.dart';
 
+/// Controls the strength of visual, audio, and haptic game feedback.
+enum FeedbackIntensity { gentle, balanced, lively }
+
 /// Thin wrapper around [SharedPreferences] for values the app needs to
 /// remember across launches.
 class SettingsService {
@@ -19,6 +22,8 @@ class SettingsService {
   static const _adsRemovedKey = 'adsRemoved';
   static const _soundEnabledKey = 'soundEnabled';
   static const _hapticsEnabledKey = 'hapticsEnabled';
+  static const _reduceMotionKey = 'reduceMotion';
+  static const _feedbackIntensityKey = 'feedbackIntensity';
   static const _boardThemeKey = 'boardTheme';
   static const _gamesPlayedKey = 'gamesPlayed';
   static const _currentStreakKey = 'currentStreak';
@@ -125,6 +130,29 @@ class SettingsService {
   static Future<void> setHapticsEnabled(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_hapticsEnabledKey, value);
+  }
+
+  static Future<bool> getReduceMotion() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_reduceMotionKey) ?? false;
+  }
+
+  static Future<void> setReduceMotion(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_reduceMotionKey, value);
+  }
+
+  static Future<FeedbackIntensity> getFeedbackIntensity() async {
+    final prefs = await SharedPreferences.getInstance();
+    final index =
+        prefs.getInt(_feedbackIntensityKey) ?? FeedbackIntensity.balanced.index;
+    return FeedbackIntensity
+        .values[index.clamp(0, FeedbackIntensity.values.length - 1)];
+  }
+
+  static Future<void> setFeedbackIntensity(FeedbackIntensity value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_feedbackIntensityKey, value.index);
   }
 
   static Future<bool> getHomeHowToPlayDismissed() async {

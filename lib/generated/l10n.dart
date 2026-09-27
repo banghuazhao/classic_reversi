@@ -704,6 +704,66 @@ class S {
     return Intl.message('Haptics', name: 'Haptics', desc: '', args: []);
   }
 
+  /// `Accessibility`
+  String get Accessibility {
+    return Intl.message(
+      'Accessibility',
+      name: 'Accessibility',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reduce motion`
+  String get ReduceMotion {
+    return Intl.message(
+      'Reduce motion',
+      name: 'ReduceMotion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minimizes piece movement and celebration effects`
+  String get ReduceMotionSubtitle {
+    return Intl.message(
+      'Minimizes piece movement and celebration effects',
+      name: 'ReduceMotionSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Feedback intensity`
+  String get FeedbackIntensity {
+    return Intl.message(
+      'Feedback intensity',
+      name: 'FeedbackIntensity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gentle`
+  String get FeedbackGentle {
+    return Intl.message('Gentle', name: 'FeedbackGentle', desc: '', args: []);
+  }
+
+  /// `Balanced`
+  String get FeedbackBalanced {
+    return Intl.message(
+      'Balanced',
+      name: 'FeedbackBalanced',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Lively`
+  String get FeedbackLively {
+    return Intl.message('Lively', name: 'FeedbackLively', desc: '', args: []);
+  }
+
   /// `Theme`
   String get Theme {
     return Intl.message('Theme', name: 'Theme', desc: '', args: []);

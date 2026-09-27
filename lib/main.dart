@@ -311,6 +311,12 @@ class _GameScreenState extends State<GameScreen> {
   // never participate in move validation or game state.
   int _moveImpactId = 0;
   int _lastFlippedCount = 0;
+  bool _cpuMoveAnticipating = false;
+
+  bool _gameOverCelebrating = false;
+  PieceType _gameOverWinner = PieceType.empty;
+  bool _gameOverVictory = false;
+  int _gameOverCelebrationId = 0;
 
   // Snapshots of the board from just before each human move, used to
   // support taking a move back. Cleared on undo so only one undo can be
@@ -389,9 +395,19 @@ class _GameScreenState extends State<GameScreen> {
           break;
         }
         if (move != null) {
-          // A brief pause makes the CPU's move visible and easy to follow
-          // instead of feeling instant.
-          await Future.delayed(const Duration(milliseconds: 600));
+          // Most of the pause reads as thinking; the final beat visibly
+          // anticipates the piece landing without delaying the move overall.
+          await Future.delayed(const Duration(milliseconds: 420));
+          if (generation != _turnGeneration) {
+            break;
+          }
+          if (mounted) {
+            setState(() => _cpuMoveAnticipating = true);
+          }
+          await Future.delayed(const Duration(milliseconds: 180));
+          if (mounted) {
+            setState(() => _cpuMoveAnticipating = false);
+          }
           if (generation != _turnGeneration) {
             break;
           }
@@ -437,6 +453,7 @@ class _GameScreenState extends State<GameScreen> {
 
     PurchaseService.instance.addListener(_onPurchaseEntitlementChanged);
     ThemeController.instance.addListener(_onThemeChanged);
+    FeedbackService.instance.addListener(_onFeedbackSettingsChanged);
 
     if (!kIsWeb && AdsManager.adsEnabled) {
       _setupAds();
@@ -444,6 +461,12 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void _onThemeChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _onFeedbackSettingsChanged() {
     if (mounted) {
       setState(() {});
     }
@@ -514,6 +537,7 @@ class _GameScreenState extends State<GameScreen> {
   void dispose() {
     PurchaseService.instance.removeListener(_onPurchaseEntitlementChanged);
     ThemeController.instance.removeListener(_onThemeChanged);
+    FeedbackService.instance.removeListener(_onFeedbackSettingsChanged);
     _tearDownAds();
     _userMovesController.close();
     _restartController.close();
@@ -566,32 +590,59 @@ class _GameScreenState extends State<GameScreen> {
     }
 
     List<AchievementId> unlocked = const [];
-    bool? humanWon;
     final isTie = model.blackScore == model.whiteScore;
+    final winner = isTie
+        ? PieceType.empty
+        : model.blackScore > model.whiteScore
+            ? PieceType.black
+            : PieceType.white;
+    final bool? humanWon = widget.settings.twoPlayerMode || isTie
+        ? null
+        : winner == widget.settings.humanColor;
+    final celebrateVictory =
+        !isTie && (widget.settings.twoPlayerMode || humanWon == true);
     var requestReview = false;
 
     try {
       if (!widget.settings.twoPlayerMode) {
-        if (!isTie) {
-          humanWon = model.blackScore > model.whiteScore
-              ? widget.settings.humanColor == PieceType.black
-              : widget.settings.humanColor == PieceType.white;
-        }
         unlocked = await AchievementsService.instance.recordGameOver(
           model: model,
           settings: widget.settings,
         );
         requestReview = unlocked.contains(AchievementId.firstWin);
       }
+    } catch (error) {
+      debugPrint('Game-over bookkeeping failed: $error');
+    }
 
-      await FeedbackService.instance.gameOverFeedback(
-        humanWon: humanWon == true,
+    if (!mounted || _gameOverSheetVisible) {
+      return;
+    }
+
+    final feedback = FeedbackService.instance;
+    await Future.delayed(
+      Duration(milliseconds: feedback.reduceMotion ? 80 : 420),
+    );
+    if (!mounted || _gameOverSheetVisible) {
+      return;
+    }
+    setState(() {
+      _gameOverCelebrating = true;
+      _gameOverWinner = winner;
+      _gameOverVictory = celebrateVictory;
+      _gameOverCelebrationId++;
+    });
+    try {
+      await feedback.gameOverFeedback(
+        humanWon: celebrateVictory,
         tie: isTie,
       );
     } catch (error) {
-      print('Game-over bookkeeping failed: $error');
+      debugPrint('Game-over feedback failed: $error');
     }
-
+    await Future.delayed(
+      Duration(milliseconds: feedback.reduceMotion ? 120 : 940),
+    );
     if (!mounted || _gameOverSheetVisible) {
       return;
     }
@@ -604,6 +655,9 @@ class _GameScreenState extends State<GameScreen> {
         settings: widget.settings,
         theme: ThemeController.instance.theme,
         newAchievements: unlocked,
+        reduceMotion: feedback.reduceMotion,
+        feedbackScale: feedback.effectScale,
+        celebrateWin: celebrateVictory,
         onRematch: _rematch,
         onHome: () {
           Navigator.of(context)
@@ -612,6 +666,9 @@ class _GameScreenState extends State<GameScreen> {
       );
     } finally {
       _gameOverSheetVisible = false;
+      if (mounted) {
+        setState(() => _gameOverCelebrating = false);
+      }
     }
 
     // Ask for a review after the result sheet, not on top of it.
@@ -628,6 +685,10 @@ class _GameScreenState extends State<GameScreen> {
       _lastMove = null;
       _moveImpactId = 0;
       _lastFlippedCount = 0;
+      _cpuMoveAnticipating = false;
+      _gameOverCelebrating = false;
+      _gameOverWinner = PieceType.empty;
+      _gameOverVictory = false;
       _gameOverHandled = false;
       _gameOverSheetVisible = false;
       _rewardedUndoCharges = 0;
@@ -688,6 +749,7 @@ class _GameScreenState extends State<GameScreen> {
     final previousModel = _historyStack.removeLast();
     _canUndo = false;
     _lastMove = null;
+    _cpuMoveAnticipating = false;
     _turnGeneration++;
     setState(() {});
     _restartController.add(previousModel);
@@ -873,26 +935,37 @@ class _GameScreenState extends State<GameScreen> {
     final scoreStyle = player == PieceType.black
         ? Styling.scoreTextBlack.copyWith(color: theme.scoreBlack)
         : Styling.scoreText.copyWith(color: theme.scoreWhite);
+    final feedback = FeedbackService.instance;
+    final reduceMotion = feedback.reduceMotion ||
+        (MediaQuery.maybeOf(context)?.disableAnimations ?? false);
+    final active = model.player == player;
 
-    return DecoratedBox(
-      decoration: (model.player == player)
-          ? (player == PieceType.black
-              ? BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(width: 2.0, color: theme.scoreBlack),
-                  ),
-                )
-              : BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(width: 2.0, color: theme.scoreWhite),
-                  ),
-                ))
+    final scoreCard = AnimatedContainer(
+      duration:
+          reduceMotion ? Duration.zero : const Duration(milliseconds: 220),
+      curve: Curves.easeOutCubic,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+      decoration: active
+          ? BoxDecoration(
+              color: theme.buttonFill.withAlpha(38),
+              borderRadius: BorderRadius.circular(12),
+              border: Border(
+                bottom: BorderSide(
+                  width: 2,
+                  color: player == PieceType.black
+                      ? theme.scoreBlack
+                      : theme.scoreWhite,
+                ),
+              ),
+            )
           : Styling.inactivePlayerIndicator,
       child: Column(
         children: <Widget>[
           Text(label, textAlign: TextAlign.center, style: labelStyle),
           AnimatedSwitcher(
-            duration: const Duration(milliseconds: 240),
+            duration: reduceMotion
+                ? Duration.zero
+                : const Duration(milliseconds: 240),
             switchInCurve: Curves.easeOutBack,
             switchOutCurve: Curves.easeInCubic,
             transitionBuilder: (child, animation) {
@@ -914,6 +987,21 @@ class _GameScreenState extends State<GameScreen> {
         ],
       ),
     );
+
+    if (!active || reduceMotion) {
+      return scoreCard;
+    }
+    return TweenAnimationBuilder<double>(
+      key: ValueKey('turn-$player-${model.player}-$_moveImpactId'),
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 360),
+      curve: Curves.easeOutCubic,
+      builder: (context, progress, child) {
+        final pulse = sin(progress * pi) * 0.045 * feedback.effectScale;
+        return Transform.scale(scale: 1 + pulse, child: child);
+      },
+      child: scoreCard,
+    );
   }
 
   Widget _buildGameBoardDisplay(
@@ -922,19 +1010,32 @@ class _GameScreenState extends State<GameScreen> {
     double boxWidth,
     AppTheme theme,
   ) {
-    final showLegalMoveHints =
-        _showHints && model.player != _computerColor && !model.gameIsOver;
-    final legalMoveHints = showLegalMoveHints
+    final feedback = FeedbackService.instance;
+    final reduceMotion = feedback.reduceMotion ||
+        (MediaQuery.maybeOf(context)?.disableAnimations ?? false);
+    final isHumanTurn = widget.settings.twoPlayerMode
+        ? model.player != PieceType.empty
+        : model.player != _computerColor;
+    final canInteract =
+        isHumanTurn && !model.gameIsOver && !_gameOverCelebrating;
+    final legalMoves = canInteract
         ? model.board.getMovesForPlayer(model.player)
         : const <Position>[];
+    final showLegalMoveHints =
+        _showHints && model.player != _computerColor && !model.gameIsOver;
     final cells = <Widget>[];
+    final winningCells = <Offset>[];
 
     for (var y = 0; y < model.board.height; y++) {
       for (var x = 0; x < model.board.width; x++) {
         final type = model.board.getPieceAtLocation(x, y);
         final isLastMove = _lastMove?.x == x && _lastMove?.y == y;
-        final isLegalMoveHint = type == PieceType.empty &&
-            legalMoveHints.any((p) => p.x == x && p.y == y);
+        final isLegalTap = type == PieceType.empty &&
+            legalMoves.any((position) => position.x == x && position.y == y);
+        final isLegalMoveHint = showLegalMoveHints && isLegalTap;
+        if (_gameOverCelebrating && type == _gameOverWinner) {
+          winningCells.add(Offset(x + 0.5, y + 0.5));
+        }
         final distanceFromMove = _lastMove == null
             ? 0
             : max((x - _lastMove!.x).abs(), (y - _lastMove!.y).abs());
@@ -948,35 +1049,43 @@ class _GameScreenState extends State<GameScreen> {
             top: y * boxWidth,
             width: boxWidth,
             height: boxWidth,
-            child: SizedBox.expand(
+            child: TactileBoardCell(
               key: ValueKey('cell-$x-$y'),
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => _attemptUserMove(model, x, y),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    if (isLastMove && type != PieceType.empty)
-                      MoveImpactHalo(
-                        key: ValueKey('move-halo-$_moveImpactId'),
-                        size: boxWidth,
-                        color: theme.lastMoveBorder,
-                      ),
-                    FlipPiece(
-                      type: type,
+              enabled: canInteract,
+              isLegal: isLegalTap,
+              reduceMotion: reduceMotion,
+              effectScale: feedback.effectScale,
+              onLegalTap: () => _attemptUserMove(model, x, y),
+              onInvalidTap: FeedbackService.instance.invalidMoveFeedback,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (isLastMove && type != PieceType.empty)
+                    MoveImpactHalo(
+                      key: ValueKey('move-halo-$_moveImpactId'),
                       size: boxWidth,
-                      isLastMove: isLastMove,
-                      theme: theme,
-                      duration: Styling.pieceFlipDuration,
-                      delay: flipDelay,
+                      color: theme.lastMoveBorder,
+                      reduceMotion: reduceMotion,
+                      effectScale: feedback.effectScale,
                     ),
-                    if (isLegalMoveHint)
-                      MaterialMoveHint(
-                        size: boxWidth * 0.28,
-                        color: theme.hintDot,
-                      ),
-                  ],
-                ),
+                  FlipPiece(
+                    type: type,
+                    size: boxWidth,
+                    isLastMove: isLastMove,
+                    theme: theme,
+                    duration: Styling.pieceFlipDuration,
+                    delay: flipDelay,
+                    reduceMotion: reduceMotion,
+                    effectScale: feedback.effectScale,
+                  ),
+                  if (isLegalMoveHint)
+                    MaterialMoveHint(
+                      size: boxWidth * 0.28,
+                      color: theme.hintDot,
+                      reduceMotion: reduceMotion,
+                      effectScale: feedback.effectScale,
+                    ),
+                ],
               ),
             ),
           ),
@@ -988,12 +1097,30 @@ class _GameScreenState extends State<GameScreen> {
       boardSize: model.board.size,
       cellSize: boxWidth,
       theme: theme,
-      child: Stack(children: cells),
+      child: Stack(
+        children: [
+          ...cells,
+          if (_gameOverCelebrating)
+            Positioned.fill(
+              child: EndgameBoardCelebration(
+                celebrationId: _gameOverCelebrationId,
+                boardSize: model.board.size,
+                winningCells: winningCells,
+                victory: _gameOverVictory,
+                reduceMotion: reduceMotion,
+                effectScale: feedback.effectScale,
+                color: theme.lastMoveBorder,
+              ),
+            ),
+        ],
+      ),
     );
 
     return BoardImpactAnimator(
       impactId: _moveImpactId,
       flippedCount: _lastFlippedCount,
+      reduceMotion: reduceMotion,
+      effectScale: feedback.effectScale,
       child: board,
     );
   }
@@ -1158,6 +1285,9 @@ class _GameScreenState extends State<GameScreen> {
                         color: theme.thinking,
                         height: Styling.thinkingSize,
                         visible: model.player == _computerColor,
+                        emphasized: _cpuMoveAnticipating,
+                        reduceMotion: FeedbackService.instance.reduceMotion,
+                        effectScale: FeedbackService.instance.effectScale,
                       ),
                       SizedBox(height: 10),
                       _buildGameBoardDisplay(context, model, boxWidth, theme),

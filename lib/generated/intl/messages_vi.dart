@@ -27,6 +27,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "Accessibility": MessageLookupByLibrary.simpleMessage("Trợ năng"),
     "AchDailyChallenge": MessageLookupByLibrary.simpleMessage(
       "Nhà vô địch ngày",
     ),
@@ -66,6 +67,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "DifficultyHard": MessageLookupByLibrary.simpleMessage("Khó"),
     "DifficultyMedium": MessageLookupByLibrary.simpleMessage("Trung bình"),
     "DifficultySuperEasy": MessageLookupByLibrary.simpleMessage("Siêu dễ"),
+    "FeedbackBalanced": MessageLookupByLibrary.simpleMessage("Cân bằng"),
+    "FeedbackGentle": MessageLookupByLibrary.simpleMessage("Nhẹ"),
+    "FeedbackIntensity": MessageLookupByLibrary.simpleMessage(
+      "Cường độ phản hồi",
+    ),
+    "FeedbackLively": MessageLookupByLibrary.simpleMessage("Sống động"),
     "FirstPlayerComputer": MessageLookupByLibrary.simpleMessage("Máy tính"),
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Người chơi"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Ngẫu nhiên"),
@@ -118,6 +125,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage(
       "Hiện không thể mua.",
+    ),
+    "ReduceMotion": MessageLookupByLibrary.simpleMessage("Giảm chuyển động"),
+    "ReduceMotionSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Giảm chuyển động quân cờ và hiệu ứng ăn mừng",
     ),
     "Rematch": MessageLookupByLibrary.simpleMessage("Chơi lại"),
     "RemoveAds": MessageLookupByLibrary.simpleMessage("Gỡ quảng cáo"),

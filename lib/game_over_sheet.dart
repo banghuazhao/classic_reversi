@@ -15,6 +15,9 @@ Future<void> showGameOverSheet({
   required GameSettings settings,
   required AppTheme theme,
   required List<AchievementId> newAchievements,
+  required bool reduceMotion,
+  required double feedbackScale,
+  required bool celebrateWin,
   required VoidCallback onRematch,
   required VoidCallback onHome,
 }) {
@@ -23,7 +26,7 @@ Future<void> showGameOverSheet({
     barrierDismissible: false,
     barrierLabel: 'game-over',
     barrierColor: const Color(0x99000000),
-    transitionDuration: const Duration(milliseconds: 220),
+    transitionDuration: Duration(milliseconds: reduceMotion ? 80 : 220),
     pageBuilder: (context, animation, secondaryAnimation) {
       return SafeArea(
         child: Center(
@@ -31,19 +34,30 @@ Future<void> showGameOverSheet({
             color: Colors.transparent,
             child: FadeTransition(
               opacity: animation,
-              child: ScaleTransition(
-                scale: CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeOutBack,
-                ),
-                child: _GameOverCard(
-                  model: model,
-                  settings: settings,
-                  theme: theme,
-                  newAchievements: newAchievements,
-                  onRematch: onRematch,
-                  onHome: onHome,
-                ),
+              child: Builder(
+                builder: (context) {
+                  final card = _GameOverCard(
+                    model: model,
+                    settings: settings,
+                    theme: theme,
+                    newAchievements: newAchievements,
+                    reduceMotion: reduceMotion,
+                    feedbackScale: feedbackScale,
+                    celebrateWin: celebrateWin,
+                    onRematch: onRematch,
+                    onHome: onHome,
+                  );
+                  if (reduceMotion) {
+                    return card;
+                  }
+                  return ScaleTransition(
+                    scale: CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOutBack,
+                    ),
+                    child: card,
+                  );
+                },
               ),
             ),
           ),
@@ -58,6 +72,9 @@ class _GameOverCard extends StatelessWidget {
   final GameSettings settings;
   final AppTheme theme;
   final List<AchievementId> newAchievements;
+  final bool reduceMotion;
+  final double feedbackScale;
+  final bool celebrateWin;
   final VoidCallback onRematch;
   final VoidCallback onHome;
 
@@ -66,6 +83,9 @@ class _GameOverCard extends StatelessWidget {
     required this.settings,
     required this.theme,
     required this.newAchievements,
+    required this.reduceMotion,
+    required this.feedbackScale,
+    required this.celebrateWin,
     required this.onRematch,
     required this.onHome,
   });
@@ -146,26 +166,49 @@ class _GameOverCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            _headline(context),
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Roboto',
-              fontSize: 32,
-              fontWeight: FontWeight.w900,
-              fontStyle: FontStyle.italic,
-              color: theme.scoreWhite,
-            ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (celebrateWin) ...[
+                Icon(
+                  CupertinoIcons.sparkles,
+                  size: 20,
+                  color: theme.lastMoveBorder,
+                ),
+                const SizedBox(width: 9),
+              ],
+              Flexible(
+                child: Text(
+                  _headline(context),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900,
+                    fontStyle: FontStyle.italic,
+                    color: theme.scoreWhite,
+                  ),
+                ),
+              ),
+              if (celebrateWin) ...[
+                const SizedBox(width: 9),
+                Icon(
+                  CupertinoIcons.sparkles,
+                  size: 20,
+                  color: theme.lastMoveBorder,
+                ),
+              ],
+            ],
           ),
           const SizedBox(height: 14),
-          Text(
-            '${s.Black} ${model.blackScore}  ·  ${s.White} ${model.whiteScore}',
-            style: TextStyle(
-              fontFamily: 'Roboto',
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: theme.scoreWhite,
-            ),
+          _AnimatedFinalScore(
+            blackLabel: s.Black,
+            whiteLabel: s.White,
+            blackScore: model.blackScore,
+            whiteScore: model.whiteScore,
+            color: theme.scoreWhite,
+            reduceMotion: reduceMotion,
+            feedbackScale: feedbackScale,
           ),
           if (newAchievements.isNotEmpty) ...[
             const SizedBox(height: 16),
@@ -241,6 +284,61 @@ class _GameOverCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _AnimatedFinalScore extends StatelessWidget {
+  final String blackLabel;
+  final String whiteLabel;
+  final int blackScore;
+  final int whiteScore;
+  final Color color;
+  final bool reduceMotion;
+  final double feedbackScale;
+
+  const _AnimatedFinalScore({
+    required this.blackLabel,
+    required this.whiteLabel,
+    required this.blackScore,
+    required this.whiteScore,
+    required this.color,
+    required this.reduceMotion,
+    required this.feedbackScale,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textStyle = TextStyle(
+      fontFamily: 'Roboto',
+      fontSize: 18,
+      fontWeight: FontWeight.w700,
+      color: color,
+    );
+    if (reduceMotion ||
+        (MediaQuery.maybeOf(context)?.disableAnimations ?? false)) {
+      return Text(
+        '$blackLabel $blackScore  ·  $whiteLabel $whiteScore',
+        style: textStyle,
+      );
+    }
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 680),
+      curve: Curves.easeOutCubic,
+      builder: (context, progress, child) {
+        final black = (blackScore * progress).round();
+        final white = (whiteScore * progress).round();
+        final settle =
+            1 + (1 - progress) * 0.025 * feedbackScale.clamp(0.65, 1.3);
+        return Transform.scale(
+          scale: settle,
+          child: Text(
+            '$blackLabel $black  ·  $whiteLabel $white',
+            style: textStyle,
+          ),
+        );
+      },
     );
   }
 }

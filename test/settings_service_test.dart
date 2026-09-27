@@ -63,6 +63,23 @@ void main() {
     expect(await SettingsService.getHapticsEnabled(), isFalse);
   });
 
+  test('accessibility feedback preferences default and round-trip', () async {
+    expect(await SettingsService.getReduceMotion(), isFalse);
+    expect(
+      await SettingsService.getFeedbackIntensity(),
+      FeedbackIntensity.balanced,
+    );
+
+    await SettingsService.setReduceMotion(true);
+    await SettingsService.setFeedbackIntensity(FeedbackIntensity.gentle);
+
+    expect(await SettingsService.getReduceMotion(), isTrue);
+    expect(
+      await SettingsService.getFeedbackIntensity(),
+      FeedbackIntensity.gentle,
+    );
+  });
+
   test('home how-to dismissal persists', () async {
     expect(await SettingsService.getHomeHowToPlayDismissed(), isFalse);
 

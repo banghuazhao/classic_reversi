@@ -27,6 +27,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "Accessibility": MessageLookupByLibrary.simpleMessage("Aksesibilitas"),
     "AchDailyChallenge": MessageLookupByLibrary.simpleMessage("Juara harian"),
     "AchFirstWin": MessageLookupByLibrary.simpleMessage("Kemenangan pertama"),
     "AchGames10": MessageLookupByLibrary.simpleMessage("10 permainan"),
@@ -68,6 +69,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "DifficultyHard": MessageLookupByLibrary.simpleMessage("Sulit"),
     "DifficultyMedium": MessageLookupByLibrary.simpleMessage("Sedang"),
     "DifficultySuperEasy": MessageLookupByLibrary.simpleMessage("Sangat Mudah"),
+    "FeedbackBalanced": MessageLookupByLibrary.simpleMessage("Seimbang"),
+    "FeedbackGentle": MessageLookupByLibrary.simpleMessage("Lembut"),
+    "FeedbackIntensity": MessageLookupByLibrary.simpleMessage(
+      "Intensitas umpan balik",
+    ),
+    "FeedbackLively": MessageLookupByLibrary.simpleMessage("Semarak"),
     "FirstPlayerComputer": MessageLookupByLibrary.simpleMessage("Komputer"),
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Pemain"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Acak"),
@@ -116,6 +123,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage(
       "Pembelian saat ini tidak tersedia.",
+    ),
+    "ReduceMotion": MessageLookupByLibrary.simpleMessage("Kurangi gerakan"),
+    "ReduceMotionSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Meminimalkan gerakan keping dan efek perayaan",
     ),
     "Rematch": MessageLookupByLibrary.simpleMessage("Ulangi"),
     "RemoveAds": MessageLookupByLibrary.simpleMessage("Hapus Iklan"),

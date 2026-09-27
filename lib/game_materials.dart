@@ -328,17 +328,127 @@ class _BoardSurfacePainter extends CustomPainter {
   }
 }
 
+/// Gives a legal square a short press-in response before its move is applied.
+/// Illegal taps deliberately receive no visual motion; callers may attach a
+/// small haptic response through [onInvalidTap].
+class TactileBoardCell extends StatefulWidget {
+  final bool enabled;
+  final bool isLegal;
+  final bool reduceMotion;
+  final double effectScale;
+  final VoidCallback onLegalTap;
+  final VoidCallback? onInvalidTap;
+  final Widget child;
+
+  const TactileBoardCell({
+    super.key,
+    required this.enabled,
+    required this.isLegal,
+    required this.reduceMotion,
+    required this.effectScale,
+    required this.onLegalTap,
+    this.onInvalidTap,
+    required this.child,
+  });
+
+  @override
+  State<TactileBoardCell> createState() => _TactileBoardCellState();
+}
+
+class _TactileBoardCellState extends State<TactileBoardCell> {
+  bool _pressed = false;
+
+  void _setPressed(bool value) {
+    if (_pressed == value || !mounted) {
+      return;
+    }
+    setState(() => _pressed = value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final systemReduceMotion =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final reduceMotion = widget.reduceMotion || systemReduceMotion;
+    final duration =
+        reduceMotion ? Duration.zero : const Duration(milliseconds: 75);
+    final pressDepth = 0.018 * widget.effectScale;
+
+    return Semantics(
+      button: true,
+      enabled: widget.enabled,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: (_) {
+          if (widget.enabled && widget.isLegal && !reduceMotion) {
+            _setPressed(true);
+          }
+        },
+        onTapUp: (_) => _setPressed(false),
+        onTapCancel: () => _setPressed(false),
+        onTap: widget.enabled
+            ? () {
+                _setPressed(false);
+                if (widget.isLegal) {
+                  widget.onLegalTap();
+                } else {
+                  widget.onInvalidTap?.call();
+                }
+              }
+            : null,
+        child: AnimatedScale(
+          scale: _pressed ? 1 - pressDepth : 1,
+          duration: duration,
+          curve: Curves.easeOutCubic,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              widget.child,
+              IgnorePointer(
+                child: AnimatedOpacity(
+                  opacity: _pressed ? 1 : 0,
+                  duration: duration,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: const Color(0x16000000),
+                      border: Border.all(
+                        color: const Color(0x52000000),
+                        width: 1.5,
+                      ),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x44000000),
+                          blurRadius: 5,
+                          spreadRadius: -1,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// A short, decaying physical nudge used when a move lands. It moves only the
 /// visual board; game state and hit testing remain in their original space.
 class BoardImpactAnimator extends StatefulWidget {
   final int impactId;
   final int flippedCount;
+  final bool reduceMotion;
+  final double effectScale;
   final Widget child;
 
   const BoardImpactAnimator({
     super.key,
     required this.impactId,
     required this.flippedCount,
+    this.reduceMotion = false,
+    this.effectScale = 1,
     required this.child,
   });
 
@@ -357,7 +467,8 @@ class _BoardImpactAnimatorState extends State<BoardImpactAnimator>
   void didUpdateWidget(covariant BoardImpactAnimator oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.impactId != widget.impactId && widget.impactId > 0) {
-      if (!(MediaQuery.maybeOf(context)?.disableAnimations ?? false)) {
+      if (!widget.reduceMotion &&
+          !(MediaQuery.maybeOf(context)?.disableAnimations ?? false)) {
         _controller.forward(from: 0);
       }
     }
@@ -371,7 +482,8 @@ class _BoardImpactAnimatorState extends State<BoardImpactAnimator>
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.maybeOf(context)?.disableAnimations ?? false) {
+    if (widget.reduceMotion ||
+        (MediaQuery.maybeOf(context)?.disableAnimations ?? false)) {
       return widget.child;
     }
 
@@ -381,7 +493,9 @@ class _BoardImpactAnimatorState extends State<BoardImpactAnimator>
       builder: (context, child) {
         final t = _controller.value;
         final envelope = math.pow(1 - t, 2).toDouble();
-        final intensity = (0.55 + widget.flippedCount * 0.07).clamp(0.55, 1.25);
+        final intensity =
+            (0.55 + widget.flippedCount * 0.07).clamp(0.55, 1.25) *
+                widget.effectScale;
         final nudge = math.sin(t * math.pi * 5) * envelope * intensity;
         final press = math.sin(math.min(t / 0.58, 1) * math.pi) * 0.0045;
         return Transform.translate(
@@ -403,13 +517,21 @@ class _BoardImpactAnimatorState extends State<BoardImpactAnimator>
 class MoveImpactHalo extends StatelessWidget {
   final double size;
   final Color color;
+  final bool reduceMotion;
+  final double effectScale;
 
-  const MoveImpactHalo({super.key, required this.size, required this.color});
+  const MoveImpactHalo({
+    super.key,
+    required this.size,
+    required this.color,
+    this.reduceMotion = false,
+    this.effectScale = 1,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final reduceMotion =
-        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final reduceMotion = this.reduceMotion ||
+        (MediaQuery.maybeOf(context)?.disableAnimations ?? false);
     if (reduceMotion) {
       return const SizedBox.expand();
     }
@@ -420,7 +542,11 @@ class MoveImpactHalo extends StatelessWidget {
         curve: Curves.easeOutCubic,
         builder: (context, progress, child) {
           return CustomPaint(
-            painter: _MoveImpactPainter(progress: progress, color: color),
+            painter: _MoveImpactPainter(
+              progress: progress,
+              color: color,
+              effectScale: effectScale,
+            ),
             size: Size.square(size),
           );
         },
@@ -432,14 +558,20 @@ class MoveImpactHalo extends StatelessWidget {
 class _MoveImpactPainter extends CustomPainter {
   final double progress;
   final Color color;
+  final double effectScale;
 
-  const _MoveImpactPainter({required this.progress, required this.color});
+  const _MoveImpactPainter({
+    required this.progress,
+    required this.color,
+    required this.effectScale,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
     final fade = math.pow(1 - progress, 2).toDouble();
-    final radius = size.shortestSide * (0.26 + progress * 0.28);
+    final radius = size.shortestSide *
+        (0.26 + progress * 0.28 * effectScale.clamp(0.7, 1.35));
     final ring = Paint()
       ..color = color.withAlpha((fade * 190).round())
       ..style = PaintingStyle.stroke
@@ -460,7 +592,9 @@ class _MoveImpactPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _MoveImpactPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.color != color;
+    return oldDelegate.progress != progress ||
+        oldDelegate.color != color ||
+        oldDelegate.effectScale != effectScale;
   }
 }
 
@@ -469,13 +603,21 @@ class _MoveImpactPainter extends CustomPainter {
 class MaterialMoveHint extends StatelessWidget {
   final double size;
   final Color color;
+  final bool reduceMotion;
+  final double effectScale;
 
-  const MaterialMoveHint({super.key, required this.size, required this.color});
+  const MaterialMoveHint({
+    super.key,
+    required this.size,
+    required this.color,
+    this.reduceMotion = false,
+    this.effectScale = 1,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final reduceMotion =
-        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final reduceMotion = this.reduceMotion ||
+        (MediaQuery.maybeOf(context)?.disableAnimations ?? false);
     final hint = CustomPaint(
       size: Size.square(size),
       painter: _MoveHintPainter(color),
@@ -484,7 +626,7 @@ class MaterialMoveHint extends StatelessWidget {
       return hint;
     }
     return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.68, end: 1),
+      tween: Tween(begin: 1 - 0.32 * effectScale, end: 1),
       duration: const Duration(milliseconds: 280),
       curve: Curves.easeOutBack,
       builder: (context, scale, child) {
@@ -492,6 +634,196 @@ class MaterialMoveHint extends StatelessWidget {
       },
       child: hint,
     );
+  }
+}
+
+/// A single end-of-match sweep that highlights the winning discs and, for a
+/// player victory, releases a restrained burst of board-local confetti.
+class EndgameBoardCelebration extends StatefulWidget {
+  final int celebrationId;
+  final int boardSize;
+  final List<Offset> winningCells;
+  final bool victory;
+  final bool reduceMotion;
+  final double effectScale;
+  final Color color;
+
+  const EndgameBoardCelebration({
+    super.key,
+    required this.celebrationId,
+    required this.boardSize,
+    required this.winningCells,
+    required this.victory,
+    required this.reduceMotion,
+    required this.effectScale,
+    required this.color,
+  });
+
+  @override
+  State<EndgameBoardCelebration> createState() =>
+      _EndgameBoardCelebrationState();
+}
+
+class _EndgameBoardCelebrationState extends State<EndgameBoardCelebration>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 940),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.celebrationId > 0 && !widget.reduceMotion) {
+      _controller.forward();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant EndgameBoardCelebration oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.celebrationId != oldWidget.celebrationId &&
+        widget.celebrationId > 0 &&
+        !widget.reduceMotion) {
+      _controller.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.reduceMotion ||
+        (MediaQuery.maybeOf(context)?.disableAnimations ?? false)) {
+      return const SizedBox.expand();
+    }
+    return IgnorePointer(
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return CustomPaint(
+            painter: _EndgameCelebrationPainter(
+              progress: _controller.value,
+              boardSize: widget.boardSize,
+              winningCells: widget.winningCells,
+              victory: widget.victory,
+              effectScale: widget.effectScale,
+              color: widget.color,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _EndgameCelebrationPainter extends CustomPainter {
+  final double progress;
+  final int boardSize;
+  final List<Offset> winningCells;
+  final bool victory;
+  final double effectScale;
+  final Color color;
+
+  const _EndgameCelebrationPainter({
+    required this.progress,
+    required this.boardSize,
+    required this.winningCells,
+    required this.victory,
+    required this.effectScale,
+    required this.color,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (size.isEmpty || boardSize <= 0) {
+      return;
+    }
+    final cellSize = size.shortestSide / boardSize;
+    final eased = Curves.easeOutCubic.transform(progress.clamp(0.0, 1.0));
+    final sweepFade = math.sin(progress.clamp(0.0, 1.0) * math.pi);
+    final sweepX = -size.width * 0.35 + size.width * 1.45 * eased;
+    final sweep = Paint()
+      ..color =
+          color.withAlpha((72 * sweepFade * effectScale).round().clamp(0, 110))
+      ..strokeWidth = cellSize * 0.75
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(
+      Offset(sweepX - size.height * 0.22, -cellSize),
+      Offset(sweepX + size.height * 0.22, size.height + cellSize),
+      sweep,
+    );
+
+    final ring = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = (cellSize * 0.055 * effectScale).clamp(1.2, 3.0);
+    for (final cell in winningCells) {
+      final delay = ((cell.dx + cell.dy) / (boardSize * 2)) * 0.38;
+      final local = ((progress - delay) / 0.46).clamp(0.0, 1.0);
+      final glow = math.sin(local * math.pi);
+      if (glow <= 0) {
+        continue;
+      }
+      ring.color = color.withAlpha((185 * glow).round());
+      canvas.drawCircle(
+        Offset(cell.dx * cellSize, cell.dy * cellSize),
+        cellSize * (0.34 + local * 0.1),
+        ring,
+      );
+    }
+
+    if (victory) {
+      _paintConfetti(canvas, size, cellSize);
+    }
+  }
+
+  void _paintConfetti(Canvas canvas, Size size, double cellSize) {
+    final random = math.Random(90210);
+    final count = (18 * effectScale).round().clamp(10, 26);
+    final colors = [color, Colors.white, const Color(0xffffd76a)];
+    for (var i = 0; i < count; i++) {
+      final startX = random.nextDouble() * size.width;
+      final delay = random.nextDouble() * 0.24;
+      final local = ((progress - delay) / (0.78 - delay)).clamp(0.0, 1.0);
+      if (local <= 0 || local >= 1) {
+        continue;
+      }
+      final x = startX + math.sin(local * math.pi * 2 + i) * cellSize * 0.35;
+      final y = -cellSize * 0.2 +
+          local * (size.height * (0.55 + random.nextDouble() * 0.45));
+      final fade = math.sin(local * math.pi);
+      final paint = Paint()
+        ..color = colors[i % colors.length].withAlpha((210 * fade).round());
+      canvas.save();
+      canvas.translate(x, y);
+      canvas.rotate(local * math.pi * (1.5 + random.nextDouble()));
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(
+            center: Offset.zero,
+            width: cellSize * 0.075,
+            height: cellSize * 0.16,
+          ),
+          const Radius.circular(1.5),
+        ),
+        paint,
+      );
+      canvas.restore();
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _EndgameCelebrationPainter oldDelegate) {
+    return oldDelegate.progress != progress ||
+        oldDelegate.boardSize != boardSize ||
+        oldDelegate.winningCells != winningCells ||
+        oldDelegate.victory != victory ||
+        oldDelegate.effectScale != effectScale ||
+        oldDelegate.color != color;
   }
 }
 

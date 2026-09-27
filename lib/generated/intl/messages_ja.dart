@@ -27,6 +27,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "Accessibility": MessageLookupByLibrary.simpleMessage("アクセシビリティ"),
     "AchDailyChallenge": MessageLookupByLibrary.simpleMessage("デイリーチャンピオン"),
     "AchFirstWin": MessageLookupByLibrary.simpleMessage("初勝利"),
     "AchGames10": MessageLookupByLibrary.simpleMessage("10対局"),
@@ -71,6 +72,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "DifficultyHard": MessageLookupByLibrary.simpleMessage("むずかしい"),
     "DifficultyMedium": MessageLookupByLibrary.simpleMessage("ふつう"),
     "DifficultySuperEasy": MessageLookupByLibrary.simpleMessage("とてもかんたん"),
+    "FeedbackBalanced": MessageLookupByLibrary.simpleMessage("標準"),
+    "FeedbackGentle": MessageLookupByLibrary.simpleMessage("控えめ"),
+    "FeedbackIntensity": MessageLookupByLibrary.simpleMessage("フィードバックの強さ"),
+    "FeedbackLively": MessageLookupByLibrary.simpleMessage("にぎやか"),
     "FirstPlayerComputer": MessageLookupByLibrary.simpleMessage("コンピューター"),
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("プレイヤー"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("ランダム"),
@@ -114,6 +119,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "広告を削除しました。ありがとうございます！",
     ),
     "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage("現在購入できません。"),
+    "ReduceMotion": MessageLookupByLibrary.simpleMessage("動きを減らす"),
+    "ReduceMotionSubtitle": MessageLookupByLibrary.simpleMessage(
+      "駒の動きとお祝い演出を最小限にします",
+    ),
     "Rematch": MessageLookupByLibrary.simpleMessage("再戦"),
     "RemoveAds": MessageLookupByLibrary.simpleMessage("広告を削除"),
     "RestartGame": MessageLookupByLibrary.simpleMessage("対局をやり直す"),

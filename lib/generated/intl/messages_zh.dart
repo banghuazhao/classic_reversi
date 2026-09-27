@@ -27,6 +27,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+    "Accessibility": MessageLookupByLibrary.simpleMessage("辅助功能"),
     "AchDailyChallenge": MessageLookupByLibrary.simpleMessage("每日冠军"),
     "AchFirstWin": MessageLookupByLibrary.simpleMessage("首胜"),
     "AchGames10": MessageLookupByLibrary.simpleMessage("完成 10 局"),
@@ -63,6 +64,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "DifficultyHard": MessageLookupByLibrary.simpleMessage("困难"),
     "DifficultyMedium": MessageLookupByLibrary.simpleMessage("中等"),
     "DifficultySuperEasy": MessageLookupByLibrary.simpleMessage("超简单"),
+    "FeedbackBalanced": MessageLookupByLibrary.simpleMessage("均衡"),
+    "FeedbackGentle": MessageLookupByLibrary.simpleMessage("柔和"),
+    "FeedbackIntensity": MessageLookupByLibrary.simpleMessage("反馈强度"),
+    "FeedbackLively": MessageLookupByLibrary.simpleMessage("活跃"),
     "FirstPlayerComputer": MessageLookupByLibrary.simpleMessage("电脑"),
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("玩家"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("随机"),
@@ -104,6 +109,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "PurchasePending": MessageLookupByLibrary.simpleMessage("购买待批准…"),
     "PurchaseSuccess": MessageLookupByLibrary.simpleMessage("广告已去除，谢谢！"),
     "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage("暂时无法购买。"),
+    "ReduceMotion": MessageLookupByLibrary.simpleMessage("减少动态效果"),
+    "ReduceMotionSubtitle": MessageLookupByLibrary.simpleMessage(
+      "尽量减少棋子运动和庆祝动画",
+    ),
     "Relaxing_Up": MessageLookupByLibrary.simpleMessage("冥想Up"),
     "Rematch": MessageLookupByLibrary.simpleMessage("再来一局"),
     "RemoveAds": MessageLookupByLibrary.simpleMessage("去除广告"),
