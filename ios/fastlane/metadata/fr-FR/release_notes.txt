@@ -1,0 +1,4 @@
+Nouveautés :
+• Profitez d’un plateau plus réaliste et agréable, avec des textures enrichies pour les pions et la surface.
+• Les coups, retournements, changements de tour et victoires sont plus fluides grâce à des animations, sons et retours haptiques affinés.
+• Réglez l’expérience avec les nouvelles options Réduire les animations et Intensité du retour.

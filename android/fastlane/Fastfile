@@ -1,12 +1,25 @@
 default_platform(:android)
 
 platform :android do
+  desc "Build a signed Android App Bundle without uploading it"
+  lane :build_release do
+    Dir.chdir(File.expand_path("../..", __dir__)) do
+      sh("flutter build appbundle --release")
+    end
+  end
+
   desc "Deploy a new version to the Google Play Store"
   lane :deploy do
     upload_to_play_store(
       track: 'production',
       rollout: '1.0',
-      aab: '../build/app/outputs/bundle/release/app-release.aab'
+      release_status: 'completed',
+      aab: '../build/app/outputs/bundle/release/app-release.aab',
+      metadata_path: 'fastlane/metadata/android',
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: false
     )
   end
 end
