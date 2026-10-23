@@ -20,10 +20,30 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'ru';
 
-  static String m0(result, black, white, mode) =>
+  static String m0(coordinate, piece) => "${coordinate}, ${piece}";
+
+  static String m1(color) => "Компьютер · ${color}";
+
+  static String m2(status, black, white) =>
+      "${status}. Чёрные ${black}, белые ${white}.";
+
+  static String m3(color) => "Ход: ${color}";
+
+  static String m4(black, white) => "Углы · Чёрные ${black} · Белые ${white}";
+
+  static String m5(move, total) => "Ход ${move} из ${total}";
+
+  static String m6(result, black, white, mode) =>
       "${result} · Чёрные ${black} – Белые ${white} (${mode}) — Classic Reversi";
 
-  static String m1(wins, losses) => "Побед ${wins} · Поражений ${losses}";
+  static String m7(passed, current) =>
+      "${passed}: нет допустимых ходов. ${current} ходят снова.";
+
+  static String m8(step, total) => "Урок ${step} из ${total}";
+
+  static String m9(wins, losses) => "Побед ${wins} · Поражений ${losses}";
+
+  static String m10(color) => "Вы · ${color}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -47,13 +67,29 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "AdLoading": MessageLookupByLibrary.simpleMessage("Загрузка рекламы…"),
     "AdsRemoved": MessageLookupByLibrary.simpleMessage("Реклама отключена"),
+    "AgainstComputer": MessageLookupByLibrary.simpleMessage("Компьютер"),
     "BestStreak": MessageLookupByLibrary.simpleMessage("Лучшая серия"),
     "Black": MessageLookupByLibrary.simpleMessage("чёрные"),
     "BlackWins": MessageLookupByLibrary.simpleMessage("Чёрные побеждают"),
+    "BoardCell": m0,
+    "BoardEmpty": MessageLookupByLibrary.simpleMessage("Пусто"),
+    "BoardKeyboardHint": MessageLookupByLibrary.simpleMessage(
+      "Перемещайтесь по доске клавишами со стрелками. Нажмите Enter или пробел, чтобы сделать ход в отмеченную клетку.",
+    ),
+    "BoardLastMove": MessageLookupByLibrary.simpleMessage("Последний ход"),
+    "BoardLegalMove": MessageLookupByLibrary.simpleMessage("Допустимый ход"),
+    "BoardReviewKeyboardHint": MessageLookupByLibrary.simpleMessage(
+      "Перемещайтесь по доске клавишами со стрелками.",
+    ),
     "Cancel": MessageLookupByLibrary.simpleMessage("Отмена"),
     "Classic_Reversi": MessageLookupByLibrary.simpleMessage(
       "Классические Реверси",
     ),
+    "ComputerColor": m1,
+    "ComputerThinking": MessageLookupByLibrary.simpleMessage(
+      "Компьютер думает…",
+    ),
+    "ContinueGame": MessageLookupByLibrary.simpleMessage("Продолжить игру"),
     "CurrentStreak": MessageLookupByLibrary.simpleMessage("Серия побед"),
     "DailyChallenge": MessageLookupByLibrary.simpleMessage("Ежедневный вызов"),
     "DailyChallengeSubtitle": MessageLookupByLibrary.simpleMessage(
@@ -77,25 +113,42 @@ class MessageLookup extends MessageLookupByLibrary {
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Игрок"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Случайно"),
     "GameOver": MessageLookupByLibrary.simpleMessage("Игра окончена"),
+    "GameSetup": MessageLookupByLibrary.simpleMessage("Настройте игру"),
+    "GameStatusAnnouncement": m2,
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("Сыграно партий"),
+    "GuidedFirstGame": MessageLookupByLibrary.simpleMessage("Обучающая игра"),
+    "GuidedFirstGameSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Научитесь переворачивать фишки, занимать углы и находить свой ритм.",
+    ),
     "Haptics": MessageLookupByLibrary.simpleMessage("Вибрация"),
     "Help": MessageLookupByLibrary.simpleMessage("Справка"),
     "Hint": MessageLookupByLibrary.simpleMessage("Подсказка"),
+    "HintWithAd": MessageLookupByLibrary.simpleMessage(
+      "Допустимые ходы · смотреть рекламу",
+    ),
     "HintsEnabled": MessageLookupByLibrary.simpleMessage(
       "Подсказки включены для этой игры.",
     ),
     "Home": MessageLookupByLibrary.simpleMessage("Домой"),
+    "HomeTagline": MessageLookupByLibrary.simpleMessage(
+      "Немного стратегии. Мгновение для себя.",
+    ),
     "How_to_play": MessageLookupByLibrary.simpleMessage("Как играть?"),
     "How_to_play_explain": MessageLookupByLibrary.simpleMessage(
       "В игре все фишки соперника, лежащие по прямой линии между только что поставленной фишкой и другой фишкой текущего игрока, переворачиваются в цвет текущего игрока. Цель игры — к моменту заполнения последней свободной клетки иметь на доске большинство фишек своего цвета.",
     ),
+    "KeepPlaying": MessageLookupByLibrary.simpleMessage("Продолжить играть"),
     "More": MessageLookupByLibrary.simpleMessage("Ещё"),
     "MoreApps": MessageLookupByLibrary.simpleMessage("Другие приложения"),
+    "NewGame": MessageLookupByLibrary.simpleMessage("Новая игра"),
     "OK": MessageLookupByLibrary.simpleMessage("OK"),
+    "Opponent": MessageLookupByLibrary.simpleMessage("Соперник"),
     "PerfectWins": MessageLookupByLibrary.simpleMessage("Идеальные победы"),
+    "Play": MessageLookupByLibrary.simpleMessage("Играть"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Играть с другом на этом устройстве",
     ),
+    "PlayerTurn": m3,
     "PrivacyOptions": MessageLookupByLibrary.simpleMessage(
       "Параметры конфиденциальности",
     ),
@@ -132,6 +185,18 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "Rematch": MessageLookupByLibrary.simpleMessage("Ещё раз"),
     "RemoveAds": MessageLookupByLibrary.simpleMessage("Убрать рекламу"),
+    "ReplaceSavedGameMessage": MessageLookupByLibrary.simpleMessage(
+      "Незавершённая игра будет заменена. Вы можете продолжить её с главного экрана.",
+    ),
+    "ReplaceSavedGameTitle": MessageLookupByLibrary.simpleMessage(
+      "Начать новую игру?",
+    ),
+    "RestartConfirmMessage": MessageLookupByLibrary.simpleMessage(
+      "Текущая позиция будет заменена начальной.",
+    ),
+    "RestartConfirmTitle": MessageLookupByLibrary.simpleMessage(
+      "Начать эту игру заново?",
+    ),
     "RestartGame": MessageLookupByLibrary.simpleMessage("Перезапустить игру"),
     "RestoreNothing": MessageLookupByLibrary.simpleMessage(
       "Нет покупок для восстановления.",
@@ -142,11 +207,28 @@ class MessageLookup extends MessageLookupByLibrary {
     "RestoreSuccess": MessageLookupByLibrary.simpleMessage(
       "Покупки восстановлены.",
     ),
+    "ReviewBoardLabel": MessageLookupByLibrary.simpleMessage(
+      "Доска разбора партии",
+    ),
+    "ReviewCorners": m4,
+    "ReviewFinal": MessageLookupByLibrary.simpleMessage("Конечная позиция"),
+    "ReviewFirst": MessageLookupByLibrary.simpleMessage("К началу"),
+    "ReviewGame": MessageLookupByLibrary.simpleMessage("Разбор партии"),
+    "ReviewLast": MessageLookupByLibrary.simpleMessage("К концу"),
+    "ReviewMove": m5,
+    "ReviewNext": MessageLookupByLibrary.simpleMessage("Следующий ход"),
+    "ReviewPrevious": MessageLookupByLibrary.simpleMessage("Предыдущий ход"),
+    "ReviewStart": MessageLookupByLibrary.simpleMessage("Начальная позиция"),
+    "Rules": MessageLookupByLibrary.simpleMessage("Правила"),
+    "SavedGameSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Ваша доска ждёт вас.",
+    ),
     "Settings": MessageLookupByLibrary.simpleMessage("Настройки"),
     "Share": MessageLookupByLibrary.simpleMessage("Поделиться"),
-    "ShareResult": m0,
+    "ShareResult": m6,
     "Sound": MessageLookupByLibrary.simpleMessage("Звук"),
     "StartGame": MessageLookupByLibrary.simpleMessage("Начать игру"),
+    "StartNewGame": MessageLookupByLibrary.simpleMessage("Начать новую игру"),
     "Stats": MessageLookupByLibrary.simpleMessage("Статистика"),
     "Theme": MessageLookupByLibrary.simpleMessage("Тема"),
     "ThemeClassic": MessageLookupByLibrary.simpleMessage("Классика"),
@@ -154,10 +236,52 @@ class MessageLookup extends MessageLookupByLibrary {
     "ThemeNight": MessageLookupByLibrary.simpleMessage("Ночь"),
     "Tie": MessageLookupByLibrary.simpleMessage("Ничья"),
     "Ties": MessageLookupByLibrary.simpleMessage("Ничьи"),
+    "TurnPassed": m7,
+    "TutorialBoardLabel": MessageLookupByLibrary.simpleMessage("Учебная доска"),
+    "TutorialCaptureBody": MessageLookupByLibrary.simpleMessage(
+      "Вы играете чёрными. Нажмите на отмеченную клетку, чтобы зажать белую фишку между двумя чёрными.",
+    ),
+    "TutorialCaptureDoneBody": MessageLookupByLibrary.simpleMessage(
+      "Зажатая белая фишка становится чёрной. Теперь ходят белые, а затем снова вы.",
+    ),
+    "TutorialCaptureDoneTitle": MessageLookupByLibrary.simpleMessage(
+      "Вот как переворачиваются фишки",
+    ),
+    "TutorialCaptureTitle": MessageLookupByLibrary.simpleMessage(
+      "Переверните первые фишки",
+    ),
+    "TutorialCompleteBody": MessageLookupByLibrary.simpleMessage(
+      "Побеждает тот, у кого в конце больше фишек. Если допустимых ходов нет, ход автоматически пропускается. Начните с лёгкого уровня и повышайте сложность, когда будете готовы.",
+    ),
+    "TutorialCompleteTitle": MessageLookupByLibrary.simpleMessage(
+      "Всё готово к игре",
+    ),
+    "TutorialCornersBody": MessageLookupByLibrary.simpleMessage(
+      "Попробуйте эту учебную позицию. Нажмите на отмеченный угол A1. Угловую фишку нельзя перевернуть.",
+    ),
+    "TutorialCornersTitle": MessageLookupByLibrary.simpleMessage(
+      "Займите угол",
+    ),
+    "TutorialNext": MessageLookupByLibrary.simpleMessage("Продолжить"),
+    "TutorialPlayEasy": MessageLookupByLibrary.simpleMessage(
+      "Играть на лёгком уровне",
+    ),
+    "TutorialProgress": m8,
+    "TutorialReplyBody": MessageLookupByLibrary.simpleMessage(
+      "Белые сделали ход. Нажмите на любую отмеченную клетку, чтобы снова перевернуть фишки.",
+    ),
+    "TutorialReplyDoneBody": MessageLookupByLibrary.simpleMessage(
+      "Вы прошли полный круг ходов. Теперь попробуйте занять угол в учебной позиции.",
+    ),
+    "TutorialSkip": MessageLookupByLibrary.simpleMessage("Пропустить обучение"),
+    "TutorialTitle": MessageLookupByLibrary.simpleMessage("Учитесь играя"),
     "TwoPlayersMode": MessageLookupByLibrary.simpleMessage(
       "2 игрока (по очереди)",
     ),
     "Undo": MessageLookupByLibrary.simpleMessage("Отменить"),
+    "UndoWithAd": MessageLookupByLibrary.simpleMessage(
+      "Отменить ход · смотреть рекламу",
+    ),
     "Watch": MessageLookupByLibrary.simpleMessage("Смотреть"),
     "WatchAd": MessageLookupByLibrary.simpleMessage("Смотреть рекламу"),
     "WatchAdForHint": MessageLookupByLibrary.simpleMessage(
@@ -173,8 +297,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "WinsByDifficulty": MessageLookupByLibrary.simpleMessage(
       "Победы по сложности",
     ),
-    "WinsLosses": m1,
+    "WinsLosses": m9,
+    "YouColor": m10,
     "YouLose": MessageLookupByLibrary.simpleMessage("Вы проиграли"),
     "YouWin": MessageLookupByLibrary.simpleMessage("Вы победили!"),
+    "YourTurn": MessageLookupByLibrary.simpleMessage("Ваш ход"),
   };
 }

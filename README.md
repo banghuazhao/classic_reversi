@@ -16,13 +16,16 @@
 
 ## Features
 
-- **Three difficulty levels** — Easy (random legal moves), Medium (greedy heuristic), and Hard (minimax search), so both beginners and experienced players get a fair game.
+- **Four difficulty levels** — Super Easy uses a smaller 6×6 board; Easy, Medium, and Hard play on the classic 8×8 board. New players start on Easy.
+- **Save and continue** — unfinished games, computer turns, and undo history are saved after each move and restored across launches.
+- **Guided practice** — learn captures, turns, and corner strategy by playing short interactive lessons.
+- **Game review** — inspect the final board and replay every move after a match.
 - **Choose who goes first** — play as Black, let the computer open, or leave it to chance.
 - **Local 2-player mode** — pass-and-play against a friend on the same device.
-- **Undo** — take back your last move (once per turn, disabled on Hard).
-- **Legal move hints** — on Easy difficulty, valid moves are marked on the board to help new players learn the rules.
-- **Win/loss tracking** — your record is kept across sessions and shown on the start screen.
-- Responsive board that adapts to any phone or tablet screen size.
+- **Undo and legal move hints** — available directly on easier levels, with rewarded options on harder levels and an ad-free purchase option on supported platforms.
+- **Daily challenges and achievements** — play a daily position and track wins, streaks, and milestones.
+- **Accessible play** — descriptive board cells, keyboard navigation, turn announcements, larger text, reduced motion, and three board themes.
+- Responsive layouts for phones and tablets in portrait and landscape, with clear turn/pass messages and restart protection.
 
 ## Tech stack
 

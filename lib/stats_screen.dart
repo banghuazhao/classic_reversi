@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -48,12 +50,20 @@ class _StatsScreenState extends State<StatsScreen> {
                     padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
                     children: [
                       _SummaryCard(stats: stats),
-                      const SizedBox(height: 22),
+                      const SizedBox(height: 24),
                       LayoutBuilder(
                         builder: (context, constraints) {
-                          final columns = constraints.maxWidth >= 620 ? 3 : 2;
+                          final scale =
+                              MediaQuery.textScalerOf(context).scale(14) / 14;
+                          final columns = max(
+                            1,
+                            min(
+                              3,
+                              (constraints.maxWidth / (140 * scale)).floor(),
+                            ),
+                          );
                           final width =
-                              (constraints.maxWidth - (columns - 1) * 12) /
+                              (constraints.maxWidth - (columns - 1) * 16) /
                                   columns;
                           final cards = [
                             _MetricCard(
@@ -88,11 +98,12 @@ class _StatsScreenState extends State<StatsScreen> {
                             ),
                           ];
                           return Wrap(
-                            spacing: 12,
-                            runSpacing: 12,
+                            spacing: 16,
+                            runSpacing: 16,
                             children: cards
-                                .map((card) =>
-                                    SizedBox(width: width, child: card))
+                                .map(
+                                  (card) => SizedBox(width: width, child: card),
+                                )
                                 .toList(),
                           );
                         },
@@ -100,25 +111,49 @@ class _StatsScreenState extends State<StatsScreen> {
                       const SizedBox(height: 24),
                       AppSectionTitle(s.WinsByDifficulty),
                       AppInfoCard(
-                        child: Row(
-                          children: [
-                            _DifficultyStat(
-                              label: s.DifficultySuperEasy,
-                              value: stats.winsSuperEasy,
-                            ),
-                            _DifficultyStat(
-                              label: s.DifficultyEasy,
-                              value: stats.winsEasy,
-                            ),
-                            _DifficultyStat(
-                              label: s.DifficultyMedium,
-                              value: stats.winsMedium,
-                            ),
-                            _DifficultyStat(
-                              label: s.DifficultyHard,
-                              value: stats.winsHard,
-                            ),
-                          ],
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final scale =
+                                MediaQuery.textScalerOf(context).scale(14) / 14;
+                            final columns = max(
+                              1,
+                              min(
+                                4,
+                                (constraints.maxWidth / (104 * scale)).floor(),
+                              ),
+                            );
+                            final width =
+                                (constraints.maxWidth - (columns - 1) * 16) /
+                                    columns;
+                            final difficulties = [
+                              _DifficultyStat(
+                                label: s.DifficultySuperEasy,
+                                value: stats.winsSuperEasy,
+                              ),
+                              _DifficultyStat(
+                                label: s.DifficultyEasy,
+                                value: stats.winsEasy,
+                              ),
+                              _DifficultyStat(
+                                label: s.DifficultyMedium,
+                                value: stats.winsMedium,
+                              ),
+                              _DifficultyStat(
+                                label: s.DifficultyHard,
+                                value: stats.winsHard,
+                              ),
+                            ];
+                            return Wrap(
+                              spacing: 16,
+                              runSpacing: 16,
+                              children: difficulties
+                                  .map(
+                                    (item) =>
+                                        SizedBox(width: width, child: item),
+                                  )
+                                  .toList(),
+                            );
+                          },
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -133,13 +168,13 @@ class _StatsScreenState extends State<StatsScreen> {
                         children: [
                           Expanded(child: AppSectionTitle(s.Achievements)),
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
+                            padding: const EdgeInsets.only(bottom: 12),
                             child: Text(
                               '${stats.unlockedAchievements.length}/${AchievementId.values.length}',
                               style: const TextStyle(
                                 fontFamily: 'Roboto',
                                 fontSize: 14,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w600,
                                 color: AppChrome.secondaryText,
                               ),
                             ),
@@ -149,8 +184,9 @@ class _StatsScreenState extends State<StatsScreen> {
                       ...AchievementId.values.map(
                         (id) => _AchievementRow(
                           title: id.title(context),
-                          unlocked: stats.unlockedAchievements
-                              .contains(id.storageKey),
+                          unlocked: stats.unlockedAchievements.contains(
+                            id.storageKey,
+                          ),
                         ),
                       ),
                     ],
@@ -189,19 +225,25 @@ class _SummaryCard extends StatelessWidget {
                     color: palette.lastMoveBorder,
                   ),
                 ),
-                Text(
-                  '$percent%',
-                  style: const TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    color: AppChrome.primaryText,
+                SizedBox(
+                  width: 62,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      '$percent%',
+                      style: const TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: AppChrome.primaryText,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 18),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,11 +253,11 @@ class _SummaryCard extends StatelessWidget {
                   style: const TextStyle(
                     fontFamily: 'Roboto',
                     fontSize: 18,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: AppChrome.primaryText,
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 Text(
                   '${s.GamesPlayed}: ${stats.gamesPlayed}',
                   style: const TextStyle(
@@ -248,29 +290,27 @@ class _MetricCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = ThemeController.instance.theme;
     return AppInfoCard(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, size: 20, color: palette.lastMoveBorder),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Text(
             value,
             style: const TextStyle(
               fontFamily: 'Roboto',
               fontSize: 26,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: AppChrome.primaryText,
             ),
           ),
-          const SizedBox(height: 3),
+          const SizedBox(height: 4),
           Text(
             label,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontFamily: 'Roboto',
-              fontSize: 13,
+              fontSize: 14,
               color: AppChrome.secondaryText,
             ),
           ),
@@ -288,30 +328,28 @@ class _DifficultyStat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          Text(
-            '$value',
-            style: const TextStyle(
-              fontFamily: 'Roboto',
-              fontSize: 24,
-              fontWeight: FontWeight.w900,
-              color: AppChrome.primaryText,
-            ),
+    return Column(
+      children: [
+        Text(
+          '$value',
+          style: const TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            color: AppChrome.primaryText,
           ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontFamily: 'Roboto',
-              fontSize: 13,
-              color: AppChrome.secondaryText,
-            ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: 14,
+            color: AppChrome.secondaryText,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -334,13 +372,13 @@ class _WideMetricCard extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, color: palette.lastMoveBorder, size: 28),
-          const SizedBox(width: 14),
+          const SizedBox(width: 16),
           Text(
             value,
             style: const TextStyle(
               fontFamily: 'Roboto',
               fontSize: 26,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: AppChrome.primaryText,
             ),
           ),
@@ -371,11 +409,11 @@ class _AchievementRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = ThemeController.instance.theme;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 12),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: unlocked ? AppChrome.cardColor : AppChrome.subtleCardColor,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppChrome.borderColor),
         ),
         child: Padding(
@@ -395,7 +433,7 @@ class _AchievementRow extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Roboto',
                     fontSize: 14,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w600,
                     color: unlocked
                         ? AppChrome.primaryText
                         : AppChrome.secondaryText,

@@ -15,31 +15,22 @@ abstract class Styling {
     PieceType.black: LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [
-        Color(0xff101010),
-        Color(0xff303030),
-      ],
+      colors: [Color(0xff101010), Color(0xff303030)],
     ),
     PieceType.white: LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [
-        Color(0xffffffff),
-        Color(0xffe0e0e0),
-      ],
+      colors: [Color(0xffffffff), Color(0xffe0e0e0)],
     ),
     PieceType.empty: LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [
-        Color(0x60ffffff),
-        Color(0x40ffffff),
-      ],
+      colors: [Color(0x60ffffff), Color(0x40ffffff)],
     ),
   };
 
-  static const backgroundStartColor = Color(0xb0E6A763);
-  static const backgroundFinishColor = Color(0xb0AE561B);
+  static const backgroundStartColor = Color(0xff3B2A24);
+  static const backgroundFinishColor = Color(0xff241B18);
   static const thinkingColor = Color(0xa0ffffff);
 
   // **** ANIMATIONS ****
@@ -55,73 +46,64 @@ abstract class Styling {
   // **** TEXT ****
 
   static const scoreText = TextStyle(
-      fontSize: 45.0,
-      fontFamily: 'Roboto',
-      color: Color(0xffffffff),
-      fontStyle: FontStyle.normal,
-      fontWeight: FontWeight.w900);
+    fontSize: 45.0,
+    fontFamily: 'Roboto',
+    color: Color(0xffffffff),
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.w900,
+  );
 
   static const scoreLabelText = TextStyle(
-      fontSize: 25.0,
-      fontFamily: 'Roboto',
-      color: Color(0xffffffff),
-      fontStyle: FontStyle.normal,
-      fontWeight: FontWeight.w900);
+    fontSize: 20.0,
+    fontFamily: 'Roboto',
+    color: Color(0xffffffff),
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.w600,
+  );
 
   static const scoreTextBlack = TextStyle(
-      fontSize: 45.0,
-      fontFamily: 'Roboto',
-      color: Color(0xff000000),
-      fontStyle: FontStyle.normal,
-      fontWeight: FontWeight.w900);
+    fontSize: 45.0,
+    fontFamily: 'Roboto',
+    color: Color(0xff000000),
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.w900,
+  );
 
   static const scoreLabelTextBlack = TextStyle(
-      fontSize: 25.0,
-      fontFamily: 'Roboto',
-      color: Color(0xff000000),
-      fontStyle: FontStyle.normal,
-      fontWeight: FontWeight.w900);
+    fontSize: 20.0,
+    fontFamily: 'Roboto',
+    color: Color(0xff000000),
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.w600,
+  );
 
   static const resultText = TextStyle(
-      fontSize: 45.0,
-      fontFamily: 'Roboto',
-      color: Color(0xe0ffffff),
-      fontStyle: FontStyle.italic,
-      fontWeight: FontWeight.w900);
+    fontSize: 45.0,
+    fontFamily: 'Roboto',
+    color: Color(0xe0ffffff),
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.w900,
+  );
 
   static const buttonText = TextStyle(
-      fontSize: 25.0,
-      fontFamily: 'Roboto',
-      color: Color(0xe0ffffff),
-      fontStyle: FontStyle.normal,
-      fontWeight: FontWeight.w900);
+    fontSize: 20.0,
+    fontFamily: 'Roboto',
+    color: Color(0xe0ffffff),
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.w600,
+  );
 
   // **** BOXES ****
 
   static const activePlayerIndicator = BoxDecoration(
-    border: Border(
-      bottom: BorderSide(
-        width: 2.0,
-        color: Color(0xffffffff),
-      ),
-    ),
+    border: Border(bottom: BorderSide(width: 2.0, color: Color(0xffffffff))),
   );
 
   static const activePlayerIndicatorBlack = BoxDecoration(
-    border: Border(
-      bottom: BorderSide(
-        width: 2.0,
-        color: Color(0xff000000),
-      ),
-    ),
+    border: Border(bottom: BorderSide(width: 2.0, color: Color(0xff000000))),
   );
 
   static const inactivePlayerIndicator = BoxDecoration(
-    border: Border(
-      bottom: BorderSide(
-        width: 2.0,
-        color: Color(0x00000000),
-      ),
-    ),
+    border: Border(bottom: BorderSide(width: 2.0, color: Color(0x00000000))),
   );
 }

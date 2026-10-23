@@ -40,7 +40,7 @@ class SettingsService {
 
   static Future<Difficulty> getDifficulty() async {
     final prefs = await SharedPreferences.getInstance();
-    final index = prefs.getInt(_difficultyKey) ?? Difficulty.hard.index;
+    final index = prefs.getInt(_difficultyKey) ?? Difficulty.easy.index;
     return Difficulty.values[index.clamp(0, Difficulty.values.length - 1)];
   }
 
@@ -146,8 +146,10 @@ class SettingsService {
     final prefs = await SharedPreferences.getInstance();
     final index =
         prefs.getInt(_feedbackIntensityKey) ?? FeedbackIntensity.balanced.index;
-    return FeedbackIntensity
-        .values[index.clamp(0, FeedbackIntensity.values.length - 1)];
+    return FeedbackIntensity.values[index.clamp(
+      0,
+      FeedbackIntensity.values.length - 1,
+    )];
   }
 
   static Future<void> setFeedbackIntensity(FeedbackIntensity value) async {
@@ -184,7 +186,9 @@ class SettingsService {
   static Future<void> incrementGamesPlayed() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(
-        _gamesPlayedKey, (prefs.getInt(_gamesPlayedKey) ?? 0) + 1);
+      _gamesPlayedKey,
+      (prefs.getInt(_gamesPlayedKey) ?? 0) + 1,
+    );
   }
 
   static Future<int> getCurrentStreak() async {
@@ -245,7 +249,9 @@ class SettingsService {
   static Future<void> incrementPerfectWins() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(
-        _perfectWinsKey, (prefs.getInt(_perfectWinsKey) ?? 0) + 1);
+      _perfectWinsKey,
+      (prefs.getInt(_perfectWinsKey) ?? 0) + 1,
+    );
   }
 
   static String todayKey([DateTime? date]) {
@@ -266,7 +272,9 @@ class SettingsService {
     await prefs.setString(_dailyCompletedDateKey, todayKey());
     if (!already) {
       await prefs.setInt(
-          _dailyCompletionsKey, (prefs.getInt(_dailyCompletionsKey) ?? 0) + 1);
+        _dailyCompletionsKey,
+        (prefs.getInt(_dailyCompletionsKey) ?? 0) + 1,
+      );
     }
   }
 
@@ -282,8 +290,8 @@ class SettingsService {
 
   static Future<bool> unlockAchievement(String id) async {
     final prefs = await SharedPreferences.getInstance();
-    final current =
-        (prefs.getStringList(_unlockedAchievementsKey) ?? []).toSet();
+    final current = (prefs.getStringList(_unlockedAchievementsKey) ?? [])
+        .toSet();
     if (current.contains(id)) {
       return false;
     }

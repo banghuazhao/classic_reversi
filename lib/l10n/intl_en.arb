@@ -61,8 +61,8 @@
       "losses": {}
     }
   },
-  "Black": "black",
-  "White": "white",
+  "Black": "Black",
+  "White": "White",
   "BlackWins": "Black wins",
   "WhiteWins": "White wins",
   "Tie": "Tie",
@@ -149,5 +149,124 @@
   "PrivacyPolicy": "Privacy Policy",
   "PrivacyPolicySubtitle": "How we handle data and ads",
   "PrivacyOptions": "Privacy options",
-  "PrivacyOptionsSubtitle": "Update your ad privacy choices"
+  "PrivacyOptionsSubtitle": "Update your ad privacy choices",
+  "ContinueGame": "Continue game",
+  "Play": "Play",
+  "NewGame": "New game",
+  "HomeTagline": "A little strategy. A moment for yourself.",
+  "SavedGameSubtitle": "Your board is ready when you are.",
+  "GameSetup": "Set up your game",
+  "Opponent": "Opponent",
+  "AgainstComputer": "Computer",
+  "ReplaceSavedGameTitle": "Start a new game?",
+  "ReplaceSavedGameMessage": "Your unfinished game will be replaced. You can continue it from Home instead.",
+  "KeepPlaying": "Keep playing",
+  "StartNewGame": "Start new game",
+  "GuidedFirstGame": "Learn with a guided game",
+  "GuidedFirstGameSubtitle": "Practice a capture, discover corners, and find your rhythm.",
+  "Rules": "Rules",
+  "TutorialTitle": "Learn by playing",
+  "TutorialCaptureTitle": "Make your first capture",
+  "TutorialCaptureBody": "You are Black. Tap a marked square to trap a white disc between two black discs.",
+  "TutorialCaptureDoneTitle": "That is a capture",
+  "TutorialCaptureDoneBody": "The trapped white disc turns black. White replies next, then it is your turn again.",
+  "TutorialReplyBody": "White has played. Tap any marked square to make another capture.",
+  "TutorialReplyDoneBody": "You have played a full turn. Now try a corner in a practice position.",
+  "TutorialCornersTitle": "Claim a corner",
+  "TutorialCornersBody": "Try this practice position. Tap the marked corner at A1. A corner disc cannot be flipped.",
+  "TutorialCompleteTitle": "You are ready",
+  "TutorialCompleteBody": "Win by finishing with more discs. If you have no legal move, your turn passes automatically. Start with Easy and move up when you feel ready.",
+  "TutorialNext": "Continue",
+  "TutorialSkip": "Skip tutorial",
+  "TutorialPlayEasy": "Play an Easy game",
+  "ReviewGame": "Review game",
+  "ReviewStart": "Starting position",
+  "ReviewFinal": "Final position",
+  "ReviewPrevious": "Previous move",
+  "ReviewNext": "Next move",
+  "ReviewFirst": "Go to start",
+  "ReviewLast": "Go to end",
+  "BoardEmpty": "Empty",
+  "BoardLegalMove": "Legal move",
+  "BoardLastMove": "Last move",
+  "BoardKeyboardHint": "Use arrow keys to explore the board and Enter or Space to play a marked square.",
+  "BoardReviewKeyboardHint": "Use arrow keys to explore the board.",
+  "ReviewBoardLabel": "Game review board",
+  "TutorialBoardLabel": "Practice board",
+  "TutorialProgress": "Lesson {step} of {total}",
+  "@TutorialProgress": {
+    "type": "text",
+    "placeholders": {
+      "step": {},
+      "total": {}
+    }
+  },
+  "ReviewMove": "Move {move} of {total}",
+  "@ReviewMove": {
+    "type": "text",
+    "placeholders": {
+      "move": {},
+      "total": {}
+    }
+  },
+  "ReviewCorners": "Corners · Black {black} · White {white}",
+  "@ReviewCorners": {
+    "type": "text",
+    "placeholders": {
+      "black": {},
+      "white": {}
+    }
+  },
+  "BoardCell": "{coordinate}, {piece}",
+  "@BoardCell": {
+    "type": "text",
+    "placeholders": {
+      "coordinate": {},
+      "piece": {}
+    }
+  },
+  "RestartConfirmTitle": "Restart this game?",
+  "RestartConfirmMessage": "Your current board will be replaced by the starting position.",
+  "YourTurn": "Your turn",
+  "ComputerThinking": "Computer is thinking…",
+  "PlayerTurn": "{color} to play",
+  "@PlayerTurn": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "TurnPassed": "{passed} has no legal moves. {current} plays again.",
+  "@TurnPassed": {
+    "type": "text",
+    "placeholders": {
+      "passed": {},
+      "current": {}
+    }
+  },
+  "YouColor": "You · {color}",
+  "@YouColor": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "ComputerColor": "Computer · {color}",
+  "@ComputerColor": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "GameStatusAnnouncement": "{status}. Black {black}, White {white}.",
+  "@GameStatusAnnouncement": {
+    "type": "text",
+    "placeholders": {
+      "status": {},
+      "black": {},
+      "white": {}
+    }
+  },
+  "UndoWithAd": "Undo · watch an ad",
+  "HintWithAd": "Legal moves · watch an ad"
 }

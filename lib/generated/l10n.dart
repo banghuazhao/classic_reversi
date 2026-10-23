@@ -534,14 +534,14 @@ class S {
     );
   }
 
-  /// `black`
+  /// `Black`
   String get Black {
-    return Intl.message('black', name: 'Black', desc: '', args: []);
+    return Intl.message('Black', name: 'Black', desc: '', args: []);
   }
 
-  /// `white`
+  /// `White`
   String get White {
-    return Intl.message('white', name: 'White', desc: '', args: []);
+    return Intl.message('White', name: 'White', desc: '', args: []);
   }
 
   /// `Black wins`
@@ -1159,6 +1159,526 @@ class S {
     return Intl.message(
       'Update your ad privacy choices',
       name: 'PrivacyOptionsSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Continue game`
+  String get ContinueGame {
+    return Intl.message(
+      'Continue game',
+      name: 'ContinueGame',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Play`
+  String get Play {
+    return Intl.message('Play', name: 'Play', desc: '', args: []);
+  }
+
+  /// `New game`
+  String get NewGame {
+    return Intl.message('New game', name: 'NewGame', desc: '', args: []);
+  }
+
+  /// `A little strategy. A moment for yourself.`
+  String get HomeTagline {
+    return Intl.message(
+      'A little strategy. A moment for yourself.',
+      name: 'HomeTagline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your board is ready when you are.`
+  String get SavedGameSubtitle {
+    return Intl.message(
+      'Your board is ready when you are.',
+      name: 'SavedGameSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set up your game`
+  String get GameSetup {
+    return Intl.message(
+      'Set up your game',
+      name: 'GameSetup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Opponent`
+  String get Opponent {
+    return Intl.message('Opponent', name: 'Opponent', desc: '', args: []);
+  }
+
+  /// `Computer`
+  String get AgainstComputer {
+    return Intl.message(
+      'Computer',
+      name: 'AgainstComputer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start a new game?`
+  String get ReplaceSavedGameTitle {
+    return Intl.message(
+      'Start a new game?',
+      name: 'ReplaceSavedGameTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your unfinished game will be replaced. You can continue it from Home instead.`
+  String get ReplaceSavedGameMessage {
+    return Intl.message(
+      'Your unfinished game will be replaced. You can continue it from Home instead.',
+      name: 'ReplaceSavedGameMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep playing`
+  String get KeepPlaying {
+    return Intl.message(
+      'Keep playing',
+      name: 'KeepPlaying',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start new game`
+  String get StartNewGame {
+    return Intl.message(
+      'Start new game',
+      name: 'StartNewGame',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Learn with a guided game`
+  String get GuidedFirstGame {
+    return Intl.message(
+      'Learn with a guided game',
+      name: 'GuidedFirstGame',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Practice a capture, discover corners, and find your rhythm.`
+  String get GuidedFirstGameSubtitle {
+    return Intl.message(
+      'Practice a capture, discover corners, and find your rhythm.',
+      name: 'GuidedFirstGameSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rules`
+  String get Rules {
+    return Intl.message('Rules', name: 'Rules', desc: '', args: []);
+  }
+
+  /// `Learn by playing`
+  String get TutorialTitle {
+    return Intl.message(
+      'Learn by playing',
+      name: 'TutorialTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Make your first capture`
+  String get TutorialCaptureTitle {
+    return Intl.message(
+      'Make your first capture',
+      name: 'TutorialCaptureTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You are Black. Tap a marked square to trap a white disc between two black discs.`
+  String get TutorialCaptureBody {
+    return Intl.message(
+      'You are Black. Tap a marked square to trap a white disc between two black discs.',
+      name: 'TutorialCaptureBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `That is a capture`
+  String get TutorialCaptureDoneTitle {
+    return Intl.message(
+      'That is a capture',
+      name: 'TutorialCaptureDoneTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The trapped white disc turns black. White replies next, then it is your turn again.`
+  String get TutorialCaptureDoneBody {
+    return Intl.message(
+      'The trapped white disc turns black. White replies next, then it is your turn again.',
+      name: 'TutorialCaptureDoneBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `White has played. Tap any marked square to make another capture.`
+  String get TutorialReplyBody {
+    return Intl.message(
+      'White has played. Tap any marked square to make another capture.',
+      name: 'TutorialReplyBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have played a full turn. Now try a corner in a practice position.`
+  String get TutorialReplyDoneBody {
+    return Intl.message(
+      'You have played a full turn. Now try a corner in a practice position.',
+      name: 'TutorialReplyDoneBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Claim a corner`
+  String get TutorialCornersTitle {
+    return Intl.message(
+      'Claim a corner',
+      name: 'TutorialCornersTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try this practice position. Tap the marked corner at A1. A corner disc cannot be flipped.`
+  String get TutorialCornersBody {
+    return Intl.message(
+      'Try this practice position. Tap the marked corner at A1. A corner disc cannot be flipped.',
+      name: 'TutorialCornersBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You are ready`
+  String get TutorialCompleteTitle {
+    return Intl.message(
+      'You are ready',
+      name: 'TutorialCompleteTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Win by finishing with more discs. If you have no legal move, your turn passes automatically. Start with Easy and move up when you feel ready.`
+  String get TutorialCompleteBody {
+    return Intl.message(
+      'Win by finishing with more discs. If you have no legal move, your turn passes automatically. Start with Easy and move up when you feel ready.',
+      name: 'TutorialCompleteBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Continue`
+  String get TutorialNext {
+    return Intl.message('Continue', name: 'TutorialNext', desc: '', args: []);
+  }
+
+  /// `Skip tutorial`
+  String get TutorialSkip {
+    return Intl.message(
+      'Skip tutorial',
+      name: 'TutorialSkip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Play an Easy game`
+  String get TutorialPlayEasy {
+    return Intl.message(
+      'Play an Easy game',
+      name: 'TutorialPlayEasy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Review game`
+  String get ReviewGame {
+    return Intl.message('Review game', name: 'ReviewGame', desc: '', args: []);
+  }
+
+  /// `Starting position`
+  String get ReviewStart {
+    return Intl.message(
+      'Starting position',
+      name: 'ReviewStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Final position`
+  String get ReviewFinal {
+    return Intl.message(
+      'Final position',
+      name: 'ReviewFinal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Previous move`
+  String get ReviewPrevious {
+    return Intl.message(
+      'Previous move',
+      name: 'ReviewPrevious',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next move`
+  String get ReviewNext {
+    return Intl.message('Next move', name: 'ReviewNext', desc: '', args: []);
+  }
+
+  /// `Go to start`
+  String get ReviewFirst {
+    return Intl.message('Go to start', name: 'ReviewFirst', desc: '', args: []);
+  }
+
+  /// `Go to end`
+  String get ReviewLast {
+    return Intl.message('Go to end', name: 'ReviewLast', desc: '', args: []);
+  }
+
+  /// `Empty`
+  String get BoardEmpty {
+    return Intl.message('Empty', name: 'BoardEmpty', desc: '', args: []);
+  }
+
+  /// `Legal move`
+  String get BoardLegalMove {
+    return Intl.message(
+      'Legal move',
+      name: 'BoardLegalMove',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last move`
+  String get BoardLastMove {
+    return Intl.message('Last move', name: 'BoardLastMove', desc: '', args: []);
+  }
+
+  /// `Use arrow keys to explore the board and Enter or Space to play a marked square.`
+  String get BoardKeyboardHint {
+    return Intl.message(
+      'Use arrow keys to explore the board and Enter or Space to play a marked square.',
+      name: 'BoardKeyboardHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use arrow keys to explore the board.`
+  String get BoardReviewKeyboardHint {
+    return Intl.message(
+      'Use arrow keys to explore the board.',
+      name: 'BoardReviewKeyboardHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Game review board`
+  String get ReviewBoardLabel {
+    return Intl.message(
+      'Game review board',
+      name: 'ReviewBoardLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Practice board`
+  String get TutorialBoardLabel {
+    return Intl.message(
+      'Practice board',
+      name: 'TutorialBoardLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Lesson {step} of {total}`
+  String TutorialProgress(Object step, Object total) {
+    return Intl.message(
+      'Lesson $step of $total',
+      name: 'TutorialProgress',
+      desc: '',
+      args: [step, total],
+    );
+  }
+
+  /// `Move {move} of {total}`
+  String ReviewMove(Object move, Object total) {
+    return Intl.message(
+      'Move $move of $total',
+      name: 'ReviewMove',
+      desc: '',
+      args: [move, total],
+    );
+  }
+
+  /// `Corners · Black {black} · White {white}`
+  String ReviewCorners(Object black, Object white) {
+    return Intl.message(
+      'Corners · Black $black · White $white',
+      name: 'ReviewCorners',
+      desc: '',
+      args: [black, white],
+    );
+  }
+
+  /// `{coordinate}, {piece}`
+  String BoardCell(Object coordinate, Object piece) {
+    return Intl.message(
+      '$coordinate, $piece',
+      name: 'BoardCell',
+      desc: '',
+      args: [coordinate, piece],
+    );
+  }
+
+  /// `Restart this game?`
+  String get RestartConfirmTitle {
+    return Intl.message(
+      'Restart this game?',
+      name: 'RestartConfirmTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your current board will be replaced by the starting position.`
+  String get RestartConfirmMessage {
+    return Intl.message(
+      'Your current board will be replaced by the starting position.',
+      name: 'RestartConfirmMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your turn`
+  String get YourTurn {
+    return Intl.message('Your turn', name: 'YourTurn', desc: '', args: []);
+  }
+
+  /// `Computer is thinking…`
+  String get ComputerThinking {
+    return Intl.message(
+      'Computer is thinking…',
+      name: 'ComputerThinking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{color} to play`
+  String PlayerTurn(Object color) {
+    return Intl.message(
+      '$color to play',
+      name: 'PlayerTurn',
+      desc: '',
+      args: [color],
+    );
+  }
+
+  /// `{passed} has no legal moves. {current} plays again.`
+  String TurnPassed(Object passed, Object current) {
+    return Intl.message(
+      '$passed has no legal moves. $current plays again.',
+      name: 'TurnPassed',
+      desc: '',
+      args: [passed, current],
+    );
+  }
+
+  /// `You · {color}`
+  String YouColor(Object color) {
+    return Intl.message(
+      'You · $color',
+      name: 'YouColor',
+      desc: '',
+      args: [color],
+    );
+  }
+
+  /// `Computer · {color}`
+  String ComputerColor(Object color) {
+    return Intl.message(
+      'Computer · $color',
+      name: 'ComputerColor',
+      desc: '',
+      args: [color],
+    );
+  }
+
+  /// `{status}. Black {black}, White {white}.`
+  String GameStatusAnnouncement(Object status, Object black, Object white) {
+    return Intl.message(
+      '$status. Black $black, White $white.',
+      name: 'GameStatusAnnouncement',
+      desc: '',
+      args: [status, black, white],
+    );
+  }
+
+  /// `Undo · watch an ad`
+  String get UndoWithAd {
+    return Intl.message(
+      'Undo · watch an ad',
+      name: 'UndoWithAd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Legal moves · watch an ad`
+  String get HintWithAd {
+    return Intl.message(
+      'Legal moves · watch an ad',
+      name: 'HintWithAd',
       desc: '',
       args: [],
     );

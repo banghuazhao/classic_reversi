@@ -123,5 +123,124 @@
   "PrivacyPolicy": "隐私政策",
   "PrivacyPolicySubtitle": "了解我们如何处理数据和广告",
   "PrivacyOptions": "隐私选项",
-  "PrivacyOptionsSubtitle": "更新你的广告隐私选择"
+  "PrivacyOptionsSubtitle": "更新你的广告隐私选择",
+  "ContinueGame": "继续游戏",
+  "Play": "开始游戏",
+  "NewGame": "新游戏",
+  "HomeTagline": "用一点策略，享一刻自在。",
+  "SavedGameSubtitle": "棋盘已为你保留，随时可以继续。",
+  "GameSetup": "设置对局",
+  "Opponent": "对手",
+  "AgainstComputer": "电脑",
+  "ReplaceSavedGameTitle": "开始新游戏？",
+  "ReplaceSavedGameMessage": "尚未结束的对局将被替换。你也可以返回主页继续这局游戏。",
+  "KeepPlaying": "继续当前对局",
+  "StartNewGame": "开始新游戏",
+  "GuidedFirstGame": "跟着引导学下棋",
+  "GuidedFirstGameSubtitle": "练习翻子，了解角位，找到自己的节奏。",
+  "Rules": "规则",
+  "TutorialTitle": "边玩边学",
+  "TutorialCaptureTitle": "第一次翻子",
+  "TutorialCaptureBody": "你执黑棋。点击标记的格子，用两枚黑子夹住一枚白子。",
+  "TutorialCaptureDoneTitle": "这就是翻子",
+  "TutorialCaptureDoneBody": "被夹住的白子变成了黑子。接着轮到白棋，然后又是你的回合。",
+  "TutorialReplyBody": "白棋已落子。点击任意标记的格子，再翻一次棋子。",
+  "TutorialReplyDoneBody": "你已完成一轮落子。现在换到练习局面，试着占据角位。",
+  "TutorialCornersTitle": "占据角位",
+  "TutorialCornersBody": "试试这个练习局面。点击 A1 处标记的角位。角位上的棋子不会被翻转。",
+  "TutorialCompleteTitle": "准备就绪",
+  "TutorialCompleteBody": "结束时棋子更多的一方获胜。没有合法落子点时，会自动跳过回合。先从简单难度开始，熟悉后再挑战更高难度。",
+  "TutorialNext": "继续",
+  "TutorialSkip": "跳过教学",
+  "TutorialPlayEasy": "开始简单对局",
+  "ReviewGame": "复盘",
+  "ReviewStart": "初始局面",
+  "ReviewFinal": "最终局面",
+  "ReviewPrevious": "上一步",
+  "ReviewNext": "下一步",
+  "ReviewFirst": "回到开局",
+  "ReviewLast": "前往终局",
+  "BoardEmpty": "空格",
+  "BoardLegalMove": "合法落子点",
+  "BoardLastMove": "上一步落子",
+  "BoardKeyboardHint": "使用方向键浏览棋盘，按回车键或空格键在标记的格子落子。",
+  "BoardReviewKeyboardHint": "使用方向键浏览棋盘。",
+  "ReviewBoardLabel": "复盘棋盘",
+  "TutorialBoardLabel": "练习棋盘",
+  "TutorialProgress": "第 {step} 课，共 {total} 课",
+  "@TutorialProgress": {
+    "type": "text",
+    "placeholders": {
+      "step": {},
+      "total": {}
+    }
+  },
+  "ReviewMove": "第 {move} 步，共 {total} 步",
+  "@ReviewMove": {
+    "type": "text",
+    "placeholders": {
+      "move": {},
+      "total": {}
+    }
+  },
+  "ReviewCorners": "角位 · 黑棋 {black} · 白棋 {white}",
+  "@ReviewCorners": {
+    "type": "text",
+    "placeholders": {
+      "black": {},
+      "white": {}
+    }
+  },
+  "BoardCell": "{coordinate}，{piece}",
+  "@BoardCell": {
+    "type": "text",
+    "placeholders": {
+      "coordinate": {},
+      "piece": {}
+    }
+  },
+  "RestartConfirmTitle": "重新开始这局游戏？",
+  "RestartConfirmMessage": "当前棋盘将恢复为初始局面。",
+  "YourTurn": "轮到你了",
+  "ComputerThinking": "电脑思考中…",
+  "PlayerTurn": "轮到{color}落子",
+  "@PlayerTurn": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "TurnPassed": "{passed}无合法落子点，{current}再走一步。",
+  "@TurnPassed": {
+    "type": "text",
+    "placeholders": {
+      "passed": {},
+      "current": {}
+    }
+  },
+  "YouColor": "你 · {color}",
+  "@YouColor": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "ComputerColor": "电脑 · {color}",
+  "@ComputerColor": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "GameStatusAnnouncement": "{status}。黑棋 {black}，白棋 {white}。",
+  "@GameStatusAnnouncement": {
+    "type": "text",
+    "placeholders": {
+      "status": {},
+      "black": {},
+      "white": {}
+    }
+  },
+  "UndoWithAd": "悔棋 · 观看广告",
+  "HintWithAd": "合法落子点 · 观看广告"
 }

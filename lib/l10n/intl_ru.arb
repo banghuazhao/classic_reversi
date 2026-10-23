@@ -98,5 +98,124 @@
   "PrivacyPolicy": "Политика конфиденциальности",
   "PrivacyPolicySubtitle": "Как мы обрабатываем данные и рекламу",
   "PrivacyOptions": "Параметры конфиденциальности",
-  "PrivacyOptionsSubtitle": "Обновить настройки рекламной конфиденциальности"
+  "PrivacyOptionsSubtitle": "Обновить настройки рекламной конфиденциальности",
+  "ContinueGame": "Продолжить игру",
+  "Play": "Играть",
+  "NewGame": "Новая игра",
+  "HomeTagline": "Немного стратегии. Мгновение для себя.",
+  "SavedGameSubtitle": "Ваша доска ждёт вас.",
+  "GameSetup": "Настройте игру",
+  "Opponent": "Соперник",
+  "AgainstComputer": "Компьютер",
+  "ReplaceSavedGameTitle": "Начать новую игру?",
+  "ReplaceSavedGameMessage": "Незавершённая игра будет заменена. Вы можете продолжить её с главного экрана.",
+  "KeepPlaying": "Продолжить играть",
+  "StartNewGame": "Начать новую игру",
+  "GuidedFirstGame": "Обучающая игра",
+  "GuidedFirstGameSubtitle": "Научитесь переворачивать фишки, занимать углы и находить свой ритм.",
+  "Rules": "Правила",
+  "TutorialTitle": "Учитесь играя",
+  "TutorialCaptureTitle": "Переверните первые фишки",
+  "TutorialCaptureBody": "Вы играете чёрными. Нажмите на отмеченную клетку, чтобы зажать белую фишку между двумя чёрными.",
+  "TutorialCaptureDoneTitle": "Вот как переворачиваются фишки",
+  "TutorialCaptureDoneBody": "Зажатая белая фишка становится чёрной. Теперь ходят белые, а затем снова вы.",
+  "TutorialReplyBody": "Белые сделали ход. Нажмите на любую отмеченную клетку, чтобы снова перевернуть фишки.",
+  "TutorialReplyDoneBody": "Вы прошли полный круг ходов. Теперь попробуйте занять угол в учебной позиции.",
+  "TutorialCornersTitle": "Займите угол",
+  "TutorialCornersBody": "Попробуйте эту учебную позицию. Нажмите на отмеченный угол A1. Угловую фишку нельзя перевернуть.",
+  "TutorialCompleteTitle": "Всё готово к игре",
+  "TutorialCompleteBody": "Побеждает тот, у кого в конце больше фишек. Если допустимых ходов нет, ход автоматически пропускается. Начните с лёгкого уровня и повышайте сложность, когда будете готовы.",
+  "TutorialNext": "Продолжить",
+  "TutorialSkip": "Пропустить обучение",
+  "TutorialPlayEasy": "Играть на лёгком уровне",
+  "ReviewGame": "Разбор партии",
+  "ReviewStart": "Начальная позиция",
+  "ReviewFinal": "Конечная позиция",
+  "ReviewPrevious": "Предыдущий ход",
+  "ReviewNext": "Следующий ход",
+  "ReviewFirst": "К началу",
+  "ReviewLast": "К концу",
+  "BoardEmpty": "Пусто",
+  "BoardLegalMove": "Допустимый ход",
+  "BoardLastMove": "Последний ход",
+  "BoardKeyboardHint": "Перемещайтесь по доске клавишами со стрелками. Нажмите Enter или пробел, чтобы сделать ход в отмеченную клетку.",
+  "BoardReviewKeyboardHint": "Перемещайтесь по доске клавишами со стрелками.",
+  "ReviewBoardLabel": "Доска разбора партии",
+  "TutorialBoardLabel": "Учебная доска",
+  "TutorialProgress": "Урок {step} из {total}",
+  "@TutorialProgress": {
+    "type": "text",
+    "placeholders": {
+      "step": {},
+      "total": {}
+    }
+  },
+  "ReviewMove": "Ход {move} из {total}",
+  "@ReviewMove": {
+    "type": "text",
+    "placeholders": {
+      "move": {},
+      "total": {}
+    }
+  },
+  "ReviewCorners": "Углы · Чёрные {black} · Белые {white}",
+  "@ReviewCorners": {
+    "type": "text",
+    "placeholders": {
+      "black": {},
+      "white": {}
+    }
+  },
+  "BoardCell": "{coordinate}, {piece}",
+  "@BoardCell": {
+    "type": "text",
+    "placeholders": {
+      "coordinate": {},
+      "piece": {}
+    }
+  },
+  "RestartConfirmTitle": "Начать эту игру заново?",
+  "RestartConfirmMessage": "Текущая позиция будет заменена начальной.",
+  "YourTurn": "Ваш ход",
+  "ComputerThinking": "Компьютер думает…",
+  "PlayerTurn": "Ход: {color}",
+  "@PlayerTurn": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "TurnPassed": "{passed}: нет допустимых ходов. {current} ходят снова.",
+  "@TurnPassed": {
+    "type": "text",
+    "placeholders": {
+      "passed": {},
+      "current": {}
+    }
+  },
+  "YouColor": "Вы · {color}",
+  "@YouColor": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "ComputerColor": "Компьютер · {color}",
+  "@ComputerColor": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "GameStatusAnnouncement": "{status}. Чёрные {black}, белые {white}.",
+  "@GameStatusAnnouncement": {
+    "type": "text",
+    "placeholders": {
+      "status": {},
+      "black": {},
+      "white": {}
+    }
+  },
+  "UndoWithAd": "Отменить ход · смотреть рекламу",
+  "HintWithAd": "Допустимые ходы · смотреть рекламу"
 }

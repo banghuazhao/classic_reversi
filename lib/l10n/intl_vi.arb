@@ -98,5 +98,124 @@
   "PrivacyPolicy": "Chính sách quyền riêng tư",
   "PrivacyPolicySubtitle": "Cách chúng tôi xử lý dữ liệu và quảng cáo",
   "PrivacyOptions": "Tùy chọn quyền riêng tư",
-  "PrivacyOptionsSubtitle": "Cập nhật lựa chọn quyền riêng tư quảng cáo"
+  "PrivacyOptionsSubtitle": "Cập nhật lựa chọn quyền riêng tư quảng cáo",
+  "ContinueGame": "Tiếp tục ván chơi",
+  "Play": "Chơi",
+  "NewGame": "Ván mới",
+  "HomeTagline": "Một chút chiến thuật. Một khoảng riêng cho bạn.",
+  "SavedGameSubtitle": "Bàn cờ luôn sẵn sàng khi bạn muốn chơi tiếp.",
+  "GameSetup": "Thiết lập ván chơi",
+  "Opponent": "Đối thủ",
+  "AgainstComputer": "Máy tính",
+  "ReplaceSavedGameTitle": "Bắt đầu ván mới?",
+  "ReplaceSavedGameMessage": "Ván chưa hoàn tất sẽ bị thay thế. Bạn có thể tiếp tục ván đó từ màn hình chính.",
+  "KeepPlaying": "Chơi tiếp",
+  "StartNewGame": "Bắt đầu ván mới",
+  "GuidedFirstGame": "Học qua ván chơi có hướng dẫn",
+  "GuidedFirstGameSubtitle": "Tập lật quân, tìm hiểu các ô góc và làm quen theo nhịp của bạn.",
+  "Rules": "Luật chơi",
+  "TutorialTitle": "Học qua trải nghiệm",
+  "TutorialCaptureTitle": "Lật quân đầu tiên",
+  "TutorialCaptureBody": "Bạn cầm quân đen. Chạm vào ô được đánh dấu để kẹp một quân trắng giữa hai quân đen.",
+  "TutorialCaptureDoneTitle": "Đó là cách lật quân",
+  "TutorialCaptureDoneBody": "Quân trắng bị kẹp sẽ chuyển thành đen. Tiếp theo quân trắng đi, rồi lại đến lượt bạn.",
+  "TutorialReplyBody": "Quân trắng đã đi. Chạm vào bất kỳ ô được đánh dấu nào để lật quân tiếp.",
+  "TutorialReplyDoneBody": "Bạn đã hoàn thành một lượt chơi. Giờ hãy thử chiếm một ô góc trong thế cờ luyện tập.",
+  "TutorialCornersTitle": "Chiếm ô góc",
+  "TutorialCornersBody": "Thử thế cờ luyện tập này. Chạm vào ô góc A1 được đánh dấu. Quân ở ô góc không thể bị lật.",
+  "TutorialCompleteTitle": "Bạn đã sẵn sàng",
+  "TutorialCompleteBody": "Bạn thắng khi kết thúc với nhiều quân hơn. Nếu không có nước đi hợp lệ, lượt của bạn sẽ tự động được bỏ qua. Hãy bắt đầu ở mức Dễ và tăng độ khó khi thấy sẵn sàng.",
+  "TutorialNext": "Tiếp tục",
+  "TutorialSkip": "Bỏ qua hướng dẫn",
+  "TutorialPlayEasy": "Chơi một ván mức Dễ",
+  "ReviewGame": "Xem lại ván chơi",
+  "ReviewStart": "Thế cờ ban đầu",
+  "ReviewFinal": "Thế cờ cuối cùng",
+  "ReviewPrevious": "Nước đi trước",
+  "ReviewNext": "Nước đi tiếp theo",
+  "ReviewFirst": "Về đầu",
+  "ReviewLast": "Đến cuối",
+  "BoardEmpty": "Ô trống",
+  "BoardLegalMove": "Nước đi hợp lệ",
+  "BoardLastMove": "Nước đi vừa rồi",
+  "BoardKeyboardHint": "Dùng các phím mũi tên để di chuyển trên bàn cờ, rồi nhấn Enter hoặc phím cách để đặt quân vào ô được đánh dấu.",
+  "BoardReviewKeyboardHint": "Dùng các phím mũi tên để di chuyển trên bàn cờ.",
+  "ReviewBoardLabel": "Bàn cờ xem lại ván chơi",
+  "TutorialBoardLabel": "Bàn cờ luyện tập",
+  "TutorialProgress": "Bài học {step} trên {total}",
+  "@TutorialProgress": {
+    "type": "text",
+    "placeholders": {
+      "step": {},
+      "total": {}
+    }
+  },
+  "ReviewMove": "Nước đi {move} trên {total}",
+  "@ReviewMove": {
+    "type": "text",
+    "placeholders": {
+      "move": {},
+      "total": {}
+    }
+  },
+  "ReviewCorners": "Ô góc · Đen {black} · Trắng {white}",
+  "@ReviewCorners": {
+    "type": "text",
+    "placeholders": {
+      "black": {},
+      "white": {}
+    }
+  },
+  "BoardCell": "{coordinate}, {piece}",
+  "@BoardCell": {
+    "type": "text",
+    "placeholders": {
+      "coordinate": {},
+      "piece": {}
+    }
+  },
+  "RestartConfirmTitle": "Chơi lại ván này từ đầu?",
+  "RestartConfirmMessage": "Thế cờ hiện tại sẽ được thay bằng thế cờ ban đầu.",
+  "YourTurn": "Đến lượt bạn",
+  "ComputerThinking": "Máy tính đang suy nghĩ…",
+  "PlayerTurn": "Lượt quân {color}",
+  "@PlayerTurn": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "TurnPassed": "Quân {passed} không có nước đi hợp lệ. Quân {current} được đi tiếp.",
+  "@TurnPassed": {
+    "type": "text",
+    "placeholders": {
+      "passed": {},
+      "current": {}
+    }
+  },
+  "YouColor": "Bạn · {color}",
+  "@YouColor": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "ComputerColor": "Máy tính · {color}",
+  "@ComputerColor": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "GameStatusAnnouncement": "{status}. Đen {black}, trắng {white}.",
+  "@GameStatusAnnouncement": {
+    "type": "text",
+    "placeholders": {
+      "status": {},
+      "black": {},
+      "white": {}
+    }
+  },
+  "UndoWithAd": "Hoàn tác · xem quảng cáo",
+  "HintWithAd": "Nước đi hợp lệ · xem quảng cáo"
 }

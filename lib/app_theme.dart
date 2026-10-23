@@ -71,12 +71,12 @@ class AppTheme {
   });
 
   static const classic = AppTheme(
-    backgroundStart: Color(0xb0E6A763),
-    backgroundFinish: Color(0xb0AE561B),
+    backgroundStart: Color(0xff3B2A24),
+    backgroundFinish: Color(0xff241B18),
     thinking: Color(0xa0ffffff),
-    lastMoveBorder: Color(0xffFFC107),
+    lastMoveBorder: Color(0xffE4C18B),
     hintDot: Color(0x60ffffff),
-    buttonFill: Color(0x60421E08),
+    buttonFill: Color(0xff4D382D),
     scoreWhite: Color(0xffffffff),
     scoreBlack: Color(0xff000000),
     tableGrainLight: Color(0xffffd9a1),
@@ -113,12 +113,12 @@ class AppTheme {
   );
 
   static const night = AppTheme(
-    backgroundStart: Color(0xff1B2838),
-    backgroundFinish: Color(0xff0D1520),
+    backgroundStart: Color(0xff19232A),
+    backgroundFinish: Color(0xff11191F),
     thinking: Color(0xa0ffffff),
-    lastMoveBorder: Color(0xff64B5F6),
+    lastMoveBorder: Color(0xff9CCAD0),
     hintDot: Color(0x50ffffff),
-    buttonFill: Color(0x60304050),
+    buttonFill: Color(0xff26363D),
     scoreWhite: Color(0xffffffff),
     scoreBlack: Color(0xffB0BEC5),
     tableGrainLight: Color(0xff718aa2),
@@ -155,12 +155,12 @@ class AppTheme {
   );
 
   static const contrast = AppTheme(
-    backgroundStart: Color(0xff2E7D32),
-    backgroundFinish: Color(0xff1B5E20),
+    backgroundStart: Color(0xff12261A),
+    backgroundFinish: Color(0xff09180F),
     thinking: Color(0xffffffff),
     lastMoveBorder: Color(0xffffEB3B),
     hintDot: Color(0x90ffffff),
-    buttonFill: Color(0x80000000),
+    buttonFill: Color(0xff223C26),
     scoreWhite: Color(0xffffffff),
     scoreBlack: Color(0xff000000),
     tableGrainLight: Color(0xff8ddf94),

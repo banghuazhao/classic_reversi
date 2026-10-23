@@ -98,5 +98,124 @@
   "PrivacyPolicy": "Kebijakan Privasi",
   "PrivacyPolicySubtitle": "Cara kami menangani data dan iklan",
   "PrivacyOptions": "Opsi privasi",
-  "PrivacyOptionsSubtitle": "Perbarui pilihan privasi iklan Anda"
+  "PrivacyOptionsSubtitle": "Perbarui pilihan privasi iklan Anda",
+  "ContinueGame": "Lanjutkan permainan",
+  "Play": "Main",
+  "NewGame": "Permainan baru",
+  "HomeTagline": "Sedikit strategi. Waktu untuk diri sendiri.",
+  "SavedGameSubtitle": "Papan Anda siap saat Anda ingin bermain.",
+  "GameSetup": "Atur permainan Anda",
+  "Opponent": "Lawan",
+  "AgainstComputer": "Komputer",
+  "ReplaceSavedGameTitle": "Mulai permainan baru?",
+  "ReplaceSavedGameMessage": "Permainan yang belum selesai akan diganti. Anda dapat melanjutkannya dari Beranda.",
+  "KeepPlaying": "Terus bermain",
+  "StartNewGame": "Mulai permainan baru",
+  "GuidedFirstGame": "Belajar dengan permainan terpandu",
+  "GuidedFirstGameSubtitle": "Berlatih membalik keping, kuasai sudut, dan temukan ritme Anda.",
+  "Rules": "Aturan",
+  "TutorialTitle": "Belajar sambil bermain",
+  "TutorialCaptureTitle": "Balik keping pertama Anda",
+  "TutorialCaptureBody": "Anda bermain sebagai Hitam. Ketuk kotak bertanda untuk mengapit keping putih di antara dua keping hitam.",
+  "TutorialCaptureDoneTitle": "Begitulah cara membalik keping",
+  "TutorialCaptureDoneBody": "Keping putih yang diapit berubah menjadi hitam. Berikutnya Putih bermain, lalu giliran Anda lagi.",
+  "TutorialReplyBody": "Putih sudah bermain. Ketuk kotak bertanda untuk membalik keping lagi.",
+  "TutorialReplyDoneBody": "Anda telah menyelesaikan satu giliran. Sekarang coba kuasai sudut di posisi latihan.",
+  "TutorialCornersTitle": "Kuasai sudut",
+  "TutorialCornersBody": "Coba posisi latihan ini. Ketuk sudut bertanda di A1. Keping di sudut tidak dapat dibalik.",
+  "TutorialCompleteTitle": "Anda siap bermain",
+  "TutorialCompleteBody": "Menangkan permainan dengan memiliki lebih banyak keping di akhir. Jika tidak ada langkah yang sah, giliran Anda otomatis dilewati. Mulailah dari tingkat Mudah dan naikkan saat Anda merasa siap.",
+  "TutorialNext": "Lanjutkan",
+  "TutorialSkip": "Lewati tutorial",
+  "TutorialPlayEasy": "Main di tingkat Mudah",
+  "ReviewGame": "Tinjau permainan",
+  "ReviewStart": "Posisi awal",
+  "ReviewFinal": "Posisi akhir",
+  "ReviewPrevious": "Langkah sebelumnya",
+  "ReviewNext": "Langkah berikutnya",
+  "ReviewFirst": "Ke awal",
+  "ReviewLast": "Ke akhir",
+  "BoardEmpty": "Kosong",
+  "BoardLegalMove": "Langkah yang sah",
+  "BoardLastMove": "Langkah terakhir",
+  "BoardKeyboardHint": "Gunakan tombol panah untuk menjelajahi papan, lalu Enter atau Spasi untuk bermain di kotak bertanda.",
+  "BoardReviewKeyboardHint": "Gunakan tombol panah untuk menjelajahi papan.",
+  "ReviewBoardLabel": "Papan tinjauan permainan",
+  "TutorialBoardLabel": "Papan latihan",
+  "TutorialProgress": "Pelajaran {step} dari {total}",
+  "@TutorialProgress": {
+    "type": "text",
+    "placeholders": {
+      "step": {},
+      "total": {}
+    }
+  },
+  "ReviewMove": "Langkah {move} dari {total}",
+  "@ReviewMove": {
+    "type": "text",
+    "placeholders": {
+      "move": {},
+      "total": {}
+    }
+  },
+  "ReviewCorners": "Sudut · Hitam {black} · Putih {white}",
+  "@ReviewCorners": {
+    "type": "text",
+    "placeholders": {
+      "black": {},
+      "white": {}
+    }
+  },
+  "BoardCell": "{coordinate}, {piece}",
+  "@BoardCell": {
+    "type": "text",
+    "placeholders": {
+      "coordinate": {},
+      "piece": {}
+    }
+  },
+  "RestartConfirmTitle": "Ulangi permainan ini?",
+  "RestartConfirmMessage": "Posisi papan saat ini akan diganti dengan posisi awal.",
+  "YourTurn": "Giliran Anda",
+  "ComputerThinking": "Komputer sedang berpikir…",
+  "PlayerTurn": "Giliran {color}",
+  "@PlayerTurn": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "TurnPassed": "{passed} tidak memiliki langkah yang sah. {current} bermain lagi.",
+  "@TurnPassed": {
+    "type": "text",
+    "placeholders": {
+      "passed": {},
+      "current": {}
+    }
+  },
+  "YouColor": "Anda · {color}",
+  "@YouColor": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "ComputerColor": "Komputer · {color}",
+  "@ComputerColor": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "GameStatusAnnouncement": "{status}. Hitam {black}, Putih {white}.",
+  "@GameStatusAnnouncement": {
+    "type": "text",
+    "placeholders": {
+      "status": {},
+      "black": {},
+      "white": {}
+    }
+  },
+  "UndoWithAd": "Urungkan · tonton iklan",
+  "HintWithAd": "Langkah yang sah · tonton iklan"
 }

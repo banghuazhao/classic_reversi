@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import 'app_chrome.dart';
 import 'generated/l10n.dart';
 import 'theme_controller.dart';
+import 'tutorial_screen.dart';
 
 class HowToPlayScreen extends StatelessWidget {
   const HowToPlayScreen({super.key});
@@ -15,6 +17,17 @@ class HowToPlayScreen extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
         children: [
+          AppMenuRow(
+            icon: CupertinoIcons.play_circle,
+            title: s.GuidedFirstGame,
+            subtitle: s.GuidedFirstGameSubtitle,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<bool>(
+                builder: (context) =>
+                    const TutorialScreen(offerEasyGame: false),
+              ),
+            ),
+          ),
           AppInfoCard(
             child: Text(
               s.How_to_play_explain,

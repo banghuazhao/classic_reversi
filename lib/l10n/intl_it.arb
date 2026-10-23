@@ -98,5 +98,124 @@
   "PrivacyPolicy": "Informativa sulla privacy",
   "PrivacyPolicySubtitle": "Come gestiamo dati e annunci",
   "PrivacyOptions": "Opzioni privacy",
-  "PrivacyOptionsSubtitle": "Aggiorna le tue scelte sulla privacy degli annunci"
+  "PrivacyOptionsSubtitle": "Aggiorna le tue scelte sulla privacy degli annunci",
+  "ContinueGame": "Continua la partita",
+  "Play": "Gioca",
+  "NewGame": "Nuova partita",
+  "HomeTagline": "Un po’ di strategia. Un momento per te.",
+  "SavedGameSubtitle": "La tua scacchiera ti aspetta.",
+  "GameSetup": "Imposta la partita",
+  "Opponent": "Avversario",
+  "AgainstComputer": "Computer",
+  "ReplaceSavedGameTitle": "Iniziare una nuova partita?",
+  "ReplaceSavedGameMessage": "La partita in corso verrà sostituita. Puoi continuare a giocarla dalla schermata iniziale.",
+  "KeepPlaying": "Continua a giocare",
+  "StartNewGame": "Inizia una nuova partita",
+  "GuidedFirstGame": "Impara con una partita guidata",
+  "GuidedFirstGameSubtitle": "Esercitati a catturare le pedine, conquista gli angoli e trova il tuo ritmo.",
+  "Rules": "Regole",
+  "TutorialTitle": "Impara giocando",
+  "TutorialCaptureTitle": "Esegui la prima cattura",
+  "TutorialCaptureBody": "Giochi con il nero. Tocca una casella evidenziata per intrappolare una pedina bianca tra due pedine nere.",
+  "TutorialCaptureDoneTitle": "Ecco una cattura",
+  "TutorialCaptureDoneBody": "La pedina bianca intrappolata diventa nera. Ora tocca al bianco, poi sarà di nuovo il tuo turno.",
+  "TutorialReplyBody": "Il bianco ha giocato. Tocca una casella evidenziata per eseguire un’altra cattura.",
+  "TutorialReplyDoneBody": "Hai completato un turno. Ora prova a conquistare un angolo in una posizione di allenamento.",
+  "TutorialCornersTitle": "Conquista un angolo",
+  "TutorialCornersBody": "Prova questa posizione di allenamento. Tocca l’angolo evidenziato in A1. Una pedina in un angolo non può essere capovolta.",
+  "TutorialCompleteTitle": "Ora puoi iniziare",
+  "TutorialCompleteBody": "Vinci se alla fine hai più pedine. Se non hai mosse valide, il turno passa automaticamente. Inizia dal livello Facile e aumenta la difficoltà quando te la senti.",
+  "TutorialNext": "Continua",
+  "TutorialSkip": "Salta il tutorial",
+  "TutorialPlayEasy": "Gioca una partita Facile",
+  "ReviewGame": "Rivedi la partita",
+  "ReviewStart": "Posizione iniziale",
+  "ReviewFinal": "Posizione finale",
+  "ReviewPrevious": "Mossa precedente",
+  "ReviewNext": "Mossa successiva",
+  "ReviewFirst": "Vai all’inizio",
+  "ReviewLast": "Vai alla fine",
+  "BoardEmpty": "Vuota",
+  "BoardLegalMove": "Mossa valida",
+  "BoardLastMove": "Ultima mossa",
+  "BoardKeyboardHint": "Usa i tasti freccia per esplorare la scacchiera e Invio o Spazio per giocare in una casella evidenziata.",
+  "BoardReviewKeyboardHint": "Usa i tasti freccia per esplorare la scacchiera.",
+  "ReviewBoardLabel": "Scacchiera di revisione della partita",
+  "TutorialBoardLabel": "Scacchiera di allenamento",
+  "TutorialProgress": "Lezione {step} di {total}",
+  "@TutorialProgress": {
+    "type": "text",
+    "placeholders": {
+      "step": {},
+      "total": {}
+    }
+  },
+  "ReviewMove": "Mossa {move} di {total}",
+  "@ReviewMove": {
+    "type": "text",
+    "placeholders": {
+      "move": {},
+      "total": {}
+    }
+  },
+  "ReviewCorners": "Angoli · Nero {black} · Bianco {white}",
+  "@ReviewCorners": {
+    "type": "text",
+    "placeholders": {
+      "black": {},
+      "white": {}
+    }
+  },
+  "BoardCell": "{coordinate}, {piece}",
+  "@BoardCell": {
+    "type": "text",
+    "placeholders": {
+      "coordinate": {},
+      "piece": {}
+    }
+  },
+  "RestartConfirmTitle": "Ricominciare questa partita?",
+  "RestartConfirmMessage": "La posizione attuale verrà sostituita da quella iniziale.",
+  "YourTurn": "Tocca a te",
+  "ComputerThinking": "Il computer sta pensando…",
+  "PlayerTurn": "Tocca al {color}",
+  "@PlayerTurn": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "TurnPassed": "Nessuna mossa valida per {passed}. Muove ancora {current}.",
+  "@TurnPassed": {
+    "type": "text",
+    "placeholders": {
+      "passed": {},
+      "current": {}
+    }
+  },
+  "YouColor": "Tu · {color}",
+  "@YouColor": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "ComputerColor": "Computer · {color}",
+  "@ComputerColor": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "GameStatusAnnouncement": "{status}. Nero {black}, bianco {white}.",
+  "@GameStatusAnnouncement": {
+    "type": "text",
+    "placeholders": {
+      "status": {},
+      "black": {},
+      "white": {}
+    }
+  },
+  "UndoWithAd": "Annulla · guarda un annuncio",
+  "HintWithAd": "Mosse valide · guarda un annuncio"
 }

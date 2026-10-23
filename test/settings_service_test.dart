@@ -10,8 +10,8 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  test('difficulty defaults to hard and round-trips', () async {
-    expect(await SettingsService.getDifficulty(), Difficulty.hard);
+  test('difficulty defaults to easy and round-trips', () async {
+    expect(await SettingsService.getDifficulty(), Difficulty.easy);
 
     await SettingsService.setDifficulty(Difficulty.easy);
     expect(await SettingsService.getDifficulty(), Difficulty.easy);

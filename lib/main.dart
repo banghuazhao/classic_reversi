@@ -7,10 +7,11 @@ import 'dart:math';
 
 import 'package:app_tracking_transparency/app_tracking_transparency.dart'
     if (dart.library.io) 'package:app_tracking_transparency/app_tracking_transparency.dart';
-import 'package:async/async.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart'
     if (dart.library.io) 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -20,6 +21,7 @@ import 'Tools/in_app_reviewer_helper.dart'
     if (dart.library.io) 'Tools/in_app_reviewer_helper.dart';
 import 'Tools/purchase_service.dart';
 import 'achievements_service.dart';
+import 'app_chrome.dart';
 import 'app_theme.dart';
 import 'feedback_service.dart';
 import 'flip_piece.dart';
@@ -27,7 +29,10 @@ import 'game_board.dart';
 import 'game_materials.dart';
 import 'game_model.dart';
 import 'game_over_sheet.dart';
+import 'game_review_screen.dart';
+import 'game_session.dart';
 import 'game_settings.dart';
+import 'gameplay_activity.dart';
 import 'generated/l10n.dart';
 import 'move_finder.dart';
 import 'settings_screen.dart';
@@ -36,61 +41,52 @@ import 'styling.dart';
 import 'theme_controller.dart';
 import 'thinking_indicator.dart';
 
-/// Main function for the app. Turns off the system overlays and locks portrait
-/// orientation for a more game-like UI, and then runs the [Widget] tree.
+final ValueNotifier<bool> _servicesReady = ValueNotifier(false);
+
+/// Render the home screen before starting store, audio, and consent work.
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
 
   if (!kIsWeb) {
     Future.delayed(const Duration(seconds: 1), () {
       AppTrackingTransparency.requestTrackingAuthorization();
     }).catchError((Object error) {
-      print('ATT request failed: $error');
-    });
-
-    InAppReviewHelper.checkAndAskForReview().catchError((Object error) {
-      print('In-app review check failed: $error');
+      debugPrint('ATT request failed: $error');
     });
 
     () async {
-      // Entitlement before ads / first frame so purchased users skip ads.
-      try {
-        await PurchaseService.instance.init();
-      } catch (error) {
-        print('PurchaseService init failed: $error');
-      }
-
-      try {
-        await ThemeController.instance.load();
-      } catch (error) {
-        print('ThemeController load failed: $error');
-      }
-
-      try {
-        await FeedbackService.instance.init();
-      } catch (error) {
-        print('FeedbackService init failed: $error');
-      }
+      // Load visual/preferences independently of store network work so a
+      // remembered theme can appear as early as the first frame.
+      await Future.wait<void>([
+        PurchaseService.instance.init().catchError((Object error) {
+          debugPrint('PurchaseService init failed: $error');
+        }),
+        ThemeController.instance.load().catchError((Object error) {
+          debugPrint('ThemeController load failed: $error');
+        }),
+        FeedbackService.instance.init().catchError((Object error) {
+          debugPrint('FeedbackService init failed: $error');
+        }),
+      ]);
 
       // UMP consent must complete before ads initialize / load.
       try {
         await AdsManager.initializeWithConsent();
       } catch (error) {
-        print('Ads consent/init failed: $error');
+        debugPrint('Ads consent/init failed: $error');
       }
 
       if (kDebugMode) {
         try {
           AdsManager.debugPrintID();
         } catch (error) {
-          print('debugPrintID failed: $error');
+          debugPrint('debugPrintID failed: $error');
         }
       }
 
-      runApp(const MyApp());
+      _servicesReady.value = true;
     }();
-  } else {
-    runApp(const MyApp());
   }
 }
 
@@ -105,9 +101,12 @@ Route<T> fadeRoute<T>(WidgetBuilder builder) {
   return PageRouteBuilder<T>(
     pageBuilder: (context, animation, secondaryAnimation) => builder(context),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      if (MediaQuery.maybeOf(context)?.disableAnimations ?? false) return child;
       return FadeTransition(opacity: animation, child: child);
     },
-    transitionDuration: const Duration(milliseconds: 200),
+    transitionDuration: FeedbackService.instance.reduceMotion
+        ? Duration.zero
+        : const Duration(milliseconds: 200),
   );
 }
 
@@ -129,6 +128,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     PurchaseService.instance.addListener(_onPurchaseEntitlementChanged);
+    _servicesReady.addListener(_setupAppOpenAds);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _setupAppOpenAds();
@@ -168,6 +168,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     PurchaseService.instance.removeListener(_onPurchaseEntitlementChanged);
+    _servicesReady.removeListener(_setupAppOpenAds);
     _tearDownAppOpenAds();
     super.dispose();
   }
@@ -180,8 +181,8 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
         fontFamily: 'Roboto',
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xffAE561B),
-          brightness: Brightness.light,
+          seedColor: const Color(0xffE4C18B),
+          brightness: Brightness.dark,
         ),
         splashFactory: NoSplash.splashFactory,
         dialogTheme: DialogThemeData(
@@ -194,7 +195,7 @@ class _MyAppState extends State<MyApp> {
           titleTextStyle: const TextStyle(
             fontFamily: 'Roboto',
             fontSize: 20,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
           contentTextStyle: const TextStyle(
@@ -225,7 +226,7 @@ class _MyAppState extends State<MyApp> {
             foregroundColor: const Color(0xffffd45c),
             textStyle: const TextStyle(
               fontFamily: 'Roboto',
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
@@ -277,8 +278,9 @@ class _MyAppState extends State<MyApp> {
 /// display, from scores to board state and everything in between.
 class GameScreen extends StatefulWidget {
   final GameSettings settings;
+  final GameSession? savedSession;
 
-  const GameScreen({super.key, required this.settings});
+  const GameScreen({super.key, required this.settings, this.savedSession});
 
   @override
   State createState() => _GameScreenState();
@@ -286,17 +288,9 @@ class GameScreen extends StatefulWidget {
 
 /// State class for [GameScreen].
 ///
-/// The game is modeled as a [Stream] of immutable instances of [GameModel].
-/// Each move by the player or CPU results in a new [GameModel], which is
-/// sent downstream. [GameScreen] uses a [StreamBuilder] wired up to that stream
-/// of models to build out its [Widget] tree.
-class _GameScreenState extends State<GameScreen> {
-  final StreamController<GameModel> _userMovesController =
-      StreamController<GameModel>();
-  final StreamController<GameModel> _restartController =
-      StreamController<GameModel>();
-  Stream<GameModel>? _modelStream;
-
+/// Immutable positions are committed immediately and saved in chronological
+/// order. A generation counter cancels stale asynchronous computer turns.
+class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   BannerAd? _ad;
 
   bool _isAdLoaded = false;
@@ -322,6 +316,14 @@ class _GameScreenState extends State<GameScreen> {
   // support taking a move back. Cleared on undo so only one undo can be
   // used per turn until another move is made.
   final List<GameModel> _historyStack = [];
+  final List<GameModel> _timeline = [];
+  GameModel? _currentModel;
+  late DateTime _sessionStartedAt;
+  PieceType? _passedPlayer;
+  bool _leaving = false;
+  final FocusNode _boardFocus = FocusNode(debugLabel: 'Reversi board');
+  Position _keyboardPosition = const Position(0, 0);
+  bool _boardHasFocus = false;
   bool _canUndo = false;
 
   /// Extra undo charges earned via rewarded ads (Hard mode).
@@ -371,80 +373,66 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  // Below is the combination of streams that controls the flow of the game.
-  void _setUpModelStream() {
-    _modelStream = StreamGroup.merge([
-      _userMovesController.stream,
-      _restartController.stream,
-    ]).asyncExpand((model) async* {
-      yield model;
+  /// Commit immediately so restart, undo, and navigation always see the same
+  /// authoritative position, even while a canceled computer search winds down.
+  void _submitModel(GameModel model) {
+    final generation = ++_turnGeneration;
+    _acceptModel(model);
+    setState(() {});
+    if (model.player == _computerColor && !model.gameIsOver) {
+      unawaited(_advanceComputer(model, generation));
+    }
+  }
 
-      var newModel = model;
-      final generation = _turnGeneration;
-
-      while (newModel.player == _computerColor) {
-        if (generation != _turnGeneration) {
-          break;
-        }
-        final finder = MoveFinder(newModel.board);
-        final move = await finder.findMove(
-          newModel.player,
-          widget.settings.difficulty,
-        );
-        if (generation != _turnGeneration) {
-          break;
-        }
-        if (move != null) {
-          // Most of the pause reads as thinking; the final beat visibly
-          // anticipates the piece landing without delaying the move overall.
-          await Future.delayed(const Duration(milliseconds: 420));
-          if (generation != _turnGeneration) {
-            break;
-          }
-          if (mounted) {
-            setState(() => _cpuMoveAnticipating = true);
-          }
-          await Future.delayed(const Duration(milliseconds: 180));
-          if (mounted) {
-            setState(() => _cpuMoveAnticipating = false);
-          }
-          if (generation != _turnGeneration) {
-            break;
-          }
-          final previousBoard = newModel.board;
-          final updatedModel = newModel.updateForMove(move.x, move.y);
-          if (updatedModel == null) {
-            break;
-          }
-          final flipped = GameBoard.flippedPositions(
-            previousBoard,
-            updatedModel.board,
-            move,
-          );
-          FeedbackService.instance.moveFeedback(
-            flippedCount: flipped.length,
-          );
-          newModel = updatedModel;
-          _lastMove = move;
-          _lastFlippedCount = flipped.length;
-          _moveImpactId++;
-          yield newModel;
-        } else {
-          break;
-        }
-      }
-    });
+  Future<void> _advanceComputer(GameModel model, int generation) async {
+    var current = model;
+    bool isCurrent() => mounted && !_leaving && generation == _turnGeneration;
+    while (isCurrent() &&
+        current.player == _computerColor &&
+        !current.gameIsOver) {
+      final move = await MoveFinder(current.board)
+          .findMove(current.player, widget.settings.difficulty);
+      if (!isCurrent() || move == null) return;
+      await Future<void>.delayed(const Duration(milliseconds: 420));
+      if (!isCurrent()) return;
+      setState(() => _cpuMoveAnticipating = true);
+      await Future<void>.delayed(const Duration(milliseconds: 180));
+      if (!isCurrent()) return;
+      final updated = current.updateForMove(move.x, move.y);
+      if (updated == null) return;
+      final flipped =
+          GameBoard.flippedPositions(current.board, updated.board, move);
+      unawaited(
+          FeedbackService.instance.moveFeedback(flippedCount: flipped.length));
+      _cpuMoveAnticipating = false;
+      _lastMove = move;
+      _lastFlippedCount = flipped.length;
+      _moveImpactId++;
+      current = updated;
+      _acceptModel(current);
+      setState(() {});
+    }
   }
 
   @override
   initState() {
     super.initState();
-
-    _setUpModelStream();
+    WidgetsBinding.instance.addObserver(this);
+    GameplayActivity.begin(this);
+    final saved = widget.savedSession;
+    _sessionStartedAt = saved?.savedAt ?? DateTime.now();
+    if (saved != null) {
+      _timeline.addAll(saved.timeline);
+      _historyStack.addAll(saved.undoHistory);
+      _currentModel = saved.model;
+      _lastMove = saved.lastMove;
+      _canUndo = saved.canUndo;
+      _hintsUnlocked = saved.hintsUnlocked;
+      _rewardedUndoCharges = saved.rewardedUndoCharges;
+    }
     // Kick off the very first turn. If the computer is meant to move first,
-    // this is what triggers that opening move; otherwise it just seeds the
-    // stream with the starting position.
-    _restartController.add(_initialModel());
+    // this triggers that opening move; otherwise it commits the starting board.
+    _submitModel(saved?.model ?? _initialModel());
 
     // Ads-removed users get Hard undo / hints without watching ads.
     if (_adsRemovedOrDisabled) {
@@ -454,10 +442,120 @@ class _GameScreenState extends State<GameScreen> {
     PurchaseService.instance.addListener(_onPurchaseEntitlementChanged);
     ThemeController.instance.addListener(_onThemeChanged);
     FeedbackService.instance.addListener(_onFeedbackSettingsChanged);
+    _servicesReady.addListener(_onServicesReady);
 
-    if (!kIsWeb && AdsManager.adsEnabled) {
+    if (!kIsWeb && AdsManager.adsEnabled && AdsManager.mobileAdsInitialized) {
       _setupAds();
     }
+  }
+
+  void _onServicesReady() {
+    if (mounted &&
+        !kIsWeb &&
+        AdsManager.adsEnabled &&
+        AdsManager.mobileAdsInitialized &&
+        _ad == null) {
+      _setupAds();
+    }
+  }
+
+  static bool _samePosition(GameModel a, GameModel b) {
+    if (a.player != b.player || a.board.size != b.board.size) return false;
+    for (var y = 0; y < a.board.size; y++) {
+      for (var x = 0; x < a.board.size; x++) {
+        if (a.board.rows[y][x] != b.board.rows[y][x]) return false;
+      }
+    }
+    return true;
+  }
+
+  void _acceptModel(GameModel model) {
+    final previous = _timeline.isEmpty ? null : _timeline.last;
+    if (previous == null || !_samePosition(previous, model)) {
+      _timeline.add(model);
+    }
+    _passedPlayer = _timeline.length > 1 &&
+            _timeline[_timeline.length - 2].player == model.player &&
+            !model.gameIsOver
+        ? getOpponent(model.player)
+        : null;
+    _currentModel = model;
+    if (model.gameIsOver) {
+      GameplayActivity.end(this);
+      unawaited(
+        GameSessionService.clear().catchError((Object error) {
+          debugPrint('Clearing finished game failed: $error');
+        }),
+      );
+    } else {
+      unawaited(_saveSession());
+    }
+  }
+
+  Future<void> _saveSession() async {
+    final model = _currentModel;
+    if (model == null || model.gameIsOver || _timeline.isEmpty) return;
+    try {
+      await GameSessionService.save(
+        GameSession(
+          settings: widget.settings,
+          timeline: _timeline,
+          undoHistory: _historyStack,
+          lastMove: _lastMove,
+          canUndo: _canUndo,
+          hintsUnlocked: _hintsUnlocked,
+          rewardedUndoCharges: _rewardedUndoCharges,
+          savedAt: _sessionStartedAt,
+        ),
+      );
+    } catch (error) {
+      debugPrint('Saving game failed: $error');
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden) {
+      unawaited(_saveSession());
+    }
+  }
+
+  Future<void> _goHome() async {
+    if (_leaving) return;
+    _leaving = true;
+    _turnGeneration++;
+    await _saveSession();
+    if (!mounted) return;
+    Navigator.of(context)
+        .pushReplacement(fadeRoute((context) => const StartScreen()));
+  }
+
+  Future<void> _confirmRestart() async {
+    if (_timeline.length <= 1 || _currentModel?.gameIsOver == true) {
+      _rematch();
+      return;
+    }
+    final s = S.of(context);
+    final restart = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(s.RestartConfirmTitle),
+        content: Text(s.RestartConfirmMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(s.KeepPlaying),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(s.RestartGame),
+          ),
+        ],
+      ),
+    );
+    if (restart == true && mounted) _rematch();
   }
 
   void _onThemeChanged() {
@@ -510,7 +608,7 @@ class _GameScreenState extends State<GameScreen> {
             // Releases an ad resource when it fails to load
             ad.dispose();
 
-            print(
+            debugPrint(
               'Ad load failed (code=${error.code} message=${error.message})',
             );
           },
@@ -521,7 +619,7 @@ class _GameScreenState extends State<GameScreen> {
 
       _rewardedAdHelper.load();
     } catch (error) {
-      print('Ad setup failed: $error');
+      debugPrint('Ad setup failed: $error');
     }
   }
 
@@ -532,35 +630,26 @@ class _GameScreenState extends State<GameScreen> {
     _isAdLoaded = false;
   }
 
-  // Thou shalt tidy up thy stream controllers.
+  // Cancel computer work and release observers and board focus.
   @override
   void dispose() {
+    _turnGeneration++;
+    WidgetsBinding.instance.removeObserver(this);
+    GameplayActivity.end(this);
+    _servicesReady.removeListener(_onServicesReady);
+    _boardFocus.dispose();
     PurchaseService.instance.removeListener(_onPurchaseEntitlementChanged);
     ThemeController.instance.removeListener(_onThemeChanged);
     FeedbackService.instance.removeListener(_onFeedbackSettingsChanged);
     _tearDownAds();
-    _userMovesController.close();
-    _restartController.close();
     super.dispose();
   }
 
-  /// The build method mostly just sets up the StreamBuilder and leaves the
-  /// details to _buildWidgets.
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: ThemeController.instance,
-      builder: (context, _) {
-        return StreamBuilder<GameModel>(
-          stream: _modelStream,
-          builder: (context, snapshot) {
-            final model = snapshot.hasData ? snapshot.data! : _initialModel();
-            _handleGameOverIfNeeded(model);
-            return _buildWidgets(context, model);
-          },
-        );
-      },
-    );
+    final model = _currentModel ?? _initialModel();
+    _handleGameOverIfNeeded(model);
+    return _buildWidgets(context, model);
   }
 
   // Records stats/achievements and shows the end-of-game sheet once per game.
@@ -585,7 +674,12 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Future<void> _runGameOverFlow(GameModel model) async {
-    if (!mounted || _gameOverSheetVisible) {
+    final generation = _turnGeneration;
+    if (!mounted ||
+        _leaving ||
+        _gameOverSheetVisible ||
+        _currentModel == null ||
+        !_samePosition(_currentModel!, model)) {
       return;
     }
 
@@ -615,7 +709,7 @@ class _GameScreenState extends State<GameScreen> {
       debugPrint('Game-over bookkeeping failed: $error');
     }
 
-    if (!mounted || _gameOverSheetVisible) {
+    if (!mounted || _gameOverSheetVisible || generation != _turnGeneration) {
       return;
     }
 
@@ -623,7 +717,7 @@ class _GameScreenState extends State<GameScreen> {
     await Future.delayed(
       Duration(milliseconds: feedback.reduceMotion ? 80 : 420),
     );
-    if (!mounted || _gameOverSheetVisible) {
+    if (!mounted || _gameOverSheetVisible || generation != _turnGeneration) {
       return;
     }
     setState(() {
@@ -633,20 +727,19 @@ class _GameScreenState extends State<GameScreen> {
       _gameOverCelebrationId++;
     });
     try {
-      await feedback.gameOverFeedback(
-        humanWon: celebrateVictory,
-        tie: isTie,
-      );
+      await feedback.gameOverFeedback(humanWon: celebrateVictory, tie: isTie);
     } catch (error) {
       debugPrint('Game-over feedback failed: $error');
     }
     await Future.delayed(
       Duration(milliseconds: feedback.reduceMotion ? 120 : 940),
     );
-    if (!mounted || _gameOverSheetVisible) {
+    if (!mounted || _gameOverSheetVisible || generation != _turnGeneration) {
       return;
     }
 
+    // Respect a player who opened Settings or Review during the celebration.
+    if (ModalRoute.of(context)?.isCurrent != true) return;
     _gameOverSheetVisible = true;
     try {
       await showGameOverSheet(
@@ -655,14 +748,18 @@ class _GameScreenState extends State<GameScreen> {
         settings: widget.settings,
         theme: ThemeController.instance.theme,
         newAchievements: unlocked,
-        reduceMotion: feedback.reduceMotion,
+        reduceMotion:
+            feedback.reduceMotion || MediaQuery.disableAnimationsOf(context),
         feedbackScale: feedback.effectScale,
         celebrateWin: celebrateVictory,
         onRematch: _rematch,
-        onHome: () {
-          Navigator.of(context)
-              .pushReplacement(fadeRoute((context) => const StartScreen()));
-        },
+        onHome: _goHome,
+        onReview: () => Navigator.of(context).push(
+          fadeRoute(
+            (context) =>
+                GameReviewScreen(history: List.unmodifiable(_timeline)),
+          ),
+        ),
       );
     } finally {
       _gameOverSheetVisible = false;
@@ -672,13 +769,17 @@ class _GameScreenState extends State<GameScreen> {
     }
 
     // Ask for a review after the result sheet, not on top of it.
-    if (requestReview) {
+    if (requestReview && !kIsWeb && !GameplayActivity.isPlaying) {
       InAppReviewHelper.requestReviewAfterFirstWin();
     }
   }
 
   void _rematch() {
     _turnGeneration++;
+    GameplayActivity.begin(this);
+    _sessionStartedAt = DateTime.now();
+    _timeline.clear();
+    _passedPlayer = null;
     setState(() {
       _historyStack.clear();
       _canUndo = false;
@@ -700,7 +801,9 @@ class _GameScreenState extends State<GameScreen> {
         _hintsUnlocked = true;
       }
     });
-    _restartController.add(_initialModel());
+    final initial = _initialModel();
+    _currentModel = initial;
+    _submitModel(initial);
   }
 
   // Called when the user taps on the game's board display. If it's the player's
@@ -710,7 +813,12 @@ class _GameScreenState extends State<GameScreen> {
     final isHumanTurn = widget.settings.twoPlayerMode
         ? model.player != PieceType.empty
         : model.player != _computerColor;
-    if (isHumanTurn && model.board.isLegalMove(x, y, model.player)) {
+    if (!_leaving &&
+        _currentModel != null &&
+        _samePosition(model, _currentModel!) &&
+        isHumanTurn &&
+        !model.gameIsOver &&
+        model.board.isLegalMove(x, y, model.player)) {
       _historyStack.add(model);
       _canUndo = true;
       _lastMove = Position(x, y);
@@ -725,7 +833,7 @@ class _GameScreenState extends State<GameScreen> {
         FeedbackService.instance.moveFeedback(flippedCount: flipped.length);
         _lastFlippedCount = flipped.length;
         _moveImpactId++;
-        _userMovesController.add(updatedModel);
+        _submitModel(updatedModel);
       }
     }
   }
@@ -747,12 +855,31 @@ class _GameScreenState extends State<GameScreen> {
       _rewardedUndoCharges -= 1;
     }
     final previousModel = _historyStack.removeLast();
+    final index = _timeline.lastIndexWhere(
+      (model) => _samePosition(model, previousModel),
+    );
+    if (index >= 0) _timeline.removeRange(index + 1, _timeline.length);
     _canUndo = false;
-    _lastMove = null;
+    _lastMove = _lastPlacedPosition();
     _cpuMoveAnticipating = false;
     _turnGeneration++;
     setState(() {});
-    _restartController.add(previousModel);
+    _submitModel(previousModel);
+  }
+
+  Position? _lastPlacedPosition() {
+    if (_timeline.length < 2) return null;
+    final before = _timeline[_timeline.length - 2].board;
+    final after = _timeline.last.board;
+    for (var y = 0; y < after.size; y++) {
+      for (var x = 0; x < after.size; x++) {
+        if (before.rows[y][x] == PieceType.empty &&
+            after.rows[y][x] != PieceType.empty) {
+          return Position(x, y);
+        }
+      }
+    }
+    return null;
   }
 
   Future<void> _requestRewardedUndo({GameModel? currentModel}) async {
@@ -818,6 +945,7 @@ class _GameScreenState extends State<GameScreen> {
         return;
       }
       setState(() {});
+      unawaited(_saveSession());
       _showMessage(s.HintsEnabled);
     } finally {
       _rewardFlowBusy = false;
@@ -872,6 +1000,7 @@ class _GameScreenState extends State<GameScreen> {
     required IconData icon,
     required VoidCallback? onPressed,
     required AppTheme theme,
+    bool rewarded = false,
   }) {
     return Semantics(
       label: tooltip,
@@ -899,12 +1028,27 @@ class _GameScreenState extends State<GameScreen> {
                   ),
                 ),
               ),
-              child: Icon(
-                icon,
-                size: 20,
-                color: onPressed == null
-                    ? const Color(0x70ffffff)
-                    : const Color(0xffffffff),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Icon(
+                    icon,
+                    size: 22,
+                    color: onPressed == null
+                        ? const Color(0x70ffffff)
+                        : Colors.white,
+                  ),
+                  if (rewarded)
+                    Positioned(
+                      right: 2,
+                      top: 2,
+                      child: Icon(
+                        CupertinoIcons.play_rectangle_fill,
+                        size: 14,
+                        color: theme.lastMoveBorder,
+                      ),
+                    ),
+                ],
               ),
             ),
           ),
@@ -923,85 +1067,115 @@ class _GameScreenState extends State<GameScreen> {
   );
 
   Widget _buildScoreBox(PieceType player, GameModel model, AppTheme theme) {
-    var label =
-        player == PieceType.black ? S.of(context).Black : S.of(context).White;
-    var scoreText = player == PieceType.black
-        ? '${model.blackScore}'
-        : '${model.whiteScore}';
-
-    final labelStyle = player == PieceType.black
-        ? Styling.scoreLabelTextBlack.copyWith(color: theme.scoreBlack)
-        : Styling.scoreLabelText.copyWith(color: theme.scoreWhite);
-    final scoreStyle = player == PieceType.black
-        ? Styling.scoreTextBlack.copyWith(color: theme.scoreBlack)
-        : Styling.scoreText.copyWith(color: theme.scoreWhite);
-    final feedback = FeedbackService.instance;
-    final reduceMotion = feedback.reduceMotion ||
-        (MediaQuery.maybeOf(context)?.disableAnimations ?? false);
+    final s = S.of(context);
+    final color = player == PieceType.black ? s.Black : s.White;
+    final label = widget.settings.twoPlayerMode
+        ? color
+        : player == widget.settings.humanColor
+            ? s.YouColor(color)
+            : s.ComputerColor(color);
+    final score =
+        player == PieceType.black ? model.blackScore : model.whiteScore;
     final active = model.player == player;
-
-    final scoreCard = AnimatedContainer(
-      duration:
-          reduceMotion ? Duration.zero : const Duration(milliseconds: 220),
-      curve: Curves.easeOutCubic,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
-      decoration: active
-          ? BoxDecoration(
-              color: theme.buttonFill.withAlpha(38),
-              borderRadius: BorderRadius.circular(12),
-              border: Border(
-                bottom: BorderSide(
-                  width: 2,
-                  color: player == PieceType.black
-                      ? theme.scoreBlack
-                      : theme.scoreWhite,
-                ),
-              ),
-            )
-          : Styling.inactivePlayerIndicator,
-      child: Column(
-        children: <Widget>[
-          Text(label, textAlign: TextAlign.center, style: labelStyle),
-          AnimatedSwitcher(
-            duration: reduceMotion
-                ? Duration.zero
-                : const Duration(milliseconds: 240),
-            switchInCurve: Curves.easeOutBack,
-            switchOutCurve: Curves.easeInCubic,
-            transitionBuilder: (child, animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: ScaleTransition(
-                  scale: Tween(begin: 0.78, end: 1.0).animate(animation),
-                  child: child,
-                ),
-              );
-            },
-            child: Text(
-              scoreText,
-              key: ValueKey('$player-$scoreText'),
-              textAlign: TextAlign.center,
-              style: scoreStyle,
+    final reduceMotion = FeedbackService.instance.reduceMotion ||
+        MediaQuery.disableAnimationsOf(context);
+    return Semantics(
+      label: '$label, $score',
+      selected: active,
+      child: ExcludeSemantics(
+        child: AnimatedContainer(
+          duration:
+              reduceMotion ? Duration.zero : const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          decoration: BoxDecoration(
+            color: AppChrome.cardColor,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: active ? theme.lastMoveBorder : AppChrome.borderColor,
+              width: active ? 2 : 1,
             ),
           ),
-        ],
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: theme.pieceGradients[player],
+                      border: Border.all(color: const Color(0x66FFFFFF)),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        height: 1.35,
+                        fontWeight: FontWeight.w500,
+                        color: AppChrome.primaryText,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              AnimatedSwitcher(
+                duration: reduceMotion
+                    ? Duration.zero
+                    : const Duration(milliseconds: 180),
+                child: Text(
+                  '$score',
+                  key: ValueKey('$player-$score'),
+                  style: const TextStyle(
+                    fontSize: 36,
+                    height: 1.2,
+                    fontWeight: FontWeight.w700,
+                    color: AppChrome.primaryText,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
+  }
 
-    if (!active || reduceMotion) {
-      return scoreCard;
+  KeyEventResult _onBoardKey(GameModel model, KeyEvent event) {
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
     }
-    return TweenAnimationBuilder<double>(
-      key: ValueKey('turn-$player-${model.player}-$_moveImpactId'),
-      tween: Tween(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 360),
-      curve: Curves.easeOutCubic,
-      builder: (context, progress, child) {
-        final pulse = sin(progress * pi) * 0.045 * feedback.effectScale;
-        return Transform.scale(scale: 1 + pulse, child: child);
-      },
-      child: scoreCard,
+    final key = event.logicalKey;
+    var x = _keyboardPosition.x;
+    var y = _keyboardPosition.y;
+    if (key == LogicalKeyboardKey.arrowLeft) {
+      x--;
+    } else if (key == LogicalKeyboardKey.arrowRight) {
+      x++;
+    } else if (key == LogicalKeyboardKey.arrowUp) {
+      y--;
+    } else if (key == LogicalKeyboardKey.arrowDown) {
+      y++;
+    } else if (key == LogicalKeyboardKey.enter ||
+        key == LogicalKeyboardKey.space) {
+      if (event is KeyDownEvent) _attemptUserMove(model, x, y);
+      return KeyEventResult.handled;
+    } else {
+      return KeyEventResult.ignored;
+    }
+    setState(
+      () => _keyboardPosition = Position(
+        x.clamp(0, model.board.size - 1),
+        y.clamp(0, model.board.size - 1),
+      ),
     );
+    return KeyEventResult.handled;
   }
 
   Widget _buildGameBoardDisplay(
@@ -1049,43 +1223,85 @@ class _GameScreenState extends State<GameScreen> {
             top: y * boxWidth,
             width: boxWidth,
             height: boxWidth,
-            child: TactileBoardCell(
-              key: ValueKey('cell-$x-$y'),
-              enabled: canInteract,
-              isLegal: isLegalTap,
-              reduceMotion: reduceMotion,
-              effectScale: feedback.effectScale,
-              onLegalTap: () => _attemptUserMove(model, x, y),
-              onInvalidTap: FeedbackService.instance.invalidMoveFeedback,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  if (isLastMove && type != PieceType.empty)
-                    MoveImpactHalo(
-                      key: ValueKey('move-halo-$_moveImpactId'),
-                      size: boxWidth,
-                      color: theme.lastMoveBorder,
-                      reduceMotion: reduceMotion,
-                      effectScale: feedback.effectScale,
+            child: Semantics(
+              label: [
+                S.of(context).BoardCell(
+                      '${String.fromCharCode(65 + x)}${y + 1}',
+                      type == PieceType.empty
+                          ? S.of(context).BoardEmpty
+                          : type == PieceType.black
+                              ? S.of(context).Black
+                              : S.of(context).White,
                     ),
-                  FlipPiece(
-                    type: type,
-                    size: boxWidth,
-                    isLastMove: isLastMove,
-                    theme: theme,
-                    duration: Styling.pieceFlipDuration,
-                    delay: flipDelay,
-                    reduceMotion: reduceMotion,
-                    effectScale: feedback.effectScale,
+                if (isLegalTap) S.of(context).BoardLegalMove,
+                if (isLastMove) S.of(context).BoardLastMove,
+              ].join(', '),
+              sortKey: OrdinalSortKey((y * model.board.size + x).toDouble()),
+              button: isLegalTap,
+              selected: _boardHasFocus &&
+                  _keyboardPosition.x == x &&
+                  _keyboardPosition.y == y,
+              liveRegion: _boardHasFocus &&
+                  _keyboardPosition.x == x &&
+                  _keyboardPosition.y == y,
+              onTap: isLegalTap ? () => _attemptUserMove(model, x, y) : null,
+              child: ExcludeSemantics(
+                child: TactileBoardCell(
+                  key: ValueKey('cell-$x-$y'),
+                  enabled: canInteract,
+                  isLegal: isLegalTap,
+                  reduceMotion: reduceMotion,
+                  effectScale: feedback.effectScale,
+                  onLegalTap: () => _attemptUserMove(model, x, y),
+                  onInvalidTap: FeedbackService.instance.invalidMoveFeedback,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      if (isLastMove && type != PieceType.empty)
+                        MoveImpactHalo(
+                          key: ValueKey('move-halo-$_moveImpactId'),
+                          size: boxWidth,
+                          color: theme.lastMoveBorder,
+                          reduceMotion: reduceMotion,
+                          effectScale: feedback.effectScale,
+                        ),
+                      FlipPiece(
+                        type: type,
+                        size: boxWidth,
+                        isLastMove: isLastMove,
+                        theme: theme,
+                        duration: Styling.pieceFlipDuration,
+                        delay: flipDelay,
+                        reduceMotion: reduceMotion,
+                        effectScale: feedback.effectScale,
+                      ),
+                      if (isLegalMoveHint)
+                        MaterialMoveHint(
+                          size: boxWidth * 0.28,
+                          color: theme.hintDot,
+                          reduceMotion: reduceMotion,
+                          effectScale: feedback.effectScale,
+                        ),
+                      if (_boardHasFocus &&
+                          _keyboardPosition.x == x &&
+                          _keyboardPosition.y == y)
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: Container(
+                              margin: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 3,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
-                  if (isLegalMoveHint)
-                    MaterialMoveHint(
-                      size: boxWidth * 0.28,
-                      color: theme.hintDot,
-                      reduceMotion: reduceMotion,
-                      effectScale: feedback.effectScale,
-                    ),
-                ],
+                ),
               ),
             ),
           ),
@@ -1116,195 +1332,280 @@ class _GameScreenState extends State<GameScreen> {
       ),
     );
 
-    return BoardImpactAnimator(
-      impactId: _moveImpactId,
-      flippedCount: _lastFlippedCount,
-      reduceMotion: reduceMotion,
-      effectScale: feedback.effectScale,
-      child: board,
+    return Semantics(
+      container: true,
+      explicitChildNodes: true,
+      hint: S.of(context).BoardKeyboardHint,
+      child: Focus(
+        focusNode: _boardFocus,
+        includeSemantics: false,
+        onFocusChange: (value) => setState(() => _boardHasFocus = value),
+        onKeyEvent: (_, event) => _onBoardKey(model, event),
+        child: BoardImpactAnimator(
+          impactId: _moveImpactId,
+          flippedCount: _lastFlippedCount,
+          reduceMotion: reduceMotion,
+          effectScale: feedback.effectScale,
+          child: board,
+        ),
+      ),
     );
   }
 
-  // Builds out the Widget tree using the most recent GameModel from the stream.
+  String _turnStatus(GameModel model) {
+    final s = S.of(context);
+    if (model.gameIsOver) return s.GameOver;
+    if (widget.settings.twoPlayerMode) {
+      return s.PlayerTurn(model.player == PieceType.black ? s.Black : s.White);
+    }
+    return model.player == _computerColor ? s.ComputerThinking : s.YourTurn;
+  }
+
   Widget _buildWidgets(BuildContext context, GameModel model) {
     final theme = ThemeController.instance.theme;
-    // Fixed-height chrome that always surrounds the board, used to work out
-    // how much vertical space is actually left for the board itself so it
-    // never gets clipped or pushed off screen on smaller devices.
-    const headerHeight = 152.0;
-    const spacingHeight = 20.0 + 10.0 + 20.0;
-    const resultTextHeight = 20.0;
-    // Only reserve banner space when ads can actually show.
-    final adReservedHeight = AdsManager.adsEnabled ? 60.0 : 0.0;
-    const verticalPadding = 30.0 + 20.0;
-
     final s = S.of(context);
-    final cpuThinking = model.player == _computerColor;
-    final needsHintButton = !widget.settings.twoPlayerMode &&
-        widget.settings.difficulty != Difficulty.easy &&
-        widget.settings.difficulty != Difficulty.superEasy &&
-        !_showHints;
+    final cpuThinking = !widget.settings.twoPlayerMode &&
+        !model.gameIsOver &&
+        model.player == _computerColor;
+    final needsHintButton = !widget.settings.twoPlayerMode && !_showHints;
     final needsRewardedUndo = !widget.settings.twoPlayerMode &&
         widget.settings.difficulty == Difficulty.hard &&
         !_freeUndoAllowed;
+    final undoEnabled = !cpuThinking && !model.gameIsOver && _canUndo;
+    final reduceMotion = FeedbackService.instance.reduceMotion ||
+        MediaQuery.disableAnimationsOf(context);
+    final status = _turnStatus(model);
 
-    return Scaffold(
-      backgroundColor: theme.backgroundFinish,
-      body: Container(
-        padding: EdgeInsets.only(top: 30.0, left: 15.0, right: 15.0),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [theme.backgroundStart, theme.backgroundFinish],
-          ),
-        ),
-        child: TabletopTexture(
+    final scores = Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: _buildScoreBox(PieceType.black, model, theme)),
+        const SizedBox(width: 12),
+        Expanded(child: _buildScoreBox(PieceType.white, model, theme)),
+      ],
+    );
+    final controls = Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 12,
+      runSpacing: 12,
+      children: [
+        _circleActionButton(
+          tooltip: needsRewardedUndo ? s.UndoWithAd : s.Undo,
+          icon: CupertinoIcons.arrow_uturn_left,
           theme: theme,
-          child: SafeArea(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                double width = constraints.maxWidth;
-                // The outer page padding already protects the screen edge; keep
-                // the board itself generous so the material and piece detail is
-                // readable and every square remains an easy tap target.
-                double sideMargin = max(width * 0.035, 6);
-                // Size cells against the classic 8×8 footprint. A 6×6 Super Easy
-                // board therefore keeps comfortable tap targets while appearing
-                // visibly smaller instead of stretching to fill the same area.
-                const sizingGrid = GameBoard.standardSize;
-                const boardFrameReserve = 20.0;
-                double widthBasedBoxWidth =
-                    (width - sideMargin * 2 - boardFrameReserve) / sizingGrid;
+          rewarded: needsRewardedUndo,
+          onPressed: undoEnabled
+              ? () {
+                  if (_undoAllowed) {
+                    _undoLastMove(currentModel: model);
+                  } else {
+                    _requestRewardedUndo(currentModel: model);
+                  }
+                }
+              : null,
+        ),
+        if (needsHintButton)
+          _circleActionButton(
+            tooltip: s.HintWithAd,
+            icon: CupertinoIcons.lightbulb,
+            theme: theme,
+            rewarded: true,
+            onPressed: !model.gameIsOver && !cpuThinking
+                ? _requestRewardedHints
+                : null,
+          ),
+        _circleActionButton(
+          tooltip: s.RestartGame,
+          icon: CupertinoIcons.refresh_bold,
+          theme: theme,
+          onPressed: _confirmRestart,
+        ),
+        _circleActionButton(
+          tooltip: s.Settings,
+          icon: CupertinoIcons.settings,
+          theme: theme,
+          onPressed: () => Navigator.of(context)
+              .push(fadeRoute((context) => const SettingsScreen())),
+        ),
+        _circleActionButton(
+          tooltip: s.Home,
+          icon: CupertinoIcons.house_fill,
+          theme: theme,
+          onPressed: _goHome,
+        ),
+        if (model.gameIsOver)
+          _circleActionButton(
+            tooltip: s.ReviewGame,
+            icon: CupertinoIcons.backward_end,
+            theme: theme,
+            onPressed: () => Navigator.of(context).push(
+              fadeRoute(
+                (context) =>
+                    GameReviewScreen(history: List.unmodifiable(_timeline)),
+              ),
+            ),
+          ),
+      ],
+    );
+    final turn = Semantics(
+      liveRegion: true,
+      label: s.GameStatusAnnouncement(
+        _passedPlayer == null
+            ? status
+            : s.TurnPassed(
+                _passedPlayer == PieceType.black ? s.Black : s.White,
+                model.player == PieceType.black ? s.Black : s.White,
+              ),
+        model.blackScore,
+        model.whiteScore,
+      ),
+      child: ExcludeSemantics(
+        child: Column(
+          children: [
+            Text(
+              status,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 17,
+                height: 1.4,
+                fontWeight: FontWeight.w600,
+                color: AppChrome.primaryText,
+              ),
+            ),
+            if (_passedPlayer != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                s.TurnPassed(
+                  _passedPlayer == PieceType.black ? s.Black : s.White,
+                  model.player == PieceType.black ? s.Black : s.White,
+                ),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 14,
+                  height: 1.4,
+                  color: AppChrome.secondaryText,
+                ),
+              ),
+            ],
+            const SizedBox(height: 8),
+            ThinkingIndicator(
+              color: theme.thinking,
+              height: Styling.thinkingSize,
+              visible: cpuThinking,
+              emphasized: _cpuMoveAnticipating,
+              reduceMotion: reduceMotion,
+              effectScale: FeedbackService.instance.effectScale,
+            ),
+          ],
+        ),
+      ),
+    );
 
-                // Always reserve space for (when enabled) the banner ad, even before
-                // it appears: the board must keep the exact same size for the whole
-                // game, never resizing mid-play when the ad loads.
-                double reservedHeight = headerHeight +
-                    spacingHeight +
-                    verticalPadding +
-                    resultTextHeight +
-                    adReservedHeight;
-                double availableBoardHeight =
-                    constraints.maxHeight - reservedHeight;
-                double heightBasedBoxWidth =
-                    (availableBoardHeight - boardFrameReserve) / sizingGrid;
-
-                double boxWidth = min(
-                  widthBasedBoxWidth,
-                  heightBasedBoxWidth,
-                ).clamp(20.0, widthBasedBoxWidth);
-
-                final undoEnabled = !cpuThinking &&
-                    !model.gameIsOver &&
-                    _canUndo &&
-                    (_undoAllowed || needsRewardedUndo);
-
-                return SingleChildScrollView(
-                  child: Column(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _goHome();
+      },
+      child: Scaffold(
+        backgroundColor: theme.backgroundFinish,
+        body: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [theme.backgroundStart, theme.backgroundFinish],
+            ),
+          ),
+          child: TabletopTexture(
+            theme: theme,
+            child: SafeArea(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final width = min(constraints.maxWidth, 980.0);
+                  final wide = width >= 700 && width > constraints.maxHeight;
+                  final extent = wide
+                      ? min(
+                          (width - 64) * 0.58,
+                          max(220.0, constraints.maxHeight - 64),
+                        )
+                      : min(width - 32, 560.0);
+                  // An ad loading never changes the board dimensions.
+                  final board = _buildGameBoardDisplay(
+                    context,
+                    model,
+                    (extent - 20) / GameBoard.standardSize,
+                    theme,
+                  );
+                  final information = Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _buildScoreBox(PieceType.black, model, theme),
-                          _buildScoreBox(PieceType.white, model, theme),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
-                      Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 10,
-                        runSpacing: 10,
-                        children: [
-                          _circleActionButton(
-                            tooltip: s.Undo,
-                            icon: CupertinoIcons.arrow_uturn_left,
-                            theme: theme,
-                            onPressed: undoEnabled
-                                ? () {
-                                    if (_undoAllowed) {
-                                      _undoLastMove(currentModel: model);
-                                    } else if (needsRewardedUndo) {
-                                      _requestRewardedUndo(currentModel: model);
-                                    }
-                                  }
-                                : null,
-                          ),
-                          _circleActionButton(
-                            tooltip: s.Hint,
-                            icon: CupertinoIcons.lightbulb,
-                            theme: theme,
-                            onPressed: needsHintButton &&
-                                    !model.gameIsOver &&
-                                    !cpuThinking
-                                ? _requestRewardedHints
-                                : null,
-                          ),
-                          _circleActionButton(
-                            tooltip: s.RestartGame,
-                            icon: CupertinoIcons.refresh_bold,
-                            theme: theme,
-                            onPressed: _rematch,
-                          ),
-                          _circleActionButton(
-                            tooltip: s.Settings,
-                            icon: CupertinoIcons.settings,
-                            theme: theme,
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                fadeRoute((context) => const SettingsScreen()),
-                              );
-                            },
-                          ),
-                          _circleActionButton(
-                            tooltip: s.Home,
-                            icon: CupertinoIcons.house_fill,
-                            theme: theme,
-                            onPressed: () {
-                              Navigator.of(context).pushReplacement(
-                                fadeRoute((context) => const StartScreen()),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                      if (widget.settings.isDailyChallenge) ...[
-                        const SizedBox(height: 12),
-                        Text(
-                          s.DailyChallenge,
-                          style: TextStyle(
-                            fontFamily: 'Roboto',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                            color: theme.lastMoveBorder,
-                          ),
+                      Text(
+                        widget.settings.isDailyChallenge
+                            ? s.DailyChallenge
+                            : widget.settings.twoPlayerMode
+                                ? s.TwoPlayersMode
+                                : widget.settings.difficulty.label(context),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          height: 1.4,
+                          color: AppChrome.secondaryText,
                         ),
-                      ],
-                      SizedBox(height: 20),
-                      ThinkingIndicator(
-                        color: theme.thinking,
-                        height: Styling.thinkingSize,
-                        visible: model.player == _computerColor,
-                        emphasized: _cpuMoveAnticipating,
-                        reduceMotion: FeedbackService.instance.reduceMotion,
-                        effectScale: FeedbackService.instance.effectScale,
                       ),
-                      SizedBox(height: 10),
-                      _buildGameBoardDisplay(context, model, boxWidth, theme),
-                      SizedBox(height: 20),
-                      // The banner ad sits below the board in normal document
-                      // flow so it can never overlap or block board taps.
-                      if (_isAdLoaded)
-                        Container(
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                          height: 50.0,
-                          child: AdWidget(ad: _ad!),
-                        ),
+                      const SizedBox(height: 16),
+                      scores,
+                      const SizedBox(height: 16),
+                      controls,
+                      const SizedBox(height: 20),
+                      turn,
                     ],
-                  ),
-                );
-              },
+                  );
+                  return Align(
+                    alignment: Alignment.topCenter,
+                    child: SizedBox(
+                      width: width,
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            if (wide)
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    flex: 6,
+                                    child: Center(child: board),
+                                  ),
+                                  const SizedBox(width: 24),
+                                  Expanded(flex: 4, child: information),
+                                ],
+                              )
+                            else ...[
+                              information,
+                              const SizedBox(height: 20),
+                              Center(child: board),
+                            ],
+                            if (!kIsWeb && AdsManager.adsEnabled)
+                              SizedBox(
+                                height: 68,
+                                child: _isAdLoaded
+                                    ? Center(
+                                        child: SizedBox(
+                                          width: _ad!.size.width.toDouble(),
+                                          height: _ad!.size.height.toDouble(),
+                                          child: AdWidget(ad: _ad!),
+                                        ),
+                                      )
+                                    : null,
+                              ),
+                            const SizedBox(height: 8),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ),

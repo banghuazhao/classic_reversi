@@ -20,6 +20,7 @@ Future<void> showGameOverSheet({
   required bool celebrateWin,
   required VoidCallback onRematch,
   required VoidCallback onHome,
+  required VoidCallback onReview,
 }) {
   return showGeneralDialog<void>(
     context: context,
@@ -30,34 +31,40 @@ Future<void> showGameOverSheet({
     pageBuilder: (context, animation, secondaryAnimation) {
       return SafeArea(
         child: Center(
-          child: Material(
-            color: Colors.transparent,
-            child: FadeTransition(
-              opacity: animation,
-              child: Builder(
-                builder: (context) {
-                  final card = _GameOverCard(
-                    model: model,
-                    settings: settings,
-                    theme: theme,
-                    newAchievements: newAchievements,
-                    reduceMotion: reduceMotion,
-                    feedbackScale: feedbackScale,
-                    celebrateWin: celebrateWin,
-                    onRematch: onRematch,
-                    onHome: onHome,
-                  );
-                  if (reduceMotion) {
-                    return card;
-                  }
-                  return ScaleTransition(
-                    scale: CurvedAnimation(
-                      parent: animation,
-                      curve: Curves.easeOutBack,
-                    ),
-                    child: card,
-                  );
-                },
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 520),
+              child: Material(
+                color: Colors.transparent,
+                child: FadeTransition(
+                  opacity: animation,
+                  child: Builder(
+                    builder: (context) {
+                      final card = _GameOverCard(
+                        model: model,
+                        settings: settings,
+                        theme: theme,
+                        newAchievements: newAchievements,
+                        reduceMotion: reduceMotion,
+                        feedbackScale: feedbackScale,
+                        celebrateWin: celebrateWin,
+                        onRematch: onRematch,
+                        onHome: onHome,
+                        onReview: onReview,
+                      );
+                      if (reduceMotion) {
+                        return card;
+                      }
+                      return ScaleTransition(
+                        scale: CurvedAnimation(
+                          parent: animation,
+                          curve: Curves.easeOutBack,
+                        ),
+                        child: card,
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
           ),
@@ -77,6 +84,7 @@ class _GameOverCard extends StatelessWidget {
   final bool celebrateWin;
   final VoidCallback onRematch;
   final VoidCallback onHome;
+  final VoidCallback onReview;
 
   const _GameOverCard({
     required this.model,
@@ -88,6 +96,7 @@ class _GameOverCard extends StatelessWidget {
     required this.celebrateWin,
     required this.onRematch,
     required this.onHome,
+    required this.onReview,
   });
 
   bool get _isTie => model.blackScore == model.whiteScore;
@@ -120,12 +129,7 @@ class _GameOverCard extends StatelessWidget {
         : settings.twoPlayerMode
             ? s.TwoPlayersMode
             : settings.difficulty.label(context);
-    return s.ShareResult(
-      result,
-      model.blackScore,
-      model.whiteScore,
-      mode,
-    );
+    return s.ShareResult(result, model.blackScore, model.whiteScore, mode);
   }
 
   Future<void> _share(BuildContext context) async {
@@ -184,8 +188,7 @@ class _GameOverCard extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Roboto',
                     fontSize: 32,
-                    fontWeight: FontWeight.w900,
-                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w700,
                     color: theme.scoreWhite,
                   ),
                 ),
@@ -229,8 +232,11 @@ class _GameOverCard extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 4),
                 child: Row(
                   children: [
-                    Icon(CupertinoIcons.star_fill,
-                        size: 16, color: theme.lastMoveBorder),
+                    Icon(
+                      CupertinoIcons.star_fill,
+                      size: 16,
+                      color: theme.lastMoveBorder,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -248,6 +254,15 @@ class _GameOverCard extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 22),
+          SizedBox(
+            width: double.infinity,
+            child: _ActionButton(
+              label: s.ReviewGame,
+              filled: false,
+              onPressed: onReview,
+            ),
+          ),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
@@ -365,14 +380,14 @@ class _ActionButton extends StatelessWidget {
             filled ? const Color(0xff000000) : const Color(0xffffffff),
         elevation: 0,
         padding: const EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       child: Text(
         label,
         style: TextStyle(
           fontFamily: 'Roboto',
           fontSize: 15,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w600,
           color: filled ? const Color(0xff000000) : const Color(0xffffffff),
         ),
       ),

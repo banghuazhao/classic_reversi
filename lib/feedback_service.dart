@@ -17,7 +17,8 @@ class FeedbackService extends ChangeNotifier {
   // to overlap instead of cutting the previous tick short.
   List<AudioPool> _placePools = [];
   List<AudioPool> _flipPools = [];
-  final AudioPlayer _resultPlayer = AudioPlayer();
+  AudioPlayer? _player;
+  AudioPlayer get _resultPlayer => _player ??= AudioPlayer();
   Future<void>? _initializing;
   Future<void>? _audioInitializing;
   int _soundSequence = 0;
@@ -293,7 +294,9 @@ class FeedbackService extends ChangeNotifier {
     for (final pool in _flipPools) {
       unawaited(pool.dispose());
     }
-    unawaited(_resultPlayer.dispose());
+    final player = _player;
+    if (player != null) unawaited(player.dispose());
+    _player = null;
     _placePools = [];
     _flipPools = [];
     _ready = false;

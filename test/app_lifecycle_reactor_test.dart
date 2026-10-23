@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:classic_reversi/Tools/ads_manager.dart';
 import 'package:classic_reversi/Tools/ads_ids_debug.dart';
+import 'package:classic_reversi/gameplay_activity.dart';
 
 class _FakeAppOpenAdManager extends AppOpenAdManager {
   int showCalls = 0;
@@ -72,5 +73,37 @@ void main() {
 
     manager.cancelPendingShow();
     expect(manager.hasPendingShow, isFalse);
+  });
+
+  test('returning to active play suppresses app-open ads and delayed shows',
+      () {
+    final owner = Object();
+    GameplayActivity.begin(owner);
+    addTearDown(() => GameplayActivity.end(owner));
+    final manager = _FakeAppOpenAdManager();
+    final reactor = AppLifecycleReactor(appOpenAdManager: manager);
+    reactor.didChangeAppLifecycleState(AppLifecycleState.paused);
+    reactor.didChangeAppLifecycleState(AppLifecycleState.resumed);
+    expect(manager.showCalls, 0);
+    expect(manager.cancelCalls, 2);
+    final delayed = _NoLoadAppOpenAdManager();
+    delayed.showAdIfAvailable();
+    expect(delayed.hasPendingShow, isFalse);
+    expect(delayed.loadCalls, 0);
+    GameplayActivity.end(owner);
+    reactor.didChangeAppLifecycleState(AppLifecycleState.paused);
+    reactor.didChangeAppLifecycleState(AppLifecycleState.resumed);
+    expect(manager.showCalls, 1);
+  });
+
+  test('route replacement keeps ad suppression until every owner leaves', () {
+    final outgoing = Object();
+    final incoming = Object();
+    GameplayActivity.begin(outgoing);
+    GameplayActivity.begin(incoming);
+    GameplayActivity.end(outgoing);
+    expect(GameplayActivity.isPlaying, isTrue);
+    GameplayActivity.end(incoming);
+    expect(GameplayActivity.isPlaying, isFalse);
   });
 }

@@ -7,9 +7,10 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'daily_challenge.dart';
 import 'app_chrome.dart';
+import 'daily_challenge.dart';
 import 'game_board.dart';
+import 'game_session.dart';
 import 'game_settings.dart';
 import 'generated/l10n.dart';
 import 'how_to_play_screen.dart';
@@ -17,13 +18,11 @@ import 'main.dart';
 import 'settings_screen.dart';
 import 'settings_service.dart';
 import 'stats_screen.dart';
-import 'styling.dart';
 import 'theme_controller.dart';
+import 'tutorial_screen.dart';
 
-/// The very first screen the player sees: pick a difficulty, choose who goes
-/// first (or play locally with a friend), then start a game. Shown again
-/// whenever the player wants a new game with
-/// different settings (the home button in [GameScreen] returns here).
+/// A quiet landing page. Match preferences are revealed only when starting a
+/// new game, so returning players can get back to their board in one tap.
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
 
@@ -31,278 +30,281 @@ class StartScreen extends StatefulWidget {
   State<StartScreen> createState() => _StartScreenState();
 }
 
-class _StartScreenState extends State<StartScreen> {
-  Difficulty _difficulty = Difficulty.hard;
+class _StartScreenState extends State<StartScreen> with WidgetsBindingObserver {
+  Difficulty _difficulty = Difficulty.easy;
   FirstPlayer _firstPlayer = FirstPlayer.human;
   bool _twoPlayerMode = false;
-  bool _showHowToPlayDetails = false;
-  bool _homeHowToPlayDismissed = false;
   bool _dailyCompleted = false;
+  bool _loading = true;
+  bool _openingGame = false;
+  int _settingsLoadGeneration = 0;
+  GameSession? _savedSession;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     ThemeController.instance.addListener(_onThemeChanged);
     _loadSettings();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     ThemeController.instance.removeListener(_onThemeChanged);
     super.dispose();
   }
 
   void _onThemeChanged() {
-    if (mounted) {
-      setState(() {});
-    }
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _loadSettings();
   }
 
   Future<void> _loadSettings() async {
-    final difficulty = await SettingsService.getDifficulty();
-    final firstPlayer = await SettingsService.getFirstPlayer();
-    final howToPlayDismissed =
-        await SettingsService.getHomeHowToPlayDismissed();
-    final dailyDone = await DailyChallenge.isCompletedToday();
-    if (!mounted) return;
-    setState(() {
-      _difficulty = difficulty;
-      _firstPlayer = firstPlayer;
-      _homeHowToPlayDismissed = howToPlayDismissed;
-      _dailyCompleted = dailyDone;
-    });
-  }
-
-  Future<void> _dismissHomeHowToPlay() async {
-    setState(() {
-      _homeHowToPlayDismissed = true;
-      _showHowToPlayDetails = false;
-    });
-    await SettingsService.dismissHomeHowToPlay();
-  }
-
-  void _startGame() {
-    SettingsService.setDifficulty(_difficulty);
-    SettingsService.setFirstPlayer(_firstPlayer);
-
-    PieceType humanColor = PieceType.black;
-    if (!_twoPlayerMode) {
-      switch (_firstPlayer) {
-        case FirstPlayer.human:
-          humanColor = PieceType.black;
-          break;
-        case FirstPlayer.computer:
-          humanColor = PieceType.white;
-          break;
-        case FirstPlayer.random:
-          humanColor = Random().nextBool() ? PieceType.black : PieceType.white;
-          break;
+    if (_openingGame) return;
+    final generation = ++_settingsLoadGeneration;
+    setState(() => _loading = true);
+    try {
+      final difficulty = await SettingsService.getDifficulty();
+      final firstPlayer = await SettingsService.getFirstPlayer();
+      final dailyDone = await DailyChallenge.isCompletedToday();
+      final savedSession = await GameSessionService.load();
+      if (!mounted || generation != _settingsLoadGeneration || _openingGame) {
+        return;
+      }
+      setState(() {
+        _difficulty = difficulty;
+        _firstPlayer = firstPlayer;
+        _dailyCompleted = dailyDone;
+        _savedSession = savedSession;
+        _loading = false;
+      });
+    } catch (error) {
+      debugPrint('Refreshing home failed: $error');
+      if (mounted && generation == _settingsLoadGeneration && !_openingGame) {
+        setState(() => _loading = false);
       }
     }
-
-    Navigator.of(context).pushReplacement(
-      fadeRoute((context) => GameScreen(
-            settings: GameSettings(
-              difficulty: _difficulty,
-              twoPlayerMode: _twoPlayerMode,
-              humanColor: humanColor,
-            ),
-          )),
-    );
   }
 
-  void _startDailyChallenge() {
-    Navigator.of(context).pushReplacement(
-      fadeRoute((context) => GameScreen(
-            settings: DailyChallenge.settingsForToday(),
-          )),
-    );
-  }
-
-  Widget _sectionLabel(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Text(
-        text,
-        style: Styling.scoreLabelText.copyWith(fontSize: 18),
-      ),
-    );
-  }
-
-  // Compact switch used in the start-screen game options.
-  Widget _toggleSwitch(bool value) {
-    final theme = ThemeController.instance.theme;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 150),
-      width: 46,
-      height: 28,
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
-        color: value ? Color(0xffffffff) : Color(0x60ffffff),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: AnimatedAlign(
-        duration: const Duration(milliseconds: 150),
-        alignment: value ? Alignment.centerRight : Alignment.centerLeft,
-        child: Container(
-          width: 22,
-          height: 22,
-          decoration: BoxDecoration(
-            color: value ? theme.backgroundFinish : Color(0xffffffff),
-            shape: BoxShape.circle,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _howToPlaySection(BuildContext context) {
+  Future<bool> _confirmReplaceSavedGame() async {
+    if (_savedSession == null) return true;
     final s = S.of(context);
-    final theme = ThemeController.instance.theme;
-    return Material(
-      color: AppChrome.cardColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: const BorderSide(color: AppChrome.borderColor),
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(s.ReplaceSavedGameTitle),
+            content: Text(s.ReplaceSavedGameMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(s.KeepPlaying),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(s.StartNewGame),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
+  Future<void> _continueGame() async {
+    if (_savedSession == null || _openingGame || _loading) return;
+    // Invalidate older refreshes and validate expiry again at the moment of
+    // opening. Home can remain mounted across a change of local date.
+    _settingsLoadGeneration++;
+    setState(() {
+      _openingGame = true;
+      _loading = true;
+    });
+    try {
+      final session = await GameSessionService.load();
+      if (!mounted) return;
+      if (session == null) {
+        setState(() {
+          _savedSession = null;
+          _openingGame = false;
+        });
+        await _loadSettings();
+        return;
+      }
+      Navigator.of(context).pushReplacement(
+        fadeRoute(
+          (context) =>
+              GameScreen(settings: session.settings, savedSession: session),
+        ),
+      );
+    } catch (error) {
+      debugPrint('Continuing game failed: $error');
+      if (mounted) {
+        setState(() {
+          _openingGame = false;
+          _loading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _launchGame(GameSettings settings) async {
+    if (_openingGame || !await _confirmReplaceSavedGame() || !mounted) return;
+    setState(() => _openingGame = true);
+    await GameSessionService.clear();
+    if (!mounted) return;
+    Navigator.of(
+      context,
+    ).pushReplacement(fadeRoute((context) => GameScreen(settings: settings)));
+  }
+
+  Future<void> _startGuidedGame() async {
+    final startPractice = await Navigator.of(context)
+        .push<bool>(fadeRoute((context) => const TutorialScreen()));
+    if (startPractice == true && mounted) {
+      await _launchGame(
+        const GameSettings(
+          difficulty: Difficulty.easy,
+          twoPlayerMode: false,
+          humanColor: PieceType.black,
+        ),
+      );
+    }
+  }
+
+  Future<void> _showGameSetup() async {
+    var difficulty = _difficulty;
+    var firstPlayer = _firstPlayer;
+    var twoPlayerMode = _twoPlayerMode;
+    final settings = await showModalBottomSheet<GameSettings>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: ThemeController.instance.theme.backgroundFinish,
+      barrierColor: const Color(0x99000000),
+      constraints: const BoxConstraints(maxWidth: 640),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: [
-          InkWell(
-            onTap: () => setState(
-              () => _showHowToPlayDetails = !_showHowToPlayDetails,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setSheetState) {
+          final s = S.of(context);
+          return ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.sizeOf(context).height * 0.88,
             ),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 64),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
-                child: Row(
-                  children: [
-                    Icon(
-                      CupertinoIcons.question_circle_fill,
-                      color: theme.lastMoveBorder,
-                      size: 23,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Text(
-                        s.How_to_play,
-                        style: const TextStyle(
-                          fontFamily: 'Roboto',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                          color: AppChrome.primaryText,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                24,
+                16,
+                24,
+                24 + MediaQuery.paddingOf(context).bottom,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Semantics(
+                          header: true,
+                          child: Text(s.GameSetup, style: AppChrome.titleStyle),
                         ),
                       ),
-                    ),
-                    AnimatedRotation(
-                      turns: _showHowToPlayDetails ? 0.5 : 0,
-                      duration: const Duration(milliseconds: 180),
-                      child: const Icon(
-                        CupertinoIcons.chevron_down,
-                        size: 18,
-                        color: AppChrome.primaryText,
+                      IconButton(
+                        tooltip: MaterialLocalizations.of(context)
+                            .closeButtonTooltip,
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(
+                          CupertinoIcons.xmark,
+                          color: AppChrome.primaryText,
+                          size: 20,
+                        ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  AppSectionTitle(s.Opponent),
+                  _SetupChoices<bool>(
+                    values: const [false, true],
+                    selected: twoPlayerMode,
+                    labelFor: (value) =>
+                        value ? s.PlayAgainstFriend : s.AgainstComputer,
+                    onSelected: (value) =>
+                        setSheetState(() => twoPlayerMode = value),
+                  ),
+                  if (!twoPlayerMode) ...[
+                    const SizedBox(height: 24),
+                    AppSectionTitle(s.Difficulty),
+                    _SetupChoices<Difficulty>(
+                      values: const [
+                        Difficulty.superEasy,
+                        Difficulty.easy,
+                        Difficulty.medium,
+                        Difficulty.hard,
+                      ],
+                      selected: difficulty,
+                      labelFor: (value) => value.label(context),
+                      onSelected: (value) =>
+                          setSheetState(() => difficulty = value),
                     ),
-                    IconButton(
-                      tooltip:
-                          MaterialLocalizations.of(context).closeButtonTooltip,
-                      onPressed: _dismissHomeHowToPlay,
-                      icon: const Icon(
-                        CupertinoIcons.xmark,
-                        size: 18,
-                        color: AppChrome.primaryText,
-                      ),
+                    const SizedBox(height: 24),
+                    AppSectionTitle(s.WhoGoesFirst),
+                    _SetupChoices<FirstPlayer>(
+                      values: FirstPlayer.values,
+                      selected: firstPlayer,
+                      labelFor: (value) => value.label(context),
+                      onSelected: (value) =>
+                          setSheetState(() => firstPlayer = value),
                     ),
                   ],
-                ),
-              ),
-            ),
-          ),
-          AnimatedCrossFade(
-            firstChild: const SizedBox(width: double.infinity),
-            secondChild: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(18, 0, 18, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Divider(color: AppChrome.borderColor, height: 1),
-                  const SizedBox(height: 14),
-                  Text(
-                    s.How_to_play_explain,
-                    style: const TextStyle(
-                      fontFamily: 'Roboto',
-                      fontSize: 14,
-                      height: 1.45,
-                      color: AppChrome.secondaryText,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  TextButton.icon(
+                  const SizedBox(height: 32),
+                  ElevatedButton(
+                    style: appPrimaryButtonStyle(),
                     onPressed: () {
-                      Navigator.of(context).push(
-                        fadeRoute((context) => const HowToPlayScreen()),
+                      PieceType humanColor = PieceType.black;
+                      if (!twoPlayerMode) {
+                        humanColor = switch (firstPlayer) {
+                          FirstPlayer.human => PieceType.black,
+                          FirstPlayer.computer => PieceType.white,
+                          FirstPlayer.random => Random().nextBool()
+                              ? PieceType.black
+                              : PieceType.white,
+                        };
+                      }
+                      Navigator.of(context).pop(
+                        GameSettings(
+                          difficulty: difficulty,
+                          twoPlayerMode: twoPlayerMode,
+                          humanColor: humanColor,
+                        ),
                       );
                     },
-                    icon: const Icon(CupertinoIcons.book_fill, size: 17),
-                    label: Text(s.HowToLearnMore),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: Text(s.StartGame, textAlign: TextAlign.center),
+                    ),
                   ),
                 ],
               ),
             ),
-            crossFadeState: _showHowToPlayDetails
-                ? CrossFadeState.showSecond
-                : CrossFadeState.showFirst,
-            duration: const Duration(milliseconds: 200),
-            sizeCurve: Curves.easeInOut,
-          ),
-        ],
+          );
+        },
       ),
     );
-  }
-
-  Widget _segmentedControl<T>({
-    required List<T> values,
-    required T selected,
-    required String Function(T) labelFor,
-    required ValueChanged<T> onSelected,
-  }) {
-    return Row(
-      children: values.map((value) {
-        final isSelected = value == selected;
-        return Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: GestureDetector(
-              onTap: () => onSelected(value),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? const Color(0xffffffff)
-                      : AppChrome.cardColor,
-                  border: Border.all(color: AppChrome.borderColor),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  labelFor(value),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontWeight: FontWeight.w700,
-                    fontSize: values.length > 3 ? 12 : 14,
-                    color: isSelected ? Color(0xff000000) : Color(0xffffffff),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
+    if (settings == null || !mounted) return;
+    setState(() {
+      _difficulty = difficulty;
+      _firstPlayer = firstPlayer;
+      _twoPlayerMode = twoPlayerMode;
+    });
+    await SettingsService.setDifficulty(difficulty);
+    await SettingsService.setFirstPlayer(firstPlayer);
+    if (mounted) await _launchGame(settings);
   }
 
   Widget _iconButton({
@@ -310,27 +312,182 @@ class _StartScreenState extends State<StartScreen> {
     required IconData icon,
     required VoidCallback onPressed,
   }) {
-    return Semantics(
-      label: tooltip,
-      button: true,
-      child: ExcludeSemantics(
-        child: Tooltip(
-          message: tooltip,
-          child: SizedBox(
-            width: 44,
-            height: 44,
-            child: ElevatedButton(
-              onPressed: onPressed,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ThemeController.instance.theme.buttonFill,
-                shape: const CircleBorder(),
-                padding: EdgeInsets.zero,
-                elevation: 0,
-              ),
-              child: Icon(
-                icon,
-                size: 20,
-                color: const Color(0xffffffff),
+    return IconButton.filledTonal(
+      tooltip: tooltip,
+      onPressed: onPressed,
+      style: IconButton.styleFrom(
+        backgroundColor: AppChrome.cardColor,
+        foregroundColor: AppChrome.primaryText,
+        minimumSize: const Size(48, 48),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+      icon: Icon(icon, size: 22),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = ThemeController.instance.theme;
+    final s = S.of(context);
+    final hasSavedGame = _savedSession != null;
+    return Scaffold(
+      backgroundColor: palette.backgroundFinish,
+      body: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [palette.backgroundStart, palette.backgroundFinish],
+          ),
+        ),
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) => Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 560),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          _iconButton(
+                            tooltip: s.Stats,
+                            icon: CupertinoIcons.chart_bar,
+                            onPressed: () async {
+                              await Navigator.of(context).push(
+                                fadeRoute((context) => const StatsScreen()),
+                              );
+                              if (mounted) _loadSettings();
+                            },
+                          ),
+                          const Spacer(),
+                          _iconButton(
+                            tooltip: s.Settings,
+                            icon: CupertinoIcons.settings,
+                            onPressed: () async {
+                              await Navigator.of(context).push(
+                                fadeRoute((context) => const SettingsScreen()),
+                              );
+                              if (mounted) _loadSettings();
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      Center(
+                        child: BoardThemePreview(
+                          palette: palette,
+                          size: constraints.maxHeight < 500 ? 88 : 128,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Semantics(
+                        header: true,
+                        child: Text(
+                          s.Classic_Reversi,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontFamily: 'Roboto',
+                            fontSize: 32,
+                            fontWeight: FontWeight.w700,
+                            height: 1.15,
+                            letterSpacing: -0.6,
+                            color: AppChrome.primaryText,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        hasSavedGame ? s.SavedGameSubtitle : s.HomeTagline,
+                        textAlign: TextAlign.center,
+                        style: AppChrome.bodyStyle,
+                      ),
+                      const SizedBox(height: 32),
+                      ElevatedButton.icon(
+                        onPressed: _loading || _openingGame
+                            ? null
+                            : hasSavedGame
+                                ? _continueGame
+                                : _showGameSetup,
+                        style: appPrimaryButtonStyle(),
+                        icon: _loading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(CupertinoIcons.play_fill, size: 18),
+                        label: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: Text(
+                            hasSavedGame ? s.ContinueGame : s.Play,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      if (hasSavedGame) ...[
+                        const SizedBox(height: 8),
+                        TextButton(
+                          onPressed:
+                              _loading || _openingGame ? null : _showGameSetup,
+                          style: TextButton.styleFrom(
+                            minimumSize: const Size(48, 48),
+                            foregroundColor: AppChrome.primaryText,
+                            textStyle: AppChrome.actionStyle,
+                          ),
+                          child: Text(s.NewGame),
+                        ),
+                      ],
+                      const SizedBox(height: 24),
+                      AppMenuRow(
+                        icon: CupertinoIcons.calendar,
+                        title: s.DailyChallenge,
+                        subtitle: _dailyCompleted
+                            ? s.DailyCompleted
+                            : s.DailyChallengeSubtitle,
+                        onTap: _loading || _openingGame
+                            ? null
+                            : () => _launchGame(
+                                  DailyChallenge.settingsForToday(),
+                                ),
+                        trailing: _dailyCompleted
+                            ? Icon(
+                                CupertinoIcons.checkmark_circle,
+                                color: palette.lastMoveBorder,
+                                size: 22,
+                              )
+                            : null,
+                      ),
+                      AppMenuRow(
+                        icon: CupertinoIcons.book,
+                        title: s.GuidedFirstGame,
+                        subtitle: s.GuidedFirstGameSubtitle,
+                        onTap:
+                            _loading || _openingGame ? null : _startGuidedGame,
+                        margin: EdgeInsets.zero,
+                      ),
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.center,
+                        child: TextButton(
+                          onPressed: () => Navigator.of(context).push(
+                            fadeRoute((context) => const HowToPlayScreen()),
+                          ),
+                          style: TextButton.styleFrom(
+                            foregroundColor: AppChrome.secondaryText,
+                            minimumSize: const Size(48, 48),
+                            textStyle: AppChrome.actionStyle,
+                          ),
+                          child: Text(s.Rules),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -338,216 +495,84 @@ class _StartScreenState extends State<StartScreen> {
       ),
     );
   }
+}
+
+/// Wrapping choices keep labels legible with large text and narrow screens.
+/// The checkmark and selected semantics convey state without relying on color.
+class _SetupChoices<T> extends StatelessWidget {
+  const _SetupChoices({
+    required this.values,
+    required this.selected,
+    required this.labelFor,
+    required this.onSelected,
+  });
+
+  final List<T> values;
+  final T selected;
+  final String Function(T) labelFor;
+  final ValueChanged<T> onSelected;
 
   @override
   Widget build(BuildContext context) {
-    final theme = ThemeController.instance.theme;
-    final s = S.of(context);
-
-    return Scaffold(
-      backgroundColor: theme.backgroundFinish,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              theme.backgroundStart,
-              theme.backgroundFinish,
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return Align(
-                alignment: Alignment.topCenter,
-                child: SizedBox(
-                  width: min(constraints.maxWidth, 720),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          children: [
-                            _iconButton(
-                              tooltip: s.Stats,
-                              icon: CupertinoIcons.chart_bar,
-                              onPressed: () async {
-                                await Navigator.of(context).push(
-                                  fadeRoute((context) => const StatsScreen()),
-                                );
-                                _loadSettings();
-                              },
-                            ),
-                            const Spacer(),
-                            _iconButton(
-                              tooltip: s.Settings,
-                              icon: CupertinoIcons.settings,
-                              onPressed: () async {
-                                await Navigator.of(context).push(
-                                  fadeRoute(
-                                      (context) => const SettingsScreen()),
-                                );
-                                if (mounted) setState(() {});
-                              },
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 12),
-                        Text(
-                          s.Classic_Reversi,
-                          textAlign: TextAlign.center,
-                          style: Styling.resultText.copyWith(fontSize: 36),
-                        ),
-                        SizedBox(height: 22),
-                        GestureDetector(
-                          onTap: _startDailyChallenge,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 14, horizontal: 16),
-                            decoration: BoxDecoration(
-                              color: AppChrome.cardColor,
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(
-                                  color: theme.lastMoveBorder, width: 1.2),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(CupertinoIcons.calendar,
-                                    color: theme.lastMoveBorder, size: 22),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        s.DailyChallenge,
-                                        style: const TextStyle(
-                                          fontFamily: 'Roboto',
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w800,
-                                          color: Color(0xffffffff),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        _dailyCompleted
-                                            ? s.DailyCompleted
-                                            : s.DailyChallengeSubtitle,
-                                        style: TextStyle(
-                                          fontFamily: 'Roboto',
-                                          fontSize: 12,
-                                          color: Color(0xe0ffffff),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Icon(
-                                  _dailyCompleted
-                                      ? CupertinoIcons.checkmark_circle_fill
-                                      : CupertinoIcons.chevron_right,
-                                  color: Color(0xffffffff),
-                                  size: 20,
-                                ),
-                              ],
-                            ),
+    return LayoutBuilder(
+      builder: (context, constraints) => Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: values.map((value) {
+          final isSelected = value == selected;
+          return ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: constraints.maxWidth),
+            child: Semantics(
+              selected: isSelected,
+              button: true,
+              child: Material(
+                color: isSelected ? AppChrome.primaryText : AppChrome.cardColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: const BorderSide(color: AppChrome.borderColor),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: () => onSelected(value),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 48),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isSelected
+                                ? CupertinoIcons.checkmark_circle_fill
+                                : CupertinoIcons.circle,
+                            size: 20,
+                            color: isSelected
+                                ? AppChrome.onPrimary
+                                : AppChrome.secondaryText,
                           ),
-                        ),
-                        if (!_homeHowToPlayDismissed) ...[
-                          SizedBox(height: 24),
-                          _howToPlaySection(context),
-                        ],
-                        if (!_twoPlayerMode) ...[
-                          SizedBox(height: 30),
-                          _sectionLabel(s.Difficulty),
-                          _segmentedControl<Difficulty>(
-                            values: const [
-                              Difficulty.superEasy,
-                              Difficulty.easy,
-                              Difficulty.medium,
-                              Difficulty.hard,
-                            ],
-                            selected: _difficulty,
-                            labelFor: (d) => d.label(context),
-                            onSelected: (d) => setState(() => _difficulty = d),
-                          ),
-                        ],
-                        SizedBox(height: 30),
-                        _sectionLabel(s.TwoPlayersMode),
-                        GestureDetector(
-                          onTap: () =>
-                              setState(() => _twoPlayerMode = !_twoPlayerMode),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 16),
-                            decoration: BoxDecoration(
-                              color: AppChrome.cardColor,
-                              border: Border.all(color: AppChrome.borderColor),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    s.PlayAgainstFriend,
-                                    style: TextStyle(
-                                      fontFamily: 'Roboto',
-                                      fontSize: 14,
-                                      color: Color(0xffffffff),
-                                    ),
-                                  ),
-                                ),
-                                _toggleSwitch(_twoPlayerMode),
-                              ],
-                            ),
-                          ),
-                        ),
-                        if (!_twoPlayerMode) ...[
-                          SizedBox(height: 30),
-                          _sectionLabel(s.WhoGoesFirst),
-                          _segmentedControl<FirstPlayer>(
-                            values: FirstPlayer.values,
-                            selected: _firstPlayer,
-                            labelFor: (f) => f.label(context),
-                            onSelected: (f) => setState(() => _firstPlayer = f),
-                          ),
-                        ],
-                        SizedBox(height: 40),
-                        SizedBox(
-                          height: 56,
-                          child: ElevatedButton(
-                            onPressed: _startGame,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xffffffff),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(28),
-                              ),
-                            ),
+                          const SizedBox(width: 8),
+                          Flexible(
                             child: Text(
-                              s.StartGame,
-                              style: TextStyle(
-                                fontFamily: 'Roboto',
-                                fontSize: 20,
-                                fontWeight: FontWeight.w900,
-                                color: Color(0xff000000),
+                              labelFor(value),
+                              style: AppChrome.actionStyle.copyWith(
+                                color: isSelected
+                                    ? AppChrome.onPrimary
+                                    : AppChrome.primaryText,
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              );
-            },
-          ),
-        ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

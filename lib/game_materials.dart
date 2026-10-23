@@ -123,6 +123,15 @@ class MaterialBoard extends StatelessWidget {
       child: Container(
         width: playExtent + frame * 2,
         height: playExtent + frame * 2,
+        // Paint the border in front: a background decoration border adds
+        // implicit padding and would shrink the playable grid by two pixels.
+        foregroundDecoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(outerRadius),
+          border: Border.all(
+            color: theme.boardFrameHighlight.withAlpha(120),
+            width: 1,
+          ),
+        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(outerRadius),
           gradient: LinearGradient(
@@ -134,10 +143,6 @@ class MaterialBoard extends StatelessWidget {
               theme.boardFrameDark,
             ],
             stops: const [0, 0.48, 1],
-          ),
-          border: Border.all(
-            color: theme.boardFrameHighlight.withAlpha(120),
-            width: 1,
           ),
           boxShadow: const [
             BoxShadow(

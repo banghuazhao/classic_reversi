@@ -93,7 +93,6 @@ class _AnimatedCircles extends StatefulWidget {
   final double effectScale;
 
   const _AnimatedCircles({
-    super.key,
     required this.color,
     required this.height,
     required this.emphasized,

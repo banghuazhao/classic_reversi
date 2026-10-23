@@ -107,5 +107,124 @@
   "PrivacyPolicy": "プライバシーポリシー",
   "PrivacyPolicySubtitle": "データと広告の取り扱いについて",
   "PrivacyOptions": "プライバシー設定",
-  "PrivacyOptionsSubtitle": "広告のプライバシー選択を更新"
+  "PrivacyOptionsSubtitle": "広告のプライバシー選択を更新",
+  "ContinueGame": "対局を続ける",
+  "Play": "対局する",
+  "NewGame": "新しい対局",
+  "HomeTagline": "少しの戦略と、自分だけのひとときを。",
+  "SavedGameSubtitle": "いつでも続きから遊べます。",
+  "GameSetup": "対局の設定",
+  "Opponent": "対戦相手",
+  "AgainstComputer": "コンピューター",
+  "ReplaceSavedGameTitle": "新しい対局を始めますか？",
+  "ReplaceSavedGameMessage": "途中の対局は新しい対局に置き換わります。ホームから続きを遊ぶこともできます。",
+  "KeepPlaying": "対局を続ける",
+  "StartNewGame": "新しい対局を始める",
+  "GuidedFirstGame": "ガイド付きの対局で練習",
+  "GuidedFirstGameSubtitle": "石の返し方や角の大切さを学び、自分のペースで慣れていきましょう。",
+  "Rules": "ルール",
+  "TutorialTitle": "遊びながら学ぶ",
+  "TutorialCaptureTitle": "はじめて石を返す",
+  "TutorialCaptureBody": "あなたは黒です。印のあるマスをタップして、白い石を2つの黒い石で挟みましょう。",
+  "TutorialCaptureDoneTitle": "石を返せました",
+  "TutorialCaptureDoneBody": "挟まれた白い石が黒に変わります。次は白が打ち、その後またあなたの番です。",
+  "TutorialReplyBody": "白が打ちました。印のあるマスをタップして、もう一度石を返しましょう。",
+  "TutorialReplyDoneBody": "一巡できました。今度は練習用の局面で角を取ってみましょう。",
+  "TutorialCornersTitle": "角を取る",
+  "TutorialCornersBody": "この練習用の局面で、印のあるA1の角をタップしましょう。角の石は返されません。",
+  "TutorialCompleteTitle": "準備ができました",
+  "TutorialCompleteBody": "終了時に石が多い方の勝ちです。打てる場所がないときは自動でパスします。まずは「かんたん」で始め、慣れたら難易度を上げましょう。",
+  "TutorialNext": "続ける",
+  "TutorialSkip": "チュートリアルをスキップ",
+  "TutorialPlayEasy": "かんたんで対局する",
+  "ReviewGame": "対局を振り返る",
+  "ReviewStart": "開始時の局面",
+  "ReviewFinal": "終了時の局面",
+  "ReviewPrevious": "前の手",
+  "ReviewNext": "次の手",
+  "ReviewFirst": "最初へ",
+  "ReviewLast": "最後へ",
+  "BoardEmpty": "空きマス",
+  "BoardLegalMove": "打てるマス",
+  "BoardLastMove": "直前の一手",
+  "BoardKeyboardHint": "矢印キーで盤面を移動し、Enterキーまたはスペースキーで印のあるマスに打ちます。",
+  "BoardReviewKeyboardHint": "矢印キーで盤面を移動できます。",
+  "ReviewBoardLabel": "対局を振り返る盤面",
+  "TutorialBoardLabel": "練習用の盤面",
+  "TutorialProgress": "レッスン {step}／{total}",
+  "@TutorialProgress": {
+    "type": "text",
+    "placeholders": {
+      "step": {},
+      "total": {}
+    }
+  },
+  "ReviewMove": "{move}手目／全{total}手",
+  "@ReviewMove": {
+    "type": "text",
+    "placeholders": {
+      "move": {},
+      "total": {}
+    }
+  },
+  "ReviewCorners": "角 · 黒 {black} · 白 {white}",
+  "@ReviewCorners": {
+    "type": "text",
+    "placeholders": {
+      "black": {},
+      "white": {}
+    }
+  },
+  "BoardCell": "{coordinate}、{piece}",
+  "@BoardCell": {
+    "type": "text",
+    "placeholders": {
+      "coordinate": {},
+      "piece": {}
+    }
+  },
+  "RestartConfirmTitle": "この対局を最初からやり直しますか？",
+  "RestartConfirmMessage": "現在の局面は開始時の局面に戻ります。",
+  "YourTurn": "あなたの番です",
+  "ComputerThinking": "コンピューターが考えています…",
+  "PlayerTurn": "{color}の番です",
+  "@PlayerTurn": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "TurnPassed": "{passed}は打てる場所がありません。もう一度{current}の番です。",
+  "@TurnPassed": {
+    "type": "text",
+    "placeholders": {
+      "passed": {},
+      "current": {}
+    }
+  },
+  "YouColor": "あなた · {color}",
+  "@YouColor": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "ComputerColor": "コンピューター · {color}",
+  "@ComputerColor": {
+    "type": "text",
+    "placeholders": {
+      "color": {}
+    }
+  },
+  "GameStatusAnnouncement": "{status}。黒 {black}、白 {white}。",
+  "@GameStatusAnnouncement": {
+    "type": "text",
+    "placeholders": {
+      "status": {},
+      "black": {},
+      "white": {}
+    }
+  },
+  "UndoWithAd": "待った · 広告を見る",
+  "HintWithAd": "打てるマス · 広告を見る"
 }

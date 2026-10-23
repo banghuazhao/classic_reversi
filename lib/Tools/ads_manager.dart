@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../gameplay_activity.dart';
 import 'ads_ids_debug.dart';
 import 'ads_ids_release.dart';
 import 'purchase_service.dart';
@@ -39,7 +40,7 @@ class AdsManager {
       );
     } catch (error) {
       if (kDebugMode) {
-        print('RequestConfiguration update failed: $error');
+        debugPrint('RequestConfiguration update failed: $error');
       }
     }
 
@@ -48,7 +49,7 @@ class AdsManager {
       await ConsentForm.loadAndShowConsentFormIfRequired((_) {});
     } catch (error) {
       if (kDebugMode) {
-        print('UMP consent flow failed: $error');
+        debugPrint('UMP consent flow failed: $error');
       }
     } finally {
       _consentFlowCompleted = true;
@@ -66,7 +67,7 @@ class AdsManager {
       },
       (FormError error) {
         if (kDebugMode) {
-          print('Consent info update failed: ${error.message}');
+          debugPrint('Consent info update failed: ${error.message}');
         }
         if (!completer.isCompleted) completer.complete();
       },
@@ -90,7 +91,7 @@ class AdsManager {
       markMobileAdsInitialized();
     } catch (error) {
       if (kDebugMode) {
-        print('MobileAds initialization failed: $error');
+        debugPrint('MobileAds initialization failed: $error');
       }
     }
   }
@@ -101,8 +102,8 @@ class AdsManager {
       return false;
     }
     try {
-      final status =
-          await ConsentInformation.instance.getPrivacyOptionsRequirementStatus();
+      final status = await ConsentInformation.instance
+          .getPrivacyOptionsRequirementStatus();
       return status == PrivacyOptionsRequirementStatus.required;
     } catch (_) {
       return false;
@@ -165,7 +166,7 @@ class AdsManager {
 
   static void debugPrintID() {
     if (!kDebugMode) return;
-    print("bannerAdUnitId: ${AdsManager.bannerAdUnitId}");
+    debugPrint("bannerAdUnitId: ${AdsManager.bannerAdUnitId}");
   }
 }
 
@@ -186,6 +187,7 @@ class RewardedAdHelper {
     if (grantsWithoutAd) {
       return true;
     }
+    if (!AdsManager.mobileAdsInitialized) return false;
     if (_ad != null) {
       return true;
     }
@@ -214,7 +216,7 @@ class RewardedAdHelper {
             }
           },
           onAdFailedToLoad: (error) {
-            print('RewardedAd failed to load: $error');
+            debugPrint('RewardedAd failed to load: $error');
             _loadCompleter = null;
             if (!completer.isCompleted) {
               completer.complete(false);
@@ -223,17 +225,20 @@ class RewardedAdHelper {
         ),
       );
     } catch (error) {
-      print('RewardedAd load threw: $error');
+      debugPrint('RewardedAd load threw: $error');
       _loadCompleter = null;
       if (!completer.isCompleted) {
         completer.complete(false);
       }
     }
 
-    return completer.future.timeout(timeout, onTimeout: () {
-      _loadCompleter = null;
-      return false;
-    });
+    return completer.future.timeout(
+      timeout,
+      onTimeout: () {
+        _loadCompleter = null;
+        return false;
+      },
+    );
   }
 
   /// Returns true when the user earned the reward (or ads are removed).
@@ -242,6 +247,7 @@ class RewardedAdHelper {
       onUserEarnedReward();
       return true;
     }
+    if (!AdsManager.mobileAdsInitialized) return false;
     if (_showing) {
       return false;
     }
@@ -267,7 +273,7 @@ class RewardedAdHelper {
         }
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
-        print('RewardedAd failed to show: $error');
+        debugPrint('RewardedAd failed to show: $error');
         ad.dispose();
         _ad = null;
         _showing = false;
@@ -286,7 +292,7 @@ class RewardedAdHelper {
         },
       );
     } catch (error) {
-      print('RewardedAd show threw: $error');
+      debugPrint('RewardedAd show threw: $error');
       ad.dispose();
       _ad = null;
       _showing = false;
@@ -348,7 +354,7 @@ class AppOpenAdManager {
               return;
             }
             _isLoadingAd = false;
-            print('$ad loaded');
+            debugPrint('$ad loaded');
             _appOpenLoadTime = DateTime.now();
             _appOpenAd = ad;
             if (_showWhenLoaded) {
@@ -362,7 +368,7 @@ class AppOpenAdManager {
             }
             _isLoadingAd = false;
             _showWhenLoaded = false;
-            print('AppOpenAd failed to load: $error');
+            debugPrint('AppOpenAd failed to load: $error');
           },
         ),
       ).catchError((Object error) {
@@ -370,7 +376,7 @@ class AppOpenAdManager {
           _isLoadingAd = false;
           _showWhenLoaded = false;
         }
-        print('AppOpenAd load threw: $error');
+        debugPrint('AppOpenAd load threw: $error');
       }),
     );
   }
@@ -384,6 +390,10 @@ class AppOpenAdManager {
   bool get hasPendingShow => _showWhenLoaded;
 
   void showAdIfAvailable() {
+    if (GameplayActivity.isPlaying) {
+      cancelPendingShow();
+      return;
+    }
     if (!AdsManager.adsEnabled) {
       dispose();
       return;
@@ -391,22 +401,22 @@ class AppOpenAdManager {
     // Don't interrupt an in-progress purchase with an app-open ad.
     if (PurchaseService.instance.isPurchaseInProgress) {
       _showWhenLoaded = false;
-      print('Skipping app open ad while purchase is in progress.');
+      debugPrint('Skipping app open ad while purchase is in progress.');
       return;
     }
     if (!isAdAvailable) {
-      print('Tried to show ad before available.');
+      debugPrint('Tried to show ad before available.');
       _showWhenLoaded = true;
       loadAd();
       return;
     }
     if (_isShowingAd) {
-      print('Tried to show ad while already showing an ad.');
+      debugPrint('Tried to show ad while already showing an ad.');
       return;
     }
     if (_appOpenLoadTime != null &&
         DateTime.now().subtract(maxCacheDuration).isAfter(_appOpenLoadTime!)) {
-      print('Maximum cache duration exceeded. Loading another ad.');
+      debugPrint('Maximum cache duration exceeded. Loading another ad.');
       _appOpenAd?.dispose();
       _appOpenAd = null;
       _appOpenLoadTime = null;
@@ -419,10 +429,10 @@ class AppOpenAdManager {
     _appOpenAd?.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (ad) {
         _isShowingAd = true;
-        print('$ad onAdShowedFullScreenContent');
+        debugPrint('$ad onAdShowedFullScreenContent');
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
-        print('$ad onAdFailedToShowFullScreenContent: $error');
+        debugPrint('$ad onAdFailedToShowFullScreenContent: $error');
         _isShowingAd = false;
         ad.dispose();
         _appOpenAd = null;
@@ -430,7 +440,7 @@ class AppOpenAdManager {
         loadAd();
       },
       onAdDismissedFullScreenContent: (ad) {
-        print('$ad onAdDismissedFullScreenContent');
+        debugPrint('$ad onAdDismissedFullScreenContent');
         _isShowingAd = false;
         ad.dispose();
         _appOpenAd = null;
@@ -486,7 +496,11 @@ class AppLifecycleReactor extends WidgetsBindingObserver {
       case AppLifecycleState.resumed:
         if (_wasInBackground && AdsManager.adsEnabled) {
           _wasInBackground = false;
-          appOpenAdManager.showAdIfAvailable();
+          if (GameplayActivity.isPlaying) {
+            appOpenAdManager.cancelPendingShow();
+          } else {
+            appOpenAdManager.showAdIfAvailable();
+          }
         }
         break;
       case AppLifecycleState.inactive:
