@@ -1,4 +1,4 @@
-Nouveautés :
-• Profitez d’un plateau plus réaliste et agréable, avec des textures enrichies pour les pions et la surface.
-• Les coups, retournements, changements de tour et victoires sont plus fluides grâce à des animations, sons et retours haptiques affinés.
-• Réglez l’expérience avec les nouvelles options Réduire les animations et Intensité du retour.
+• Reprenez là où vous en étiez grâce aux parties sauvegardées et à un accueil repensé.
+• Revoyez vos parties dans Match Library et progressez avec Strategy Coach.
+• Résolvez les neuf Practice Puzzles grâce à des indices progressifs.
+• Partagez vos cartes de résultats et profitez de succès plus clairs, d’une meilleure accessibilité et d’un jeu plus fiable.
