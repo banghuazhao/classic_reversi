@@ -95,6 +95,67 @@ void main() {
   }
 
   testWidgets(
+      'compact Home keeps Play and Continue inside the initial safe viewport',
+      (tester) async {
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    for (final locale in [const Locale('en'), const Locale('ru')]) {
+      for (final scenario in [
+        (
+          size: const Size(812, 375),
+          scale: 2.0,
+          padding: const EdgeInsets.only(bottom: 21)
+        ),
+        (
+          size: const Size(320, 568),
+          scale: 3.2,
+          padding: const EdgeInsets.only(top: 24, bottom: 16)
+        ),
+      ]) {
+        for (final saved in [false, true]) {
+          SharedPreferences.setMockInitialValues({});
+          if (saved) {
+            await tester.runAsync(() => GameSessionService.save(GameSession(
+                  settings: const GameSettings(
+                      difficulty: Difficulty.easy, twoPlayerMode: true),
+                  timeline: [GameModel.initial()],
+                )));
+          }
+          tester.view.physicalSize = scenario.size;
+          tester.view.devicePixelRatio = 1;
+          await tester.pumpWidget(_app(const StartScreen(),
+              locale: locale,
+              scale: scenario.scale,
+              padding: scenario.padding));
+          await tester.pumpAndSettle();
+          final primary = find.byKey(const ValueKey('home-primary-action'));
+          final rect = tester.getRect(primary);
+          final reason =
+              '$locale, ${scenario.size}, ${scenario.scale}x, saved=$saved';
+          expect(rect.top, greaterThanOrEqualTo(scenario.padding.top),
+              reason: reason);
+          expect(rect.bottom,
+              lessThanOrEqualTo(scenario.size.height - scenario.padding.bottom),
+              reason: reason);
+          expect(primary.hitTestable(), findsOneWidget, reason: reason);
+          expect(tester.widget<ElevatedButton>(primary).onPressed, isNotNull);
+          expect(find.text(saved ? S.current.ContinueGame : S.current.Play),
+              findsOneWidget);
+          expect(
+              find.byWidgetPredicate((widget) =>
+                  widget is Semantics &&
+                  widget.properties.header == true &&
+                  widget.properties.label == S.current.Classic_Reversi),
+              findsOneWidget);
+          expect(tester.takeException(), isNull, reason: reason);
+          await tester.pumpWidget(const SizedBox.shrink());
+          await tester.pumpAndSettle();
+        }
+      }
+    }
+  });
+
+  testWidgets(
       'setup remains scrollable with large Russian text on a small phone',
       (tester) async {
     tester.view.physicalSize = const Size(320, 568);
@@ -234,7 +295,9 @@ String _lastLabel(String screen) => switch (screen) {
     };
 
 Widget _app(Widget home,
-        {Locale locale = const Locale('en'), double scale = 1}) =>
+        {Locale locale = const Locale('en'),
+        double scale = 1,
+        EdgeInsets padding = EdgeInsets.zero}) =>
     MaterialApp(
       localizationsDelegates: const [
         S.delegate,
@@ -247,7 +310,10 @@ Widget _app(Widget home,
       theme: ThemeData(useMaterial3: true),
       builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context).copyWith(
-              textScaler: TextScaler.linear(scale), disableAnimations: true),
+              textScaler: TextScaler.linear(scale),
+              disableAnimations: true,
+              padding: padding,
+              viewPadding: padding),
           child: child!),
       home: home,
     );
