@@ -217,6 +217,25 @@ void main() {
       expect(await PuzzleProgressService.complete('corner-2'), isTrue);
       expect(await PuzzleProgressService.loadCompletedIds(), {'corner-2'});
     });
+
+    test('failed rollback reads must not expose an unpersisted completion',
+        () async {
+      final store = _FailingPuzzlePreferencesStore();
+      SharedPreferencesStorePlatform.instance = store;
+      expect(await PuzzleProgressService.complete('corner-1'), isTrue);
+      store.failWrites = true;
+      store.failReads = true;
+      await expectLater(
+          PuzzleProgressService.complete('corner-2'), throwsStateError);
+      await expectLater(
+          PuzzleProgressService.loadCompletedIds(), throwsStateError);
+      store.failReads = false;
+      expect(await PuzzleProgressService.loadCompletedIds(), {'corner-1'});
+      store.failWrites = false;
+      expect(await PuzzleProgressService.complete('corner-2'), isTrue);
+      expect(await PuzzleProgressService.loadCompletedIds(),
+          {'corner-1', 'corner-2'});
+    });
   });
 }
 
@@ -229,7 +248,14 @@ class _FailingPuzzlePreferencesStore extends InMemorySharedPreferencesStore {
 
   bool failWrites = false;
   bool throwOnFailure = false;
+  bool failReads = false;
   int writeAttempts = 0;
+
+  @override
+  Future<Map<String, Object>> getAll() {
+    if (failReads) throw StateError('Simulated read failure');
+    return super.getAll();
+  }
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) async {

@@ -45,6 +45,16 @@ class GameSessionService {
   static const _key = 'activeGameSession';
   static const _maxSnapshotLength = 200000;
   static Future<void>? _pending;
+  static bool _needsReload = false;
+
+  static Future<SharedPreferences> _preferences() async {
+    final preferences = await SharedPreferences.getInstance();
+    if (_needsReload) {
+      await preferences.reload();
+      _needsReload = false;
+    }
+    return preferences;
+  }
 
   static Future<T> _enqueue<T>(Future<T> Function() operation) {
     final result =
@@ -62,7 +72,7 @@ class GameSessionService {
   }
 
   static Future<GameSession?> load() => _enqueue(() async {
-        final preferences = await SharedPreferences.getInstance();
+        final preferences = await _preferences();
         final stored = preferences.get(_key);
         if (stored == null) return null;
         try {
@@ -73,7 +83,8 @@ class GameSessionService {
             GameSessionCodec._map(jsonDecode(stored)),
           );
           final now = DateTime.now();
-          final saved = session.savedAt.toLocal();
+          final saved =
+              session.settings.dailyChallengeDate ?? session.savedAt.toLocal();
           final expiredDaily = session.settings.isDailyChallenge &&
               (saved.year != now.year ||
                   saved.month != now.month ||
@@ -82,7 +93,7 @@ class GameSessionService {
         } on FormatException {
           // Corrupt snapshots should never prevent the home screen from opening.
         }
-        await preferences.remove(_key);
+        await _persist(preferences, () => preferences.remove(_key));
         return null;
       });
 
@@ -90,15 +101,31 @@ class GameSessionService {
     // Encode now, before waiting on storage, to capture this exact turn.
     final encoded = jsonEncode(GameSessionCodec.encode(session));
     return _enqueue(() async {
-      final preferences = await SharedPreferences.getInstance();
-      await preferences.setString(_key, encoded);
+      final preferences = await _preferences();
+      await _persist(preferences, () => preferences.setString(_key, encoded));
     });
   }
 
   static Future<void> clear() => _enqueue(() async {
-        final preferences = await SharedPreferences.getInstance();
-        await preferences.remove(_key);
+        final preferences = await _preferences();
+        await _persist(preferences, () => preferences.remove(_key));
       });
+
+  static Future<void> _persist(
+      SharedPreferences preferences, Future<bool> Function() write) async {
+    try {
+      if (!await write()) {
+        throw StateError('Game session could not be persisted');
+      }
+    } catch (_) {
+      // The preferences cache changes before the platform confirms success.
+      // Restore durable values so retrying or reopening cannot lose a match.
+      _needsReload = true;
+      await preferences.reload();
+      _needsReload = false;
+      rethrow;
+    }
+  }
 }
 
 /// Versioned board and chronology validation shared by active and saved games.
@@ -116,6 +143,9 @@ class GameSessionCodec {
           'twoPlayerMode': session.settings.twoPlayerMode,
           'humanColor': session.settings.humanColor.name,
           'isDailyChallenge': session.settings.isDailyChallenge,
+          'dailyChallengeDate': session.settings.dailyChallengeDate == null
+              ? null
+              : _dayKey(session.settings.dailyChallengeDate!),
           'boardSize': session.settings.boardSize,
           'initialBoard': session.settings.initialBoard == null
               ? null
@@ -165,11 +195,31 @@ class GameSessionCodec {
     final initialPlayer = settingsData['initialPlayer'] == null
         ? null
         : _player(settingsData['initialPlayer']);
+    final isDailyChallenge = _bool(settingsData['isDailyChallenge']);
+    DateTime? dailyChallengeDate;
+    final storedDailyDate = settingsData['dailyChallengeDate'];
+    if (storedDailyDate != null) {
+      if (storedDailyDate is! String ||
+          !RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(storedDailyDate)) {
+        throw const FormatException('Invalid challenge date');
+      }
+      dailyChallengeDate = DateTime.tryParse(storedDailyDate);
+      if (dailyChallengeDate == null ||
+          _dayKey(dailyChallengeDate) != storedDailyDate ||
+          !isDailyChallenge) {
+        throw const FormatException('Invalid challenge date');
+      }
+    } else if (isDailyChallenge) {
+      // Older snapshots used the game start date as the puzzle date.
+      final local = savedAt.toLocal();
+      dailyChallengeDate = DateTime(local.year, local.month, local.day);
+    }
     final settings = GameSettings(
       difficulty: difficulty,
       twoPlayerMode: _bool(settingsData['twoPlayerMode']),
       humanColor: _player(settingsData['humanColor']),
-      isDailyChallenge: _bool(settingsData['isDailyChallenge']),
+      isDailyChallenge: isDailyChallenge,
+      dailyChallengeDate: dailyChallengeDate,
       initialBoard: initialBoard,
       initialPlayer: initialPlayer,
     );
@@ -249,6 +299,9 @@ class GameSessionCodec {
     }
     return value;
   }
+
+  static String _dayKey(DateTime date) =>
+      '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 
   static bool _bool(Object? value) {
     if (value is! bool) throw const FormatException('Expected a boolean');

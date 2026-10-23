@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +35,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
   bool _busy = false;
   bool _completionSaved = false;
   bool _saveFailed = false;
+  bool _savingCompletion = false;
   int _hints = 0;
   int _generation = 0;
 
@@ -63,6 +63,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
       _busy = false;
       _completionSaved = false;
       _saveFailed = false;
+      _savingCompletion = false;
       _hints = 0;
     });
   }
@@ -132,18 +133,32 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
   }
 
   void _complete() {
+    if (_solved) return;
     setState(() => _solved = true);
     unawaited(_saveCompletion());
   }
 
   Future<void> _saveCompletion() async {
-    setState(() => _saveFailed = false);
+    if (_savingCompletion || !_solved) return;
+    final generation = _generation;
+    setState(() {
+      _saveFailed = false;
+      _savingCompletion = true;
+    });
     try {
       await PuzzleProgressService.complete(widget.puzzle.id);
-      if (mounted) setState(() => _completionSaved = true);
+      if (mounted && generation == _generation) {
+        setState(() => _completionSaved = true);
+      }
     } catch (error) {
       debugPrint('Saving puzzle completion failed: $error');
-      if (mounted) setState(() => _saveFailed = true);
+      if (mounted && generation == _generation) {
+        setState(() => _saveFailed = true);
+      }
+    } finally {
+      if (mounted && generation == _generation) {
+        setState(() => _savingCompletion = false);
+      }
     }
   }
 
@@ -200,75 +215,17 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
       listenable: ThemeController.instance,
       builder: (context, _) {
         final palette = ThemeController.instance.theme;
-        final board = LayoutBuilder(
-          builder: (context, constraints) {
-            final extent = math.min(constraints.maxWidth, 484.0);
-            final boardExtent = extent - 24;
-            final cellExtent = (boardExtent - 20) / _model.board.size;
-            Widget coordinate(String value) => ExcludeSemantics(
-                  child: Text(value,
-                      textScaler: TextScaler.noScaling,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppChrome.secondaryText,
-                      )),
-                );
-            return Align(
-              alignment: Alignment.topCenter,
-              child: SizedBox(
-                width: extent,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 34, right: 10),
-                      child: Row(
-                        children: List.generate(
-                            _model.board.size,
-                            (x) => Expanded(
-                                child: Center(
-                                    child: coordinate(
-                                        String.fromCharCode(65 + x))))),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: 24,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Column(
-                              children: List.generate(
-                                  _model.board.size,
-                                  (y) => SizedBox(
-                                      height: cellExtent,
-                                      child: Center(
-                                          child: coordinate('${y + 1}')))),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: boardExtent,
-                          child: AccessibleBoard(
-                            key: const ValueKey('puzzle-board'),
-                            board: _model.board,
-                            label: s.PuzzleBoardLabel,
-                            legalMoves: canPlay
-                                ? _model.board.getMovesForPlayer(_model.player)
-                                : const [],
-                            onMove: canPlay ? _play : null,
-                            lastMove: _lastMove,
-                            maxExtent: boardExtent,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
+        final board = AccessibleBoard(
+          key: const ValueKey('puzzle-board'),
+          board: _model.board,
+          label: s.PuzzleBoardLabel,
+          legalMoves: canPlay
+              ? _model.board.getMovesForPlayer(_model.player)
+              : const [],
+          onMove: canPlay ? _play : null,
+          lastMove: _lastMove,
+          maxExtent: 484,
+          showCoordinates: true,
         );
         final information = Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -344,7 +301,7 @@ class _PuzzleScreenState extends State<PuzzleScreen> {
             if (_saveFailed) ...[
               Text(s.PuzzleCompletionSaveFailed, style: AppChrome.bodyStyle),
               TextButton(
-                onPressed: _saveCompletion,
+                onPressed: _savingCompletion ? null : _saveCompletion,
                 child: Text(s.PuzzleSaveProgress),
               ),
             ],

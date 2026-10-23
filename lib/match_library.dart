@@ -40,6 +40,16 @@ class MatchLibraryService {
   static Future<void>? _pending;
   static String? _cachedEncoded;
   static List<SavedMatch>? _cachedRecords;
+  static bool _needsReload = false;
+
+  static Future<SharedPreferences> _preferences() async {
+    final preferences = await SharedPreferences.getInstance();
+    if (_needsReload) {
+      await preferences.reload();
+      _needsReload = false;
+    }
+    return preferences;
+  }
 
   static Future<T> _enqueue<T>(Future<T> Function() operation) {
     final result =
@@ -80,7 +90,7 @@ class MatchLibraryService {
       completedAt: finished,
     );
     await _enqueue(() async {
-      final preferences = await SharedPreferences.getInstance();
+      final preferences = await _preferences();
       final records = _read(preferences);
       // The terminal turn may be observed by more than one lifecycle callback.
       // Retain its original completion time rather than moving it up the shelf.
@@ -92,19 +102,19 @@ class MatchLibraryService {
   }
 
   static Future<List<SavedMatch>> load() => _enqueue(() async {
-        final preferences = await SharedPreferences.getInstance();
+        final preferences = await _preferences();
         return List<SavedMatch>.unmodifiable(_read(preferences));
       });
 
   static Future<void> remove(String id) => _enqueue(() async {
-        final preferences = await SharedPreferences.getInstance();
+        final preferences = await _preferences();
         final records = _read(preferences)
           ..removeWhere((record) => record.id == id);
         await _write(preferences, records);
       });
 
   static Future<void> clear() => _enqueue(() async {
-        final preferences = await SharedPreferences.getInstance();
+        final preferences = await _preferences();
         await _persist(preferences, () => preferences.remove(_key),
             'Could not clear the match library');
         _cachedEncoded = null;
@@ -247,7 +257,9 @@ class MatchLibraryService {
       // save for an existing replay or hide a replay after a failed deletion.
       _cachedEncoded = null;
       _cachedRecords = null;
+      _needsReload = true;
       await preferences.reload();
+      _needsReload = false;
       rethrow;
     }
   }

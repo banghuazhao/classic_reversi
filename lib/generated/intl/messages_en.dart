@@ -230,6 +230,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "Flappy_Fish": MessageLookupByLibrary.simpleMessage("Flappy Fish"),
     "Fling_Knife": MessageLookupByLibrary.simpleMessage("Fling Knife"),
     "GameOver": MessageLookupByLibrary.simpleMessage("Game Over"),
+    "GameSaveFailed": MessageLookupByLibrary.simpleMessage(
+      "Your game could not be saved. Please try again before leaving.",
+    ),
     "GameSetup": MessageLookupByLibrary.simpleMessage("Set up your game"),
     "GameStatusAnnouncement": m10,
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("Games played"),
@@ -460,6 +463,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "You earned another turn. Your opponent has no legal move, and the game continues.",
     ),
     "PuzzleProgress": m20,
+    "PuzzleProgressLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "Puzzle progress could not be loaded. Try again.",
+    ),
     "PuzzleRestart": MessageLookupByLibrary.simpleMessage("Restart puzzle"),
     "PuzzleRevealHint": MessageLookupByLibrary.simpleMessage("Reveal a hint"),
     "PuzzleSaveProgress": MessageLookupByLibrary.simpleMessage("Save progress"),

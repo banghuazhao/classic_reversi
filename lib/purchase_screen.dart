@@ -7,7 +7,9 @@ import 'generated/l10n.dart';
 import 'theme_controller.dart';
 
 class PurchaseScreen extends StatefulWidget {
-  const PurchaseScreen({super.key});
+  const PurchaseScreen({super.key, this.purchaseService});
+
+  final PurchaseServiceBase? purchaseService;
 
   @override
   State<PurchaseScreen> createState() => _PurchaseScreenState();
@@ -15,17 +17,21 @@ class PurchaseScreen extends StatefulWidget {
 
 class _PurchaseScreenState extends State<PurchaseScreen> {
   bool _busy = false;
+  PurchaseServiceBase get _purchase =>
+      widget.purchaseService ?? PurchaseService.instance;
 
   @override
   void initState() {
     super.initState();
-    PurchaseService.instance.addListener(_onPurchaseChanged);
-    PurchaseService.instance.loadProducts();
+    _purchase.addListener(_onPurchaseChanged);
+    ThemeController.instance.addListener(_onPurchaseChanged);
+    _purchase.loadProducts();
   }
 
   @override
   void dispose() {
-    PurchaseService.instance.removeListener(_onPurchaseChanged);
+    _purchase.removeListener(_onPurchaseChanged);
+    ThemeController.instance.removeListener(_onPurchaseChanged);
     super.dispose();
   }
 
@@ -57,16 +63,21 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   Future<void> _run(Future<PurchaseFeedback> Function() action) async {
     if (_busy) return;
     setState(() => _busy = true);
-    final feedback = await action();
-    if (!mounted) return;
-    setState(() => _busy = false);
-    _showMessage(_messageFor(feedback));
+    var feedback = PurchaseFeedback.failed;
+    try {
+      feedback = await action();
+    } catch (error) {
+      debugPrint('Purchase action failed: $error');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+    if (mounted) _showMessage(_messageFor(feedback));
   }
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final purchase = PurchaseService.instance;
+    final purchase = _purchase;
     final palette = ThemeController.instance.theme;
     final supported = purchase.isSupportedPlatform;
     final price = purchase.localizedPrice;

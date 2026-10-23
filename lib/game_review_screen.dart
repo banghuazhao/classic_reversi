@@ -163,73 +163,79 @@ class _GameReviewScreenState extends State<GameReviewScreen> {
             MediaQuery.disableAnimationsOf(context)
         ? Duration.zero
         : const Duration(milliseconds: 200);
-    return AppInfoCard(
-      key: const ValueKey('coach-card'),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(s.CoachTitle, style: AppChrome.titleStyle),
-          const SizedBox(height: 12),
-          if (loading)
-            Text(s.CoachAnalyzing, style: AppChrome.bodyStyle)
-          else if (failed)
-            Text(s.CoachUnavailable, style: AppChrome.bodyStyle)
-          else if (advice == null || sourceIndex == null)
-            Text(s.CoachNoPosition, style: AppChrome.bodyStyle)
-          else ...[
-            Text(finalPosition ? s.CoachTurnTitle : s.CoachPositionTitle,
+    return Semantics(
+      container: true,
+      liveRegion: true,
+      child: AppInfoCard(
+        key: const ValueKey('coach-card'),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(s.CoachTitle, style: AppChrome.titleStyle),
+            const SizedBox(height: 12),
+            if (loading)
+              Text(s.CoachAnalyzing, style: AppChrome.bodyStyle)
+            else if (failed)
+              Text(s.CoachUnavailable, style: AppChrome.bodyStyle)
+            else if (advice == null || sourceIndex == null)
+              Text(s.CoachNoPosition, style: AppChrome.bodyStyle)
+            else ...[
+              Text(finalPosition ? s.CoachTurnTitle : s.CoachPositionTitle,
+                  style: AppChrome.bodyStyle
+                      .copyWith(fontWeight: FontWeight.w600)),
+              const SizedBox(height: 8),
+              Text(
+                  s.CoachForPlayer(
+                      advice.player == PieceType.black ? s.Black : s.White),
+                  style: AppChrome.bodyStyle),
+              const SizedBox(height: 12),
+              Text(
+                finalPosition && point != null
+                    ? point.offersAlternative
+                        ? s.CoachComparison(
+                            StrategyCoach.coordinate(point.actualMove),
+                            StrategyCoach.coordinate(advice.move))
+                        : s.CoachMatched(StrategyCoach.coordinate(advice.move))
+                    : s.CoachSuggested(StrategyCoach.coordinate(advice.move)),
                 style:
-                    AppChrome.bodyStyle.copyWith(fontWeight: FontWeight.w600)),
-            const SizedBox(height: 8),
-            Text(
-                s.CoachForPlayer(
-                    advice.player == PieceType.black ? s.Black : s.White),
-                style: AppChrome.bodyStyle),
-            const SizedBox(height: 12),
-            Text(
-              finalPosition && point != null
-                  ? point.offersAlternative
-                      ? s.CoachComparison(
-                          StrategyCoach.coordinate(point.actualMove),
-                          StrategyCoach.coordinate(advice.move))
-                      : s.CoachMatched(StrategyCoach.coordinate(advice.move))
-                  : s.CoachSuggested(StrategyCoach.coordinate(advice.move)),
-              style: AppChrome.bodyStyle.copyWith(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 12),
-            Text(strategyExplanation(s, advice), style: AppChrome.bodyStyle),
-            const SizedBox(height: 16),
-            if (finalPosition)
-              OutlinedButton(
-                key: const ValueKey('coach-jump'),
-                onPressed: () => _goTo(sourceIndex),
+                    AppChrome.bodyStyle.copyWith(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 12),
+              Text(strategyExplanation(s, advice), style: AppChrome.bodyStyle),
+              const SizedBox(height: 16),
+              if (finalPosition)
+                OutlinedButton(
+                  key: const ValueKey('coach-jump'),
+                  onPressed: () => _goTo(sourceIndex),
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Text(s.CoachJump, textAlign: TextAlign.center)),
+                ),
+              const SizedBox(height: 8),
+              ElevatedButton(
+                key: const ValueKey('coach-practice'),
+                style: appPrimaryButtonStyle(),
+                onPressed: () =>
+                    Navigator.of(context).push(PageRouteBuilder<void>(
+                  transitionDuration: transition,
+                  reverseTransitionDuration: transition,
+                  pageBuilder: (_, animation, secondaryAnimation) =>
+                      StrategyPracticeScreen(
+                          position: widget.history[sourceIndex]),
+                  transitionsBuilder:
+                      (_, animation, secondaryAnimation, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                )),
                 child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Text(s.CoachJump, textAlign: TextAlign.center)),
+                    child: Text(s.CoachPractice, textAlign: TextAlign.center)),
               ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              key: const ValueKey('coach-practice'),
-              style: appPrimaryButtonStyle(),
-              onPressed: () =>
-                  Navigator.of(context).push(PageRouteBuilder<void>(
-                transitionDuration: transition,
-                reverseTransitionDuration: transition,
-                pageBuilder: (_, animation, secondaryAnimation) =>
-                    StrategyPracticeScreen(
-                        position: widget.history[sourceIndex]),
-                transitionsBuilder: (_, animation, secondaryAnimation, child) =>
-                    FadeTransition(opacity: animation, child: child),
-              )),
-              child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Text(s.CoachPractice, textAlign: TextAlign.center)),
-            ),
-            const SizedBox(height: 16),
-            Text(s.CoachScope,
-                style: AppChrome.bodyStyle.copyWith(fontSize: 13)),
+              const SizedBox(height: 16),
+              Text(s.CoachScope,
+                  style: AppChrome.bodyStyle.copyWith(fontSize: 13)),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

@@ -486,5 +486,7 @@
   "PuzzleYourMove": "Your move",
   "PuzzleAllComplete": "All nine puzzles solved. Revisit any position to sharpen your play.",
   "PuzzleCompletionSaveFailed": "Progress could not be saved. Keep this screen open and try again.",
-  "PuzzleSaveProgress": "Save progress"
+  "PuzzleSaveProgress": "Save progress",
+  "GameSaveFailed": "Your game could not be saved. Please try again before leaving.",
+  "PuzzleProgressLoadFailed": "Puzzle progress could not be loaded. Try again."
 }

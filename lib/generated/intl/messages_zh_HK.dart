@@ -186,6 +186,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "Flappy_Fish": MessageLookupByLibrary.simpleMessage("飛揚的小魚"),
     "Fling_Knife": MessageLookupByLibrary.simpleMessage("西瓜飛刀"),
     "GameOver": MessageLookupByLibrary.simpleMessage("遊戲結束"),
+    "GameSaveFailed": MessageLookupByLibrary.simpleMessage("無法儲存對局。請在離開前再試一次。"),
     "GameSetup": MessageLookupByLibrary.simpleMessage("設定對局"),
     "GameStatusAnnouncement": m10,
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("對局數"),
@@ -344,6 +345,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "你爭取到了下一步！對手沒有合法落子點，對局繼續。",
     ),
     "PuzzleProgress": m20,
+    "PuzzleProgressLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "無法載入謎題進度。請再試一次。",
+    ),
     "PuzzleRestart": MessageLookupByLibrary.simpleMessage("重新練習"),
     "PuzzleRevealHint": MessageLookupByLibrary.simpleMessage("查看提示"),
     "PuzzleSaveProgress": MessageLookupByLibrary.simpleMessage("儲存進度"),

@@ -436,5 +436,7 @@
   "PuzzleYourMove": "Tocca a te",
   "PuzzleAllComplete": "Tutti e nove gli esercizi sono risolti. Rivisita qualsiasi posizione per affinare il tuo gioco.",
   "PuzzleCompletionSaveFailed": "Impossibile salvare i progressi. Tieni aperta questa schermata e riprova.",
-  "PuzzleSaveProgress": "Salva progressi"
+  "PuzzleSaveProgress": "Salva progressi",
+  "GameSaveFailed": "Impossibile salvare la partita. Riprova prima di uscire.",
+  "PuzzleProgressLoadFailed": "Impossibile caricare i progressi dei rompicapi. Riprova."
 }

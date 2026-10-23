@@ -20,6 +20,8 @@ class _PuzzlesScreenState extends State<PuzzlesScreen> {
   final _search = TextEditingController();
   Set<String> _completed = {};
   bool _loading = true;
+  bool _failed = false;
+  int _loadGeneration = 0;
 
   @override
   void initState() {
@@ -29,18 +31,31 @@ class _PuzzlesScreenState extends State<PuzzlesScreen> {
 
   @override
   void dispose() {
+    _loadGeneration++;
     _search.dispose();
     super.dispose();
   }
 
   Future<void> _load() async {
+    final generation = ++_loadGeneration;
+    setState(() {
+      _loading = true;
+      _failed = false;
+    });
     try {
       final completed = await PuzzleProgressService.loadCompletedIds();
-      if (mounted) setState(() => _completed = completed);
+      if (mounted && generation == _loadGeneration) {
+        setState(() => _completed = completed);
+      }
     } catch (error) {
       debugPrint('Loading puzzle progress failed: $error');
+      if (mounted && generation == _loadGeneration) {
+        setState(() => _failed = true);
+      }
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted && generation == _loadGeneration) {
+        setState(() => _loading = false);
+      }
     }
   }
 
@@ -90,26 +105,37 @@ class _PuzzlesScreenState extends State<PuzzlesScreen> {
                   children: [
                     Text(s.PuzzlesSubtitle, style: AppChrome.bodyStyle),
                     const SizedBox(height: 16),
-                    Text(
-                      s.PuzzleProgress(
-                          _completed.length, curatedPuzzles.length),
-                      style: AppChrome.actionStyle.copyWith(
-                        color: AppChrome.primaryText,
+                    if (_failed) ...[
+                      Text(s.PuzzleProgressLoadFailed,
+                          style: AppChrome.bodyStyle),
+                      const SizedBox(height: 8),
+                      TextButton(
+                        key: const ValueKey('puzzle-progress-retry'),
+                        onPressed: _load,
+                        child: Text(s.TryAgain),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    ExcludeSemantics(
-                      child: LinearProgressIndicator(
-                        value: _completed.length / curatedPuzzles.length,
-                        backgroundColor: AppChrome.borderColor,
-                        color: palette.lastMoveBorder,
-                        borderRadius: BorderRadius.circular(8),
-                        minHeight: 6,
+                    ] else if (!_loading) ...[
+                      Text(
+                        s.PuzzleProgress(
+                            _completed.length, curatedPuzzles.length),
+                        style: AppChrome.actionStyle.copyWith(
+                          color: AppChrome.primaryText,
+                        ),
                       ),
-                    ),
-                    if (_completed.length == curatedPuzzles.length) ...[
-                      const SizedBox(height: 16),
-                      Text(s.PuzzleAllComplete, style: AppChrome.bodyStyle),
+                      const SizedBox(height: 12),
+                      ExcludeSemantics(
+                        child: LinearProgressIndicator(
+                          value: _completed.length / curatedPuzzles.length,
+                          backgroundColor: AppChrome.borderColor,
+                          color: palette.lastMoveBorder,
+                          borderRadius: BorderRadius.circular(8),
+                          minHeight: 6,
+                        ),
+                      ),
+                      if (_completed.length == curatedPuzzles.length) ...[
+                        const SizedBox(height: 16),
+                        Text(s.PuzzleAllComplete, style: AppChrome.bodyStyle),
+                      ],
                     ],
                   ],
                 ),

@@ -71,6 +71,7 @@ class _AccessibleBoardState extends State<AccessibleBoard> {
 
   void _activate(int x, int y) {
     if (_isLegal(x, y)) {
+      setState(() => _selected = Position(x, y));
       widget.onMove!(x, y);
     }
   }
@@ -180,12 +181,7 @@ class _AccessibleBoardState extends State<AccessibleBoard> {
                               child: GestureDetector(
                                 key: ValueKey('accessible-cell-$x-$y'),
                                 behavior: HitTestBehavior.opaque,
-                                onTap: legal
-                                    ? () {
-                                        _selected = Position(x, y);
-                                        _activate(x, y);
-                                      }
-                                    : null,
+                                onTap: legal ? () => _activate(x, y) : null,
                                 child: SizedBox.square(
                                   dimension: cellSize,
                                   child: Stack(

@@ -215,6 +215,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Giocatore"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Casuale"),
     "GameOver": MessageLookupByLibrary.simpleMessage("Fine partita"),
+    "GameSaveFailed": MessageLookupByLibrary.simpleMessage(
+      "Impossibile salvare la partita. Riprova prima di uscire.",
+    ),
     "GameSetup": MessageLookupByLibrary.simpleMessage("Imposta la partita"),
     "GameStatusAnnouncement": m10,
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("Partite giocate"),
@@ -417,6 +420,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Hai guadagnato un altro turno. L’avversario non ha mosse consentite e la partita continua.",
     ),
     "PuzzleProgress": m20,
+    "PuzzleProgressLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "Impossibile caricare i progressi dei rompicapi. Riprova.",
+    ),
     "PuzzleRestart": MessageLookupByLibrary.simpleMessage(
       "Ricomincia l’esercizio",
     ),

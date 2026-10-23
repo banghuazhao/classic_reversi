@@ -278,6 +278,7 @@ class _ResultCardSheet extends StatefulWidget {
 class _ResultCardSheetState extends State<_ResultCardSheet> {
   late Future<Uint8List> _image;
   bool _sharing = false;
+  bool _shareFailed = false;
 
   @override
   void initState() {
@@ -294,7 +295,10 @@ class _ResultCardSheetState extends State<_ResultCardSheet> {
 
   Future<void> _share(Uint8List bytes) async {
     if (_sharing) return;
-    setState(() => _sharing = true);
+    setState(() {
+      _sharing = true;
+      _shareFailed = false;
+    });
     try {
       final box = context.findRenderObject() as RenderBox?;
       await widget.shareAction(ShareParams(
@@ -310,8 +314,7 @@ class _ResultCardSheetState extends State<_ResultCardSheet> {
     } catch (error) {
       debugPrint('Result sharing failed: $error');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(S.of(context).ResultCardShareFailed)));
+        setState(() => _shareFailed = true);
       }
     } finally {
       if (mounted) setState(() => _sharing = false);
@@ -351,17 +354,20 @@ class _ResultCardSheetState extends State<_ResultCardSheet> {
                     ]);
                   }
                   if (!snapshot.hasData) {
-                    return SizedBox(
-                        height: 180,
+                    return ConstrainedBox(
+                        constraints: const BoxConstraints(minHeight: 180),
                         child: Center(
-                            child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const CircularProgressIndicator(),
-                            const SizedBox(height: 16),
-                            Text(s.ResultCardPreparing,
-                                style: AppChrome.bodyStyle),
-                          ],
+                            child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 24),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const CircularProgressIndicator(),
+                              const SizedBox(height: 16),
+                              Text(s.ResultCardPreparing,
+                                  style: AppChrome.bodyStyle),
+                            ],
+                          ),
                         )));
                   }
                   return Column(
@@ -374,6 +380,15 @@ class _ResultCardSheetState extends State<_ResultCardSheet> {
                                 fit: BoxFit.contain,
                                 semanticLabel: widget.data.semanticLabel)),
                         const SizedBox(height: 20),
+                        if (_shareFailed) ...[
+                          Semantics(
+                            liveRegion: true,
+                            child: Text(s.ResultCardShareFailed,
+                                key: const ValueKey('result-share-error'),
+                                style: AppChrome.bodyStyle),
+                          ),
+                          const SizedBox(height: 12),
+                        ],
                         ElevatedButton.icon(
                           onPressed:
                               _sharing ? null : () => _share(snapshot.data!),

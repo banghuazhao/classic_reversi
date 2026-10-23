@@ -12,6 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 // platform contract; no additional runtime dependency is needed for this fake.
 // ignore: depend_on_referenced_packages
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+// ignore: depend_on_referenced_packages
+import 'package:shared_preferences_platform_interface/types.dart';
 
 final _startedAt = DateTime(2026, 10, 23, 10, 30);
 
@@ -386,6 +388,33 @@ void main() {
     expect(await MatchLibraryService.load(), hasLength(1));
   });
 
+  test('failed rollback cannot expose optimistic matches or skip a save retry',
+      () async {
+    final store = _FailingPreferencesStore();
+    SharedPreferencesStorePlatform.instance = store;
+    // Initialize the legacy cache before failing subsequent platform reads.
+    await SharedPreferences.getInstance();
+    store
+      ..failWrites = true
+      ..failReads = true;
+    const settings =
+        GameSettings(difficulty: Difficulty.superEasy, twoPlayerMode: true);
+    final history = _finish(settings);
+    await expectLater(
+        MatchLibraryService.saveCompleted(
+            settings: settings, history: history, startedAt: _startedAt),
+        throwsStateError);
+    await expectLater(MatchLibraryService.load(), throwsStateError);
+    store.failReads = false;
+    expect(await MatchLibraryService.load(), isEmpty);
+    store.failWrites = false;
+    await MatchLibraryService.saveCompleted(
+        settings: settings, history: history, startedAt: _startedAt);
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.reload();
+    expect(await MatchLibraryService.load(), hasLength(1));
+  });
+
   test(
       'a false delete or clear response is reported without losing the persisted replay',
       () async {
@@ -414,6 +443,14 @@ class _FailingPreferencesStore extends InMemorySharedPreferencesStore {
 
   bool failWrites = false;
   bool failRemovals = false;
+  bool failReads = false;
+
+  @override
+  Future<Map<String, Object>> getAllWithParameters(
+      GetAllParameters parameters) {
+    if (failReads) throw StateError('Platform read failed');
+    return super.getAllWithParameters(parameters);
+  }
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) =>

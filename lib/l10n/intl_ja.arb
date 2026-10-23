@@ -445,5 +445,7 @@
   "PuzzleYourMove": "あなたの番です",
   "PuzzleAllComplete": "9問すべてクリアしました。好きな局面をもう一度試して、腕を磨きましょう。",
   "PuzzleCompletionSaveFailed": "進捗を保存できませんでした。この画面を開いたまま、もう一度お試しください。",
-  "PuzzleSaveProgress": "進捗を保存"
+  "PuzzleSaveProgress": "進捗を保存",
+  "GameSaveFailed": "ゲームを保存できませんでした。終了する前にもう一度お試しください。",
+  "PuzzleProgressLoadFailed": "パズルの進捗を読み込めませんでした。もう一度お試しください。"
 }

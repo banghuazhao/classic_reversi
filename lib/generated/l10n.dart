@@ -2618,6 +2618,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Your game could not be saved. Please try again before leaving.`
+  String get GameSaveFailed {
+    return Intl.message(
+      'Your game could not be saved. Please try again before leaving.',
+      name: 'GameSaveFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Puzzle progress could not be loaded. Try again.`
+  String get PuzzleProgressLoadFailed {
+    return Intl.message(
+      'Puzzle progress could not be loaded. Try again.',
+      name: 'PuzzleProgressLoadFailed',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

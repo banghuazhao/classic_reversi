@@ -214,6 +214,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Pemain"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Acak"),
     "GameOver": MessageLookupByLibrary.simpleMessage("Permainan Selesai"),
+    "GameSaveFailed": MessageLookupByLibrary.simpleMessage(
+      "Permainan Anda tidak dapat disimpan. Coba lagi sebelum keluar.",
+    ),
     "GameSetup": MessageLookupByLibrary.simpleMessage("Atur permainan Anda"),
     "GameStatusAnnouncement": m10,
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("Permainan dimainkan"),
@@ -406,6 +409,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Anda mendapat giliran tambahan. Lawan tidak memiliki langkah yang sah dan permainan berlanjut.",
     ),
     "PuzzleProgress": m20,
+    "PuzzleProgressLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "Progres teka-teki tidak dapat dimuat. Coba lagi.",
+    ),
     "PuzzleRestart": MessageLookupByLibrary.simpleMessage(
       "Mulai ulang teka-teki",
     ),

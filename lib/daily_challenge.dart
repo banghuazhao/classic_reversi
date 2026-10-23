@@ -64,12 +64,15 @@ class DailyChallenge {
   }
 
   static GameSettings settingsForToday([DateTime? date]) {
-    final generated = generate(date);
+    final selectedDate = date ?? DateTime.now();
+    final generated = generate(selectedDate);
     return GameSettings(
       difficulty: Difficulty.hard,
       twoPlayerMode: false,
       humanColor: PieceType.black,
       isDailyChallenge: true,
+      dailyChallengeDate:
+          DateTime(selectedDate.year, selectedDate.month, selectedDate.day),
       initialBoard: generated.board,
       initialPlayer: generated.player,
     );

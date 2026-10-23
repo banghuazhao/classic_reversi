@@ -214,6 +214,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Игрок"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Случайно"),
     "GameOver": MessageLookupByLibrary.simpleMessage("Игра окончена"),
+    "GameSaveFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось сохранить игру. Повторите попытку перед выходом.",
+    ),
     "GameSetup": MessageLookupByLibrary.simpleMessage("Настройте игру"),
     "GameStatusAnnouncement": m10,
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("Сыграно партий"),
@@ -412,6 +415,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Вы получили ещё один ход. У соперника нет допустимого хода, и партия продолжается.",
     ),
     "PuzzleProgress": m20,
+    "PuzzleProgressLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "Не удалось загрузить прогресс задач. Повторите попытку.",
+    ),
     "PuzzleRestart": MessageLookupByLibrary.simpleMessage(
       "Начать задачу заново",
     ),

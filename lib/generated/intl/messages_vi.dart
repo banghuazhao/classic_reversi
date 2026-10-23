@@ -213,6 +213,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "FirstPlayerHuman": MessageLookupByLibrary.simpleMessage("Người chơi"),
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("Ngẫu nhiên"),
     "GameOver": MessageLookupByLibrary.simpleMessage("Kết thúc"),
+    "GameSaveFailed": MessageLookupByLibrary.simpleMessage(
+      "Không thể lưu ván đấu. Vui lòng thử lại trước khi thoát.",
+    ),
     "GameSetup": MessageLookupByLibrary.simpleMessage("Thiết lập ván chơi"),
     "GameStatusAnnouncement": m10,
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("Số ván đã chơi"),
@@ -409,6 +412,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Bạn đã giành thêm một lượt. Đối thủ không có nước đi hợp lệ và ván chơi tiếp tục.",
     ),
     "PuzzleProgress": m20,
+    "PuzzleProgressLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "Không thể tải tiến độ giải đố. Vui lòng thử lại.",
+    ),
     "PuzzleRestart": MessageLookupByLibrary.simpleMessage("Chơi lại bài tập"),
     "PuzzleRevealHint": MessageLookupByLibrary.simpleMessage("Xem gợi ý"),
     "PuzzleSaveProgress": MessageLookupByLibrary.simpleMessage("Lưu tiến độ"),

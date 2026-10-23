@@ -436,5 +436,7 @@
   "PuzzleYourMove": "Giliran Anda",
   "PuzzleAllComplete": "Semua sembilan teka-teki terpecahkan. Tinjau posisi mana pun untuk mempertajam permainan Anda.",
   "PuzzleCompletionSaveFailed": "Progres tidak dapat disimpan. Biarkan layar ini terbuka dan coba lagi.",
-  "PuzzleSaveProgress": "Simpan progres"
+  "PuzzleSaveProgress": "Simpan progres",
+  "GameSaveFailed": "Permainan Anda tidak dapat disimpan. Coba lagi sebelum keluar.",
+  "PuzzleProgressLoadFailed": "Progres teka-teki tidak dapat dimuat. Coba lagi."
 }

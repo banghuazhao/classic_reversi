@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'app_theme.dart';
 import 'theme_controller.dart';
@@ -33,6 +34,25 @@ abstract final class AppChrome {
   );
 }
 
+/// All palettes use dark surfaces; system icons must stay light even though
+/// the app uses Material's light color scheme for its custom controls.
+class AppSystemOverlay extends StatelessWidget {
+  const AppSystemOverlay({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light.copyWith(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor:
+              ThemeController.instance.theme.backgroundFinish,
+          systemNavigationBarIconBrightness: Brightness.light,
+        ),
+        child: child,
+      );
+}
+
 class AppGradientScaffold extends StatelessWidget {
   const AppGradientScaffold({
     super.key,
@@ -48,29 +68,31 @@ class AppGradientScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = ThemeController.instance.theme;
-    return Scaffold(
-      backgroundColor: palette.backgroundFinish,
-      body: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [palette.backgroundStart, palette.backgroundFinish],
+    return AppSystemOverlay(
+      child: Scaffold(
+        backgroundColor: palette.backgroundFinish,
+        body: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [palette.backgroundStart, palette.backgroundFinish],
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              AppPageHeader(title: title),
-              Expanded(
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: maxContentWidth),
-                    child: child,
+          child: SafeArea(
+            child: Column(
+              children: [
+                AppPageHeader(title: title),
+                Expanded(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: maxContentWidth),
+                      child: child,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -436,5 +436,7 @@
   "PuzzleYourMove": "Đến lượt bạn",
   "PuzzleAllComplete": "Đã giải cả chín bài tập. Hãy thử lại bất kỳ thế cờ nào để rèn thêm kỹ năng.",
   "PuzzleCompletionSaveFailed": "Không thể lưu tiến độ. Hãy giữ màn hình này mở và thử lại.",
-  "PuzzleSaveProgress": "Lưu tiến độ"
+  "PuzzleSaveProgress": "Lưu tiến độ",
+  "GameSaveFailed": "Không thể lưu ván đấu. Vui lòng thử lại trước khi thoát.",
+  "PuzzleProgressLoadFailed": "Không thể tải tiến độ giải đố. Vui lòng thử lại."
 }

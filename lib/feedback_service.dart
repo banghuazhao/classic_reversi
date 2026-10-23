@@ -227,6 +227,7 @@ class FeedbackService extends ChangeNotifier {
         variant: sequence,
       ),
     ]);
+    if (!_soundEnabled) return;
 
     final baseFlipTicks = switch (flippedCount) {
       >= 7 => 3,

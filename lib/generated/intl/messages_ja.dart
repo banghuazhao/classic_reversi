@@ -203,6 +203,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "FirstPlayerRandom": MessageLookupByLibrary.simpleMessage("ランダム"),
     "Flappy_Fish": MessageLookupByLibrary.simpleMessage("Flappy Fish"),
     "GameOver": MessageLookupByLibrary.simpleMessage("ゲーム終了"),
+    "GameSaveFailed": MessageLookupByLibrary.simpleMessage(
+      "ゲームを保存できませんでした。終了する前にもう一度お試しください。",
+    ),
     "GameSetup": MessageLookupByLibrary.simpleMessage("対局の設定"),
     "GameStatusAnnouncement": m10,
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("対局数"),
@@ -370,6 +373,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "もう一度あなたの番です。相手はパスし、対局は続きます。",
     ),
     "PuzzleProgress": m20,
+    "PuzzleProgressLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "パズルの進捗を読み込めませんでした。もう一度お試しください。",
+    ),
     "PuzzleRestart": MessageLookupByLibrary.simpleMessage("問題をやり直す"),
     "PuzzleRevealHint": MessageLookupByLibrary.simpleMessage("ヒントを見る"),
     "PuzzleSaveProgress": MessageLookupByLibrary.simpleMessage("進捗を保存"),

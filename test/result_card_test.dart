@@ -32,7 +32,7 @@ ResultCardData cardData(GameModel model) => ResultCardData(
       semanticLabel: 'Final board and scores',
     );
 
-Widget app(Widget screen) => MaterialApp(
+Widget app(Widget screen, {double scale = 1}) => MaterialApp(
       locale: const Locale('en'),
       localizationsDelegates: const [
         S.delegate,
@@ -41,10 +41,41 @@ Widget app(Widget screen) => MaterialApp(
         GlobalCupertinoLocalizations.delegate
       ],
       supportedLocales: S.delegate.supportedLocales,
+      builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: TextScaler.linear(scale)),
+          child: child!),
       home: screen,
     );
 
 void main() {
+  testWidgets('preparing a result card fits the largest text on a small phone',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 568);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.view.resetPhysicalSize);
+    await tester.pumpWidget(app(
+        Builder(
+            builder: (context) => Scaffold(
+                  body: TextButton(
+                      onPressed: () => showResultCard(context,
+                          model: finishedGame(),
+                          settings: const GameSettings(
+                              difficulty: Difficulty.easy,
+                              twoPlayerMode: false)),
+                      child: const Text('Open')),
+                )),
+        scale: 3.2));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Open'));
+    await tester.pump();
+    expect(find.text('Creating your result card…'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpAndSettle();
+  });
+
   for (final size in [6, 8]) {
     testWidgets('result PNG includes an opaque full-size $size by $size board',
         (tester) async {
@@ -102,9 +133,10 @@ void main() {
   });
 
   testWidgets(
-      'preview shares an actual PNG attachment with text and iPad origin',
+      'preview shows share failures in the sheet and retries the PNG attachment',
       (tester) async {
     ShareParams? captured;
+    var attempts = 0;
     final model = finishedGame();
     await tester.pumpWidget(app(Builder(
         builder: (context) => Scaffold(
@@ -116,6 +148,10 @@ void main() {
                             difficulty: Difficulty.easy, twoPlayerMode: false),
                         playedAt: DateTime(2026, 10, 24),
                         shareAction: (params) async {
+                          attempts++;
+                          if (attempts == 1) {
+                            throw StateError('Share service unavailable');
+                          }
                           captured = params;
                           return const ShareResult(
                               'test', ShareResultStatus.success);
@@ -139,6 +175,19 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Share'));
     await tester.pumpAndSettle();
+    final error = find.byKey(const ValueKey('result-share-error'));
+    expect(find.descendant(of: find.byType(BottomSheet), matching: error),
+        findsOneWidget);
+    expect(captured, isNull);
+    await tester.ensureVisible(error);
+    await tester.pumpAndSettle();
+    expect(tester.getRect(error).bottom, lessThanOrEqualTo(600));
+    await tester.ensureVisible(find.text('Share'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Share'));
+    await tester.pumpAndSettle();
+    expect(error, findsNothing);
+    expect(attempts, 2);
     expect(captured, isNotNull);
     expect(captured!.files, hasLength(1));
     expect(captured!.files!.single.mimeType, 'image/png');

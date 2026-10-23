@@ -187,6 +187,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "Flappy_Fish": MessageLookupByLibrary.simpleMessage("飞扬的小鱼"),
     "Fling_Knife": MessageLookupByLibrary.simpleMessage("西瓜飞刀"),
     "GameOver": MessageLookupByLibrary.simpleMessage("游戏结束"),
+    "GameSaveFailed": MessageLookupByLibrary.simpleMessage("无法保存对局。请在离开前重试。"),
     "GameSetup": MessageLookupByLibrary.simpleMessage("设置对局"),
     "GameStatusAnnouncement": m10,
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("对局数"),
@@ -343,6 +344,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "你争取到了下一步！对手没有合法落子点，对局继续。",
     ),
     "PuzzleProgress": m20,
+    "PuzzleProgressLoadFailed": MessageLookupByLibrary.simpleMessage(
+      "无法加载谜题进度。请重试。",
+    ),
     "PuzzleRestart": MessageLookupByLibrary.simpleMessage("重新练习"),
     "PuzzleRevealHint": MessageLookupByLibrary.simpleMessage("查看提示"),
     "PuzzleSaveProgress": MessageLookupByLibrary.simpleMessage("保存进度"),

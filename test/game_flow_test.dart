@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:classic_reversi/Tools/ads_manager.dart';
+import 'package:classic_reversi/achievements_service.dart';
 import 'package:classic_reversi/feedback_service.dart';
 import 'package:classic_reversi/daily_challenge.dart';
 import 'package:classic_reversi/game_board.dart';
@@ -16,6 +17,8 @@ import 'package:classic_reversi/generated/l10n.dart';
 import 'package:classic_reversi/main.dart';
 import 'package:classic_reversi/match_library.dart';
 import 'package:classic_reversi/settings_screen.dart';
+// ignore: depend_on_referenced_packages
+import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 
 Widget localized(Widget home) => MaterialApp(
       localizationsDelegates: const [
@@ -244,6 +247,36 @@ void main() {
     expect(session.model.blackScore + session.model.whiteScore, 6);
   });
 
+  testWidgets(
+      'failed Home save keeps the board and resumes exactly one CPU reply',
+      (tester) async {
+    final store = _GameFlowPreferencesStore();
+    SharedPreferencesStorePlatform.instance = store;
+    const settings =
+        GameSettings(difficulty: Difficulty.easy, twoPlayerMode: false);
+    await tester.pumpWidget(localized(const GameScreen(settings: settings)));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('cell-4-2')));
+    await tester.pump();
+    store.failWrites = true;
+    await tester.tap(find.byTooltip('Home'));
+    await tester.pump();
+    expect(find.byType(GameScreen), findsOneWidget);
+    expect(
+        find.text(
+            'Your game could not be saved. Please try again before leaving.'),
+        findsOneWidget);
+    store.failWrites = false;
+    await tester.pump(const Duration(milliseconds: 800));
+    await tester.pumpAndSettle();
+    final session = await loadSession(tester);
+    expect(session!.timeline, hasLength(3));
+    expect(session.model.player, PieceType.black);
+    expect(session.model.blackScore + session.model.whiteScore, 6);
+    await leaveForHome(tester);
+    expect(find.text('Continue game'), findsOneWidget);
+  });
+
   testWidgets('the live board exposes coordinates and keyboard activation',
       (tester) async {
     final semantics = tester.ensureSemantics();
@@ -338,6 +371,64 @@ void main() {
   });
 
   testWidgets(
+      'terminal statistics commit even when the game is removed before its result frame',
+      (tester) async {
+    final history = fullGame();
+    final before = history[history.length - 2];
+    final move = placedBetween(before, history.last);
+    await tester.pumpWidget(localized(GameScreen(
+        settings: GameSettings(
+      difficulty: Difficulty.easy,
+      twoPlayerMode: false,
+      humanColor: before.player,
+      initialBoard: before.board,
+      initialPlayer: before.player,
+    ))));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(ValueKey('cell-${move.x}-${move.y}')));
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpAndSettle();
+    final stats =
+        await flushStorage(tester, AchievementsService.instance.loadStats());
+    expect(stats.gamesPlayed, 1);
+    expect(stats.wins + stats.losses + stats.ties, 1);
+  });
+
+  testWidgets(
+      'failed terminal cleanup cannot expose an unfinished Continue game',
+      (tester) async {
+    final store = _GameFlowPreferencesStore();
+    SharedPreferencesStorePlatform.instance = store;
+    final history = fullGame();
+    final before = history[history.length - 2];
+    final move = placedBetween(before, history.last);
+    await tester.pumpWidget(localized(GameScreen(
+        settings: GameSettings(
+      difficulty: Difficulty.easy,
+      twoPlayerMode: true,
+      initialBoard: before.board,
+      initialPlayer: before.player,
+    ))));
+    await tester.pumpAndSettle();
+    store.failRemovals = true;
+    await tester.tap(find.byKey(ValueKey('cell-${move.x}-${move.y}')));
+    await tester.pump();
+    await tester.tap(find.byTooltip('Home'));
+    await tester.pump();
+    expect(find.byType(GameScreen), findsOneWidget);
+    expect(
+        find.text(
+            'Your game could not be saved. Please try again before leaving.'),
+        findsOneWidget);
+    store.failRemovals = false;
+    await tester.tap(find.byTooltip('Home'));
+    await tester.pumpAndSettle();
+    expect(find.text('Play'), findsOneWidget);
+    expect(find.text('Continue game'), findsNothing);
+    expect(await loadSession(tester), isNull);
+  });
+
+  testWidgets(
       'restarting a finished board cancels its pending result presentation',
       (tester) async {
     final history = fullGame();
@@ -399,12 +490,19 @@ void main() {
     await tester.pumpWidget(const MyApp());
     await tester.pumpAndSettle();
     expect(find.text('Continue game'), findsOneWidget);
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    final stale = DailyChallenge.settingsForToday(yesterday);
     await flushStorage(
         tester,
         GameSessionService.save(GameSession(
-          settings: settings,
-          timeline: [model],
-          savedAt: DateTime.now().subtract(const Duration(days: 1)),
+          settings: stale,
+          timeline: [
+            GameModel.initial(
+              board: stale.initialBoard,
+              player: stale.initialPlayer,
+            )
+          ],
+          savedAt: yesterday,
         )));
     await tester.tap(find.text('Continue game'));
     await tester.pumpAndSettle();
@@ -443,4 +541,18 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+}
+
+class _GameFlowPreferencesStore extends InMemorySharedPreferencesStore {
+  _GameFlowPreferencesStore() : super.empty();
+  bool failWrites = false;
+  bool failRemovals = false;
+
+  @override
+  Future<bool> setValue(String valueType, String key, Object value) =>
+      failWrites ? Future.value(false) : super.setValue(valueType, key, value);
+
+  @override
+  Future<bool> remove(String key) =>
+      failRemovals ? Future.value(false) : super.remove(key);
 }

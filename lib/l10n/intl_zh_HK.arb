@@ -460,5 +460,7 @@
   "PuzzleYourMove": "輪到你落子",
   "PuzzleAllComplete": "九題全部解開！隨時重溫任何局面，繼續磨練棋藝。",
   "PuzzleCompletionSaveFailed": "無法儲存進度，請保持此頁面開啟並再試一次。",
-  "PuzzleSaveProgress": "儲存進度"
+  "PuzzleSaveProgress": "儲存進度",
+  "GameSaveFailed": "無法儲存對局。請在離開前再試一次。",
+  "PuzzleProgressLoadFailed": "無法載入謎題進度。請再試一次。"
 }

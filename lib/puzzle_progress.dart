@@ -7,6 +7,16 @@ import 'puzzles.dart';
 abstract final class PuzzleProgressService {
   static const storageKey = 'completedCuratedPuzzles';
   static Future<void>? _pending;
+  static bool _needsReload = false;
+
+  static Future<SharedPreferences> _preferences() async {
+    final preferences = await SharedPreferences.getInstance();
+    if (_needsReload) {
+      await preferences.reload();
+      _needsReload = false;
+    }
+    return preferences;
+  }
 
   static Future<T> _enqueue<T>(Future<T> Function() operation) {
     final result =
@@ -28,7 +38,7 @@ abstract final class PuzzleProgressService {
   }
 
   static Future<Set<String>> loadCompletedIds() => _enqueue(() async {
-        final preferences = await SharedPreferences.getInstance();
+        final preferences = await _preferences();
         return Set.unmodifiable(_read(preferences));
       });
 
@@ -37,7 +47,7 @@ abstract final class PuzzleProgressService {
         if (!curatedPuzzles.any((puzzle) => puzzle.id == id)) {
           throw ArgumentError.value(id, 'id', 'Unknown puzzle');
         }
-        final preferences = await SharedPreferences.getInstance();
+        final preferences = await _preferences();
         final completed = _read(preferences);
         if (!completed.add(id)) return false;
         try {
@@ -50,7 +60,9 @@ abstract final class PuzzleProgressService {
           // The legacy preferences API updates its cache before the platform
           // confirms the write. Reload so a failed completion cannot appear
           // solved or make a retry incorrectly skip its backend write.
+          _needsReload = true;
           await preferences.reload();
+          _needsReload = false;
           rethrow;
         }
         return true;

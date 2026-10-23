@@ -320,6 +320,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   final List<GameModel> _timeline = [];
   GameModel? _currentModel;
   late DateTime _sessionStartedAt;
+  Future<List<AchievementId>>? _gameOverResult;
   PieceType? _passedPlayer;
   bool _leaving = false;
   final FocusNode _boardFocus = FocusNode(debugLabel: 'Reversi board');
@@ -483,6 +484,18 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     _currentModel = model;
     if (model.gameIsOver) {
       GameplayActivity.end(this);
+      // Bookkeeping belongs to the terminal turn, not the result animation.
+      // Leaving or restarting before the next frame must still record it.
+      _gameOverResult ??= AchievementsService.instance
+          .recordGameOver(
+        model: model,
+        settings: widget.settings,
+        playedAt: _sessionStartedAt,
+      )
+          .catchError((Object error) {
+        debugPrint('Game-over bookkeeping failed: $error');
+        return <AchievementId>[];
+      });
       // Capture the timeline before a rematch can clear the in-memory list.
       unawaited(MatchLibraryService.saveCompleted(
         settings: widget.settings,
@@ -506,7 +519,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _saveSession() async {
+  Future<void> _saveSession({bool rethrowErrors = false}) async {
     final model = _currentModel;
     if (model == null || model.gameIsOver || _timeline.isEmpty) return;
     try {
@@ -524,6 +537,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       );
     } catch (error) {
       debugPrint('Saving game failed: $error');
+      if (rethrowErrors) rethrow;
     }
   }
 
@@ -540,7 +554,27 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     if (_leaving) return;
     _leaving = true;
     _turnGeneration++;
-    await _saveSession();
+    try {
+      await _saveSession(rethrowErrors: true);
+      if (_currentModel?.gameIsOver == true) {
+        // Retry failed terminal cleanup before Home can offer the previous,
+        // unfinished snapshot as a resumable match.
+        await GameSessionService.clear();
+      }
+      // Home's daily badge must observe the just-completed game's outcome.
+      if (_gameOverResult != null) await _gameOverResult;
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _leaving = false);
+      _showMessage(S.of(context).GameSaveFailed);
+      final model = _currentModel;
+      if (model != null &&
+          model.player == _computerColor &&
+          !model.gameIsOver) {
+        unawaited(_advanceComputer(model, _turnGeneration));
+      }
+      return;
+    }
     if (!mounted) return;
     Navigator.of(context)
         .pushReplacement(fadeRoute((context) => const StartScreen()));
@@ -711,17 +745,8 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         !isTie && (widget.settings.twoPlayerMode || humanWon == true);
     var requestReview = false;
 
-    try {
-      if (!widget.settings.twoPlayerMode) {
-        unlocked = await AchievementsService.instance.recordGameOver(
-          model: model,
-          settings: widget.settings,
-        );
-        requestReview = unlocked.contains(AchievementId.firstWin);
-      }
-    } catch (error) {
-      debugPrint('Game-over bookkeeping failed: $error');
-    }
+    unlocked = await (_gameOverResult ?? Future.value(<AchievementId>[]));
+    requestReview = unlocked.contains(AchievementId.firstWin);
 
     if (!mounted || _gameOverSheetVisible || generation != _turnGeneration) {
       return;
@@ -795,6 +820,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     _turnGeneration++;
     GameplayActivity.begin(this);
     _sessionStartedAt = DateTime.now();
+    _gameOverResult = null;
     _timeline.clear();
     _passedPlayer = null;
     setState(() {
@@ -1520,110 +1546,113 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       ),
     );
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _goHome();
-      },
-      child: Scaffold(
-        backgroundColor: theme.backgroundFinish,
-        body: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [theme.backgroundStart, theme.backgroundFinish],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) _goHome();
+        },
+        child: Scaffold(
+          backgroundColor: theme.backgroundFinish,
+          body: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [theme.backgroundStart, theme.backgroundFinish],
+              ),
             ),
-          ),
-          child: TabletopTexture(
-            theme: theme,
-            child: SafeArea(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final width = min(constraints.maxWidth, 980.0);
-                  final wide = width >= 700 && width > constraints.maxHeight;
-                  final extent = wide
-                      ? min(
-                          (width - 64) * 0.58,
-                          max(220.0, constraints.maxHeight - 64),
-                        )
-                      : min(width - 32, 560.0);
-                  // An ad loading never changes the board dimensions.
-                  final board = _buildGameBoardDisplay(
-                    context,
-                    model,
-                    (extent - 20) / GameBoard.standardSize,
-                    theme,
-                  );
-                  final information = Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        widget.settings.isDailyChallenge
-                            ? s.DailyChallenge
-                            : widget.settings.twoPlayerMode
-                                ? s.TwoPlayersMode
-                                : widget.settings.difficulty.label(context),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          height: 1.4,
-                          color: AppChrome.secondaryText,
+            child: TabletopTexture(
+              theme: theme,
+              child: SafeArea(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final width = min(constraints.maxWidth, 980.0);
+                    final wide = width >= 700 && width > constraints.maxHeight;
+                    final extent = wide
+                        ? min(
+                            (width - 64) * 0.58,
+                            max(220.0, constraints.maxHeight - 64),
+                          )
+                        : min(width - 32, 560.0);
+                    // An ad loading never changes the board dimensions.
+                    final board = _buildGameBoardDisplay(
+                      context,
+                      model,
+                      (extent - 20) / GameBoard.standardSize,
+                      theme,
+                    );
+                    final information = Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          widget.settings.isDailyChallenge
+                              ? s.DailyChallenge
+                              : widget.settings.twoPlayerMode
+                                  ? s.TwoPlayersMode
+                                  : widget.settings.difficulty.label(context),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            height: 1.4,
+                            color: AppChrome.secondaryText,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      scores,
-                      const SizedBox(height: 16),
-                      controls,
-                      const SizedBox(height: 20),
-                      turn,
-                    ],
-                  );
-                  return Align(
-                    alignment: Alignment.topCenter,
-                    child: SizedBox(
-                      width: width,
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          children: [
-                            if (wide)
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    flex: 6,
-                                    child: Center(child: board),
-                                  ),
-                                  const SizedBox(width: 24),
-                                  Expanded(flex: 4, child: information),
-                                ],
-                              )
-                            else ...[
-                              information,
-                              const SizedBox(height: 20),
-                              Center(child: board),
+                        const SizedBox(height: 16),
+                        scores,
+                        const SizedBox(height: 16),
+                        controls,
+                        const SizedBox(height: 20),
+                        turn,
+                      ],
+                    );
+                    return Align(
+                      alignment: Alignment.topCenter,
+                      child: SizedBox(
+                        width: width,
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              if (wide)
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 6,
+                                      child: Center(child: board),
+                                    ),
+                                    const SizedBox(width: 24),
+                                    Expanded(flex: 4, child: information),
+                                  ],
+                                )
+                              else ...[
+                                information,
+                                const SizedBox(height: 20),
+                                Center(child: board),
+                              ],
+                              if (!kIsWeb && AdsManager.adsEnabled)
+                                SizedBox(
+                                  height: 68,
+                                  child: _isAdLoaded
+                                      ? Center(
+                                          child: SizedBox(
+                                            width: _ad!.size.width.toDouble(),
+                                            height: _ad!.size.height.toDouble(),
+                                            child: AdWidget(ad: _ad!),
+                                          ),
+                                        )
+                                      : null,
+                                ),
+                              const SizedBox(height: 8),
                             ],
-                            if (!kIsWeb && AdsManager.adsEnabled)
-                              SizedBox(
-                                height: 68,
-                                child: _isAdLoaded
-                                    ? Center(
-                                        child: SizedBox(
-                                          width: _ad!.size.width.toDouble(),
-                                          height: _ad!.size.height.toDouble(),
-                                          child: AdWidget(ad: _ad!),
-                                        ),
-                                      )
-                                    : null,
-                              ),
-                            const SizedBox(height: 8),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),

@@ -26,7 +26,7 @@ Future<void> showGameOverSheet({
   return showGeneralDialog<void>(
     context: context,
     barrierDismissible: false,
-    barrierLabel: 'game-over',
+    barrierLabel: S.of(context).GameOver,
     barrierColor: const Color(0x99000000),
     transitionDuration: Duration(milliseconds: reduceMotion ? 80 : 220),
     pageBuilder: (context, animation, secondaryAnimation) {
@@ -327,23 +327,27 @@ class _AnimatedFinalScore extends StatelessWidget {
         style: textStyle,
       );
     }
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 680),
-      curve: Curves.easeOutCubic,
-      builder: (context, progress, child) {
-        final black = (blackScore * progress).round();
-        final white = (whiteScore * progress).round();
-        final settle =
-            1 + (1 - progress) * 0.025 * feedbackScale.clamp(0.65, 1.3);
-        return Transform.scale(
-          scale: settle,
-          child: Text(
-            '$blackLabel $black  ·  $whiteLabel $white',
-            style: textStyle,
-          ),
-        );
-      },
+    return Semantics(
+      label: '$blackLabel $blackScore  ·  $whiteLabel $whiteScore',
+      excludeSemantics: true,
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: 1),
+        duration: const Duration(milliseconds: 680),
+        curve: Curves.easeOutCubic,
+        builder: (context, progress, child) {
+          final black = (blackScore * progress).round();
+          final white = (whiteScore * progress).round();
+          final settle =
+              1 + (1 - progress) * 0.025 * feedbackScale.clamp(0.65, 1.3);
+          return Transform.scale(
+            scale: settle,
+            child: Text(
+              '$blackLabel $black  ·  $whiteLabel $white',
+              style: textStyle,
+            ),
+          );
+        },
+      ),
     );
   }
 }

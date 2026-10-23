@@ -57,6 +57,9 @@ class GameSettings {
   final bool twoPlayerMode;
   final PieceType humanColor;
   final bool isDailyChallenge;
+
+  /// The calendar date that generated this puzzle, retained across rematches.
+  final DateTime? dailyChallengeDate;
   final GameBoard? initialBoard;
   final PieceType? initialPlayer;
 
@@ -65,6 +68,7 @@ class GameSettings {
     required this.twoPlayerMode,
     this.humanColor = PieceType.black,
     this.isDailyChallenge = false,
+    this.dailyChallengeDate,
     this.initialBoard,
     this.initialPlayer,
   });

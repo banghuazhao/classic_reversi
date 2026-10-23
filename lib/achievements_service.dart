@@ -87,8 +87,23 @@ class PlayerStats {
 class AchievementsService {
   AchievementsService._();
   static final AchievementsService instance = AchievementsService._();
+  Future<void>? _pending;
 
-  Future<PlayerStats> loadStats() async {
+  Future<T> _enqueue<T>(Future<T> Function() operation) {
+    final result =
+        _pending?.then((_) => operation()) ?? Future<T>.sync(operation);
+    final tail =
+        result.then<void>((_) {}, onError: (Object _, StackTrace __) {});
+    _pending = tail;
+    tail.then((_) {
+      if (identical(_pending, tail)) _pending = null;
+    });
+    return result;
+  }
+
+  Future<PlayerStats> loadStats() => _enqueue(_loadStats);
+
+  Future<PlayerStats> _loadStats() async {
     return PlayerStats(
       wins: await SettingsService.getWins(),
       losses: await SettingsService.getLosses(),
@@ -111,16 +126,39 @@ class AchievementsService {
   Future<List<AchievementId>> recordGameOver({
     required GameModel model,
     required GameSettings settings,
+    DateTime? playedAt,
+  }) =>
+      _enqueue(() => _recordGameOver(
+          model: model,
+          settings: settings,
+          playedAt: playedAt ?? DateTime.now()));
+
+  Future<List<AchievementId>> _recordGameOver({
+    required GameModel model,
+    required GameSettings settings,
+    required DateTime playedAt,
   }) async {
-    if (settings.twoPlayerMode) {
+    if (settings.twoPlayerMode || !model.gameIsOver) {
       return const [];
     }
 
     // Rematches of an already-cleared Daily Challenge shouldn't inflate
     // streaks / win counts for the same puzzle.
+    final challengeDate = settings.dailyChallengeDate ?? playedAt.toLocal();
     if (settings.isDailyChallenge &&
-        await SettingsService.isDailyCompletedToday()) {
+        await SettingsService.isDailyCompletedOn(challengeDate)) {
       return const [];
+    }
+
+    final isTie = model.blackScore == model.whiteScore;
+    final humanWon = !isTie &&
+        (model.blackScore > model.whiteScore
+            ? settings.humanColor == PieceType.black
+            : settings.humanColor == PieceType.white);
+    if (settings.isDailyChallenge && humanWon) {
+      // Commit the checked completion marker before ordinary counters. A
+      // rejected daily write must leave a winning retry completely uncounted.
+      await SettingsService.markDailyCompletedOn(challengeDate);
     }
 
     await SettingsService.incrementGamesPlayed();
@@ -140,16 +178,11 @@ class AchievementsService {
       await tryUnlock(AchievementId.games50);
     }
 
-    final isTie = model.blackScore == model.whiteScore;
     if (isTie) {
       await SettingsService.incrementTies();
       await SettingsService.resetWinStreak();
       return newlyUnlocked;
     }
-
-    final humanWon = model.blackScore > model.whiteScore
-        ? settings.humanColor == PieceType.black
-        : settings.humanColor == PieceType.white;
 
     if (humanWon) {
       await SettingsService.incrementWins();
@@ -181,7 +214,6 @@ class AchievementsService {
       }
 
       if (settings.isDailyChallenge) {
-        await SettingsService.markDailyCompletedToday();
         await tryUnlock(AchievementId.dailyChallenge);
       }
     } else {

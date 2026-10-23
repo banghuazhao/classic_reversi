@@ -28,6 +28,7 @@ void main() {
     expect(settings.twoPlayerMode, isFalse);
     expect(settings.humanColor, PieceType.black);
     expect(settings.initialBoard, isNotNull);
+    expect(settings.dailyChallengeDate, DateTime(2026, 1, 1));
   });
 
   test('generated position still has legal moves', () {

@@ -7,6 +7,8 @@ import 'package:classic_reversi/game_session.dart';
 import 'package:classic_reversi/game_settings.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// ignore: depend_on_referenced_packages
+import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 
 void main() {
   setUp(() async {
@@ -145,6 +147,81 @@ void main() {
     expect(await GameSessionService.load(), isNotNull);
   });
 
+  test(
+      'daily rematches retain their puzzle date and cannot become today by saving again',
+      () async {
+    final now = DateTime.now();
+    final date = DateTime(now.year, now.month, now.day - 1);
+    final settings = DailyChallenge.settingsForToday(date);
+    await GameSessionService.save(GameSession(
+        settings: settings,
+        timeline: _play(settings, 2).timeline,
+        savedAt: now));
+    expect(await GameSessionService.load(), isNull);
+  });
+
+  test('legacy daily snapshots recover their puzzle date from the start date',
+      () async {
+    final now = DateTime.now();
+    final settings = DailyChallenge.settingsForToday(now);
+    await GameSessionService.save(GameSession(
+        settings: settings,
+        timeline: _play(settings, 2).timeline,
+        savedAt: now));
+    final preferences = await SharedPreferences.getInstance();
+    final key = preferences.getKeys().single;
+    final encoded =
+        jsonDecode(preferences.getString(key)!) as Map<String, dynamic>;
+    (encoded['settings'] as Map).remove('dailyChallengeDate');
+    await preferences.setString(key, jsonEncode(encoded));
+    expect((await GameSessionService.load())!.settings.dailyChallengeDate,
+        DateTime(now.year, now.month, now.day));
+  });
+
+  test('failed writes and clears preserve the durable game and allow retry',
+      () async {
+    final store = _SessionPreferencesStore();
+    SharedPreferencesStorePlatform.instance = store;
+    final settings = _settings();
+    final first =
+        GameSession(settings: settings, timeline: _play(settings, 1).timeline);
+    final next =
+        GameSession(settings: settings, timeline: _play(settings, 2).timeline);
+    await GameSessionService.save(first);
+    store.failWrites = true;
+    await expectLater(GameSessionService.save(next), throwsStateError);
+    expect((await GameSessionService.load())!.timeline, hasLength(2));
+    store.failWrites = false;
+    await GameSessionService.save(next);
+    expect((await GameSessionService.load())!.timeline, hasLength(3));
+    store.failRemovals = true;
+    await expectLater(GameSessionService.clear(), throwsStateError);
+    expect((await GameSessionService.load())!.timeline, hasLength(3));
+    store.failRemovals = false;
+    await GameSessionService.clear();
+    expect(await GameSessionService.load(), isNull);
+  });
+
+  test(
+      'a failed rollback reload blocks optimistic reads until durable storage recovers',
+      () async {
+    final store = _SessionPreferencesStore();
+    SharedPreferencesStorePlatform.instance = store;
+    final settings = _settings();
+    await GameSessionService.save(
+        GameSession(settings: settings, timeline: _play(settings, 1).timeline));
+    store.failWrites = true;
+    store.failReads = true;
+    await expectLater(
+        GameSessionService.save(GameSession(
+            settings: settings, timeline: _play(settings, 2).timeline)),
+        throwsStateError);
+    await expectLater(GameSessionService.load(), throwsStateError);
+    store.failReads = false;
+    expect((await GameSessionService.load())!.timeline, hasLength(2));
+    store.failWrites = false;
+  });
+
   test('a completed match is never offered for continuation', () async {
     final settings = _settings();
     final timeline = _play(settings, 60).timeline;
@@ -215,6 +292,8 @@ void main() {
     'out of range last move': (data) => data['lastMove'] = {'x': 8, 'y': 0},
     'unoccupied last move': (data) => data['lastMove'] = {'x': 0, 'y': 0},
     'invalid date': (data) => data['savedAt'] = '2026-99-99',
+    'invalid challenge date': (data) =>
+        data['settings']['dailyChallengeDate'] = '2026-02-31',
     'missing daily starting position': (data) =>
         data['settings']['isDailyChallenge'] = true,
   };
@@ -249,6 +328,26 @@ void main() {
     expect(await GameSessionService.load(), isNull);
     expect(preferences.containsKey(key), isFalse);
   });
+}
+
+class _SessionPreferencesStore extends InMemorySharedPreferencesStore {
+  _SessionPreferencesStore() : super.empty();
+  bool failWrites = false;
+  bool failRemovals = false;
+  bool failReads = false;
+
+  @override
+  Future<bool> setValue(String valueType, String key, Object value) =>
+      failWrites ? Future.value(false) : super.setValue(valueType, key, value);
+
+  @override
+  Future<bool> remove(String key) =>
+      failRemovals ? Future.value(false) : super.remove(key);
+
+  @override
+  Future<Map<String, Object>> getAll() => failReads
+      ? Future.error(StateError('Storage is unavailable'))
+      : super.getAll();
 }
 
 GameSettings _settings({Difficulty difficulty = Difficulty.hard}) =>

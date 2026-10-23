@@ -209,68 +209,77 @@ class _SummaryCard extends StatelessWidget {
     final s = S.of(context);
     final palette = ThemeController.instance.theme;
     final percent = (stats.winRate * 100).round();
-    return AppInfoCard(
-      child: Row(
+    final gauge = SizedBox(
+      width: 82,
+      height: 82,
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          SizedBox(
-            width: 82,
-            height: 82,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox.expand(
-                  child: CircularProgressIndicator(
-                    value: stats.gamesPlayed == 0 ? 0 : stats.winRate,
-                    strokeWidth: 8,
-                    backgroundColor: const Color(0x2EFFFFFF),
-                    color: palette.lastMoveBorder,
-                  ),
-                ),
-                SizedBox(
-                  width: 62,
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      '$percent%',
-                      style: const TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: AppChrome.primaryText,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+          SizedBox.expand(
+            child: CircularProgressIndicator(
+              value: stats.gamesPlayed == 0 ? 0 : stats.winRate,
+              strokeWidth: 8,
+              backgroundColor: const Color(0x2EFFFFFF),
+              color: palette.lastMoveBorder,
             ),
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  s.WinRate,
-                  style: const TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppChrome.primaryText,
-                  ),
+          SizedBox(
+            width: 62,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '$percent%',
+                style: const TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: AppChrome.primaryText,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  '${s.GamesPlayed}: ${stats.gamesPlayed}',
-                  style: const TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 14,
-                    color: AppChrome.secondaryText,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ],
+      ),
+    );
+    final details = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          s.WinRate,
+          style: const TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: AppChrome.primaryText,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          '${s.GamesPlayed}: ${stats.gamesPlayed}',
+          style: const TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: 14,
+            color: AppChrome.secondaryText,
+          ),
+        ),
+      ],
+    );
+    return AppInfoCard(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
+          if (constraints.maxWidth < 260 * scale) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [gauge, const SizedBox(height: 20), details],
+            );
+          }
+          return Row(children: [
+            gauge,
+            const SizedBox(width: 16),
+            Expanded(child: details),
+          ]);
+        },
       ),
     );
   }
@@ -369,32 +378,43 @@ class _WideMetricCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = ThemeController.instance.theme;
+    const valueStyle = TextStyle(
+      fontFamily: 'Roboto',
+      fontSize: 26,
+      fontWeight: FontWeight.w700,
+      color: AppChrome.primaryText,
+    );
+    const labelStyle = TextStyle(
+      fontFamily: 'Roboto',
+      fontSize: 14,
+      color: AppChrome.secondaryText,
+    );
     return AppInfoCard(
-      child: Row(
-        children: [
-          Icon(icon, color: palette.lastMoveBorder, size: 28),
-          const SizedBox(width: 16),
-          Text(
-            value,
-            style: const TextStyle(
-              fontFamily: 'Roboto',
-              fontSize: 26,
-              fontWeight: FontWeight.w700,
-              color: AppChrome.primaryText,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 14,
-                color: AppChrome.secondaryText,
-              ),
-            ),
-          ),
-        ],
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
+          if (constraints.maxWidth < 300 * scale) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(children: [
+                  Icon(icon, color: palette.lastMoveBorder, size: 28),
+                  const SizedBox(width: 16),
+                  Expanded(child: Text(label, style: labelStyle)),
+                ]),
+                const SizedBox(height: 12),
+                Text(value, style: valueStyle),
+              ],
+            );
+          }
+          return Row(children: [
+            Icon(icon, color: palette.lastMoveBorder, size: 28),
+            const SizedBox(width: 16),
+            Text(value, style: valueStyle),
+            const SizedBox(width: 12),
+            Expanded(child: Text(label, style: labelStyle)),
+          ]);
+        },
       ),
     );
   }
