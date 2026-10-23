@@ -217,5 +217,224 @@
     }
   },
   "UndoWithAd": "Urungkan · tonton iklan",
-  "HintWithAd": "Langkah yang sah · tonton iklan"
+  "HintWithAd": "Langkah yang sah · tonton iklan",
+  "NextMilestone": "Target berikutnya",
+  "MilestoneCompleted": "Selesai",
+  "AchievementGamesProgress": "Permainan: {current} dari {target}",
+  "@AchievementGamesProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementStreakProgress": "Kemenangan beruntun: {current} dari {target}",
+  "@AchievementStreakProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementWinsProgress": "Kemenangan: {current} dari {target}",
+  "@AchievementWinsProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "ResultCardTitle": "Bagikan hasil Anda",
+  "ResultCardPreparing": "Membuat kartu hasil…",
+  "ResultCardError": "Kartu hasil Anda tidak dapat dibuat.",
+  "ResultCardShareFailed": "Fitur berbagi belum tersedia saat ini. Silakan coba lagi.",
+  "ResultCardPreviewLabel": "{result}. {score}. {mode}. {date}.",
+  "@ResultCardPreviewLabel": {
+    "placeholders": {
+      "result": {},
+      "score": {},
+      "mode": {},
+      "date": {}
+    }
+  },
+  "PurchaseBenefitAds": "Tanpa iklan banner atau iklan saat kembali ke aplikasi.",
+  "PurchaseBenefitUndo": "Batalkan langkah sekali per giliran pada tingkat Sulit tanpa menonton iklan.",
+  "PurchaseBenefitHints": "Petunjuk langkah yang sah pada semua tingkat lawan komputer tanpa menonton iklan.",
+  "PurchaseBenefitOnce": "Sekali bayar. Tanpa langganan. Pulihkan dengan akun App Store Anda.",
+  "PurchaseBenefits": "Pembelian satu kali menghapus iklan banner dan iklan saat kembali ke aplikasi, serta membuka pembatalan langkah pada tingkat Sulit dan petunjuk langkah yang sah tanpa iklan berhadiah. Pulihkan di perangkat yang memakai akun App Store yang sama.",
+  "MatchLibrary": "Arsip permainan",
+  "MatchLibrarySubtitle": "100 permainan selesai terakhir Anda, siap ditinjau kembali.",
+  "MatchLibraryEmptyTitle": "Kisah Anda dimulai di sini",
+  "MatchLibraryEmptyBody": "Selesaikan permainan dan permainan itu akan muncul di sini. Tinjau setiap langkah dan temukan ide baru untuk dicoba.",
+  "MatchLibraryOpen": "Tinjau permainan",
+  "DeleteSavedMatch": "Hapus permainan",
+  "DeleteSavedMatchTitle": "Hapus permainan ini?",
+  "DeleteSavedMatchMessage": "Rekaman ini akan dihapus dari arsip. Statistik Anda tidak akan berubah.",
+  "Delete": "Hapus",
+  "MatchLibraryLoadError": "Arsip permainan Anda tidak dapat dimuat.",
+  "MatchLibrarySaveError": "Permainan ini tidak dapat disimpan ke arsip Anda.",
+  "TryAgain": "Coba lagi",
+  "SavedMatchScore": "Hitam {black} · Putih {white}",
+  "@SavedMatchScore": {
+    "placeholders": {
+      "black": {},
+      "white": {}
+    }
+  },
+  "MatchLibraryDeleteError": "Permainan ini tidak dapat dihapus. Silakan coba lagi.",
+  "CoachTitle": "Pelatih strategi",
+  "CoachAnalyzing": "Mencari posisi yang berguna untuk dipelajari…",
+  "CoachUnavailable": "Analisis pelatih belum tersedia saat ini. Anda tetap dapat meninjau setiap langkah.",
+  "CoachNoPosition": "Tidak ada posisi yang dapat dimainkan untuk dipelajari dalam permainan ini.",
+  "CoachTurnTitle": "Posisi yang layak ditinjau kembali",
+  "CoachPositionTitle": "Pelajari posisi ini",
+  "CoachSuggested": "Langkah yang disarankan: {coordinate}",
+  "@CoachSuggested": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachComparison": "Dimainkan: {actual} · Pelajari: {suggested}",
+  "@CoachComparison": {
+    "placeholders": {
+      "actual": {},
+      "suggested": {}
+    }
+  },
+  "CoachMatched": "Anda memainkan {coordinate}. Tinjau kembali ide di baliknya.",
+  "@CoachMatched": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachScope": "Pencarian singkat memberikan ide untuk dipelajari, tetapi tidak menjamin langkah terkuat.",
+  "CoachCorner": "Langkah ini merebut sudut. Keping di sudut tidak dapat dibalik.",
+  "CoachPass": "Lawan tidak memiliki balasan yang sah, jadi Anda bermain lagi.",
+  "CoachReplies": "Balasan yang sah untuk lawan: {count}.",
+  "@CoachReplies": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "CoachAvoidCorner": "Langkah sah lainnya memberi lawan kesempatan langsung merebut sudut. Langkah ini menghindari ancaman tersebut.",
+  "CoachAllowsCorner": "Lawan dapat merebut sudut pada giliran berikutnya.",
+  "CoachEndsGame": "Setelah langkah ini, kedua pihak tidak dapat bermain. Permainan berakhir.",
+  "CoachJump": "Buka posisi ini",
+  "CoachPractice": "Coba posisi ini",
+  "CoachShareResult": "Bagikan hasil",
+  "PracticeTitle": "Coba posisi ini",
+  "PracticeInstructions": "Mainkan salah satu kotak yang ditandai dan lihat perubahannya.",
+  "PracticeSafe": "Latihan terpisah dari permainan tersimpan dan statistik Anda.",
+  "PracticePlayed": "Anda memainkan {coordinate}",
+  "@PracticePlayed": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "PracticeFlipped": "Keping yang dibalik: {count}",
+  "@PracticeFlipped": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "PracticeReset": "Coba langkah lain",
+  "PracticeNoMoves": "Pihak ini tidak memiliki langkah yang sah dalam posisi ini.",
+  "PracticeBoardLabel": "Papan latihan strategi",
+  "CoachForPlayer": "Ide untuk {player}",
+  "@CoachForPlayer": {
+    "placeholders": {
+      "player": {}
+    }
+  },
+  "Puzzles": "Teka-teki latihan",
+  "PuzzlesSubtitle": "Sembilan posisi yang dipilih dengan cermat. Asah satu keterampilan setiap kali.",
+  "PuzzleProgress": "{completed} dari {total} terpecahkan",
+  "@PuzzleProgress": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleSearch": "Cari teka-teki",
+  "PuzzleNoResults": "Tidak ada teka-teki yang cocok. Coba keterampilan atau nomor teka-teki.",
+  "PuzzleCornerSkill": "Rebut sudut",
+  "PuzzlePassSkill": "Dapatkan giliran tambahan",
+  "PuzzleEndgameSkill": "Akhiri dengan kemenangan",
+  "PuzzleCornerDescription": "Temukan sudut yang aman dan tutup garis penangkapan.",
+  "PuzzlePassDescription": "Buat lawan kehabisan langkah yang sah.",
+  "PuzzleEndgameDescription": "Mainkan langkah-langkah terakhir melawan balasan terbaik.",
+  "PuzzleNumber": "Teka-teki {number}",
+  "@PuzzleNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleCompleted": "Terpecahkan",
+  "PuzzleCornerObjective": "Mainkan warna {color}. Rebut sudut {coordinate} dalam satu langkah.",
+  "@PuzzleCornerObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      },
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzlePassObjective": "Mainkan warna {color}. Paksa lawan melewatkan giliran agar Anda bermain lagi, tanpa mengakhiri permainan.",
+  "@PuzzlePassObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleEndgameObjective": "Mainkan warna {color}. Menangkan posisi akhir ini melawan balasan terbaik.",
+  "@PuzzleEndgameObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleBoardLabel": "Papan teka-teki latihan",
+  "PuzzleHint": "Petunjuk {number} dari 3",
+  "@PuzzleHint": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleRevealHint": "Tampilkan petunjuk",
+  "PuzzleHintCoordinate": "Coba {coordinate}.",
+  "@PuzzleHintCoordinate": {
+    "placeholders": {
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleCornerHintOne": "Keping di sudut tidak dapat dibalik. Cari garis yang bisa Anda tutup.",
+  "PuzzleCornerHintTwo": "Telusuri dari sudut tujuan ke arah dalam hingga keping Anda mengapit deretan keping lawan.",
+  "PuzzlePassHintOne": "Giliran hanya dilewatkan jika lawan tidak memiliki langkah yang sah.",
+  "PuzzlePassHintTwo": "Bandingkan langkah yang tersedia bagi lawan setelah setiap calon langkah Anda.",
+  "PuzzleEndgameHintOne": "Jumlah akhir keping menentukan pemenang. Hitung langkah hingga akhir.",
+  "PuzzleEndgameHintTwo": "Bandingkan balasan lawan. Menangkap lebih sedikit keping dapat menyisakan langkah terakhir untuk Anda.",
+  "PuzzleCornerSuccess": "Sudut berhasil direbut. Keping sudut ini akan tetap menjadi milik Anda hingga permainan berakhir.",
+  "PuzzlePassSuccess": "Anda mendapat giliran tambahan. Lawan tidak memiliki langkah yang sah dan permainan berlanjut.",
+  "PuzzleEndgameSuccess": "Posisi akhir dimenangkan. Pilihan Anda mampu menghadapi balasan terbaik.",
+  "PuzzleTryAgain": "Langkah itu belum memecahkan posisi ini. Mulai ulang dan coba jalur lain.",
+  "PuzzleEndgameTryAgain": "Jalur ini tidak dapat menjamin kemenangan melawan permainan terbaik. Mulai ulang dan bandingkan langkah lain.",
+  "PuzzleRestart": "Mulai ulang teka-teki",
+  "PuzzleNext": "Teka-teki berikutnya",
+  "PuzzleBackToArchive": "Kembali ke teka-teki",
+  "PuzzleOpponentThinking": "Mempertimbangkan balasan terbaik…",
+  "PuzzleYourMove": "Giliran Anda",
+  "PuzzleAllComplete": "Semua sembilan teka-teki terpecahkan. Tinjau posisi mana pun untuk mempertajam permainan Anda.",
+  "PuzzleCompletionSaveFailed": "Progres tidak dapat disimpan. Biarkan layar ini terbuka dan coba lagi.",
+  "PuzzleSaveProgress": "Simpan progres"
 }

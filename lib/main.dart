@@ -33,6 +33,7 @@ import 'game_review_screen.dart';
 import 'game_session.dart';
 import 'game_settings.dart';
 import 'gameplay_activity.dart';
+import 'match_library.dart';
 import 'generated/l10n.dart';
 import 'move_finder.dart';
 import 'settings_screen.dart';
@@ -482,6 +483,19 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     _currentModel = model;
     if (model.gameIsOver) {
       GameplayActivity.end(this);
+      // Capture the timeline before a rematch can clear the in-memory list.
+      unawaited(MatchLibraryService.saveCompleted(
+        settings: widget.settings,
+        history: List.unmodifiable(_timeline),
+        startedAt: _sessionStartedAt,
+      ).catchError((Object error) {
+        debugPrint('Archiving completed game failed: $error');
+        if (mounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) _showMessage(S.of(context).MatchLibrarySaveError);
+          });
+        }
+      }));
       unawaited(
         GameSessionService.clear().catchError((Object error) {
           debugPrint('Clearing finished game failed: $error');
@@ -753,11 +767,14 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         feedbackScale: feedback.effectScale,
         celebrateWin: celebrateVictory,
         onRematch: _rematch,
+        playedAt: _sessionStartedAt,
         onHome: _goHome,
         onReview: () => Navigator.of(context).push(
           fadeRoute(
-            (context) =>
-                GameReviewScreen(history: List.unmodifiable(_timeline)),
+            (context) => GameReviewScreen(
+                history: List.unmodifiable(_timeline),
+                settings: widget.settings,
+                playedAt: _sessionStartedAt),
           ),
         ),
       );
@@ -1440,8 +1457,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
             theme: theme,
             onPressed: () => Navigator.of(context).push(
               fadeRoute(
-                (context) =>
-                    GameReviewScreen(history: List.unmodifiable(_timeline)),
+                (context) => GameReviewScreen(
+                    history: List.unmodifiable(_timeline),
+                    settings: widget.settings,
+                    playedAt: _sessionStartedAt),
               ),
             ),
           ),

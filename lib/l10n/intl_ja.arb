@@ -226,5 +226,224 @@
     }
   },
   "UndoWithAd": "待った · 広告を見る",
-  "HintWithAd": "打てるマス · 広告を見る"
+  "HintWithAd": "打てるマス · 広告を見る",
+  "NextMilestone": "次の目標",
+  "MilestoneCompleted": "達成済み",
+  "AchievementGamesProgress": "対局数：{current}／{target}",
+  "@AchievementGamesProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementStreakProgress": "連勝数：{current}／{target}",
+  "@AchievementStreakProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementWinsProgress": "勝利数：{current}／{target}",
+  "@AchievementWinsProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "ResultCardTitle": "結果をシェア",
+  "ResultCardPreparing": "結果カードを作成中…",
+  "ResultCardError": "結果カードを作成できませんでした。",
+  "ResultCardShareFailed": "現在シェアできません。もう一度お試しください。",
+  "ResultCardPreviewLabel": "{result}。{score}。{mode}。{date}。",
+  "@ResultCardPreviewLabel": {
+    "placeholders": {
+      "result": {},
+      "score": {},
+      "mode": {},
+      "date": {}
+    }
+  },
+  "PurchaseBenefitAds": "バナー広告とアプリ起動時の広告を削除。",
+  "PurchaseBenefitUndo": "広告を見ずに「むずかしい」で毎ターン1回待ったができます。",
+  "PurchaseBenefitHints": "コンピューター対戦のすべての難易度で、広告を見ずに打てるマスを表示できます。",
+  "PurchaseBenefitOnce": "買い切りで、定期購入はありません。App Storeアカウントから復元できます。",
+  "PurchaseBenefits": "一度の購入でバナー広告とアプリ起動時の広告を削除し、「むずかしい」での待ったと、打てるマスのヒントを広告なしで利用できます。同じApp Storeアカウントを使う端末で復元できます。",
+  "MatchLibrary": "対局ライブラリ",
+  "MatchLibrarySubtitle": "最近終了した100局を、いつでも振り返れます。",
+  "MatchLibraryEmptyTitle": "あなたの記録はここから",
+  "MatchLibraryEmptyBody": "対局を終えると、ここに保存されます。一手ずつ振り返って、次の対局のヒントを見つけましょう。",
+  "MatchLibraryOpen": "対局を振り返る",
+  "DeleteSavedMatch": "対局を削除",
+  "DeleteSavedMatchTitle": "この対局を削除しますか？",
+  "DeleteSavedMatchMessage": "この対局の記録をライブラリから削除します。統計は変わりません。",
+  "Delete": "削除",
+  "MatchLibraryLoadError": "対局ライブラリを読み込めませんでした。",
+  "MatchLibrarySaveError": "この対局をライブラリに保存できませんでした。",
+  "TryAgain": "もう一度試す",
+  "SavedMatchScore": "黒 {black} · 白 {white}",
+  "@SavedMatchScore": {
+    "placeholders": {
+      "black": {},
+      "white": {}
+    }
+  },
+  "MatchLibraryDeleteError": "この対局を削除できませんでした。もう一度お試しください。",
+  "CoachTitle": "戦略コーチ",
+  "CoachAnalyzing": "考えるヒントになる局面を探しています…",
+  "CoachUnavailable": "現在コーチ機能を利用できません。各手の振り返りは引き続き行えます。",
+  "CoachNoPosition": "この対局には、手を試せる局面がありません。",
+  "CoachTurnTitle": "振り返りたい局面",
+  "CoachPositionTitle": "この局面を考える",
+  "CoachSuggested": "おすすめの手：{coordinate}",
+  "@CoachSuggested": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachComparison": "実際の手 {actual} · 試す手 {suggested}",
+  "@CoachComparison": {
+    "placeholders": {
+      "actual": {},
+      "suggested": {}
+    }
+  },
+  "CoachMatched": "あなたは{coordinate}に打ちました。この手の狙いを振り返りましょう。",
+  "@CoachMatched": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachScope": "短い読みで候補を提案しています。最善手を保証するものではありません。",
+  "CoachCorner": "この手で角を取れます。角の石は返されません。",
+  "CoachPass": "相手に打てる場所がないので、もう一度あなたの番です。",
+  "CoachReplies": "相手が打てる手の数：{count}。",
+  "@CoachReplies": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "CoachAvoidCorner": "ほかの合法手では相手にすぐ角を取られます。この手なら、その危険を避けられます。",
+  "CoachAllowsCorner": "次のターンで相手に角を取られる可能性があります。",
+  "CoachEndsGame": "この手の後は両者とも打てる場所がなくなり、対局が終了します。",
+  "CoachJump": "この局面へ移動",
+  "CoachPractice": "この局面で試す",
+  "CoachShareResult": "結果をシェア",
+  "PracticeTitle": "この局面で試す",
+  "PracticeInstructions": "印のあるマスに打って、何が変わるか見てみましょう。",
+  "PracticeSafe": "練習は保存した対局や統計に影響しません。",
+  "PracticePlayed": "{coordinate}に打ちました",
+  "@PracticePlayed": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "PracticeFlipped": "返した石：{count}",
+  "@PracticeFlipped": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "PracticeReset": "ほかの手を試す",
+  "PracticeNoMoves": "この局面では、この色で打てる場所がありません。",
+  "PracticeBoardLabel": "戦略を練習する盤面",
+  "CoachForPlayer": "{player}の手を考える",
+  "@CoachForPlayer": {
+    "placeholders": {
+      "player": {}
+    }
+  },
+  "Puzzles": "練習問題",
+  "PuzzlesSubtitle": "厳選した9つの局面で、一つずつ上達しましょう。",
+  "PuzzleProgress": "{completed}／{total}問クリア",
+  "@PuzzleProgress": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleSearch": "問題を検索",
+  "PuzzleNoResults": "一致する問題がありません。練習したい技や問題番号で検索してください。",
+  "PuzzleCornerSkill": "角を取る",
+  "PuzzlePassSkill": "もう一度自分の番にする",
+  "PuzzleEndgameSkill": "勝って終える",
+  "PuzzleCornerDescription": "挟める石の並びを見つけて、安全に角を取りましょう。",
+  "PuzzlePassDescription": "相手が打てる場所をなくしましょう。",
+  "PuzzleEndgameDescription": "相手の最善の応手を読み、最後の手まで打ちましょう。",
+  "PuzzleNumber": "問題 {number}",
+  "@PuzzleNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleCompleted": "クリア済み",
+  "PuzzleCornerObjective": "{color}で打ちます。一手で{coordinate}の角を取りましょう。",
+  "@PuzzleCornerObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      },
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzlePassObjective": "{color}で打ちます。対局を終わらせずに相手をパスさせ、もう一度自分の番にしましょう。",
+  "@PuzzlePassObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleEndgameObjective": "{color}で打ちます。相手が最善の手を打っても、この終盤で勝ち切りましょう。",
+  "@PuzzleEndgameObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleBoardLabel": "練習問題の盤面",
+  "PuzzleHint": "ヒント {number}／3",
+  "@PuzzleHint": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleRevealHint": "ヒントを見る",
+  "PuzzleHintCoordinate": "{coordinate}を試しましょう。",
+  "@PuzzleHintCoordinate": {
+    "placeholders": {
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleCornerHintOne": "角の石は返されません。相手の石を挟める並びを探しましょう。",
+  "PuzzleCornerHintTwo": "狙う角から内側へたどり、相手の石を自分の石で挟める並びを探しましょう。",
+  "PuzzlePassHintOne": "相手に打てる場所がないときにだけ、パスになります。",
+  "PuzzlePassHintTwo": "それぞれの候補の後で、相手が打てる手を比べましょう。",
+  "PuzzleEndgameHintOne": "最後の石の数で勝敗が決まります。終了まで読み、石を数えましょう。",
+  "PuzzleEndgameHintTwo": "相手の応手を比べましょう。少なく返す手なら、最後の一手を残せるかもしれません。",
+  "PuzzleCornerSuccess": "角を取れました。角の石は、対局が終わるまで自分のものです。",
+  "PuzzlePassSuccess": "もう一度あなたの番です。相手はパスし、対局は続きます。",
+  "PuzzleEndgameSuccess": "終盤を勝ち切れました。相手の最善の応手にも対応できました。",
+  "PuzzleTryAgain": "この手では条件を達成できません。最初からやり直し、ほかの手順を試しましょう。",
+  "PuzzleEndgameTryAgain": "この手順では、相手が最善を尽くすと勝ち切れません。最初からやり直し、ほかの手を比べましょう。",
+  "PuzzleRestart": "問題をやり直す",
+  "PuzzleNext": "次の問題",
+  "PuzzleBackToArchive": "問題一覧に戻る",
+  "PuzzleOpponentThinking": "最善の応手を検討中…",
+  "PuzzleYourMove": "あなたの番です",
+  "PuzzleAllComplete": "9問すべてクリアしました。好きな局面をもう一度試して、腕を磨きましょう。",
+  "PuzzleCompletionSaveFailed": "進捗を保存できませんでした。この画面を開いたまま、もう一度お試しください。",
+  "PuzzleSaveProgress": "進捗を保存"
 }

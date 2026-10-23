@@ -217,5 +217,224 @@
     }
   },
   "UndoWithAd": "Hoàn tác · xem quảng cáo",
-  "HintWithAd": "Nước đi hợp lệ · xem quảng cáo"
+  "HintWithAd": "Nước đi hợp lệ · xem quảng cáo",
+  "NextMilestone": "Cột mốc tiếp theo",
+  "MilestoneCompleted": "Đã hoàn thành",
+  "AchievementGamesProgress": "Số ván: {current} trên {target}",
+  "@AchievementGamesProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementStreakProgress": "Thắng liên tiếp: {current} trên {target}",
+  "@AchievementStreakProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementWinsProgress": "Số trận thắng: {current} trên {target}",
+  "@AchievementWinsProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "ResultCardTitle": "Chia sẻ kết quả",
+  "ResultCardPreparing": "Đang tạo thẻ kết quả…",
+  "ResultCardError": "Không thể tạo thẻ kết quả của bạn.",
+  "ResultCardShareFailed": "Hiện chưa thể chia sẻ. Vui lòng thử lại.",
+  "ResultCardPreviewLabel": "{result}. {score}. {mode}. {date}.",
+  "@ResultCardPreviewLabel": {
+    "placeholders": {
+      "result": {},
+      "score": {},
+      "mode": {},
+      "date": {}
+    }
+  },
+  "PurchaseBenefitAds": "Không có quảng cáo biểu ngữ hay quảng cáo khi mở ứng dụng.",
+  "PurchaseBenefitUndo": "Hoàn tác một lần mỗi lượt ở mức Khó mà không cần xem quảng cáo.",
+  "PurchaseBenefitHints": "Gợi ý nước đi hợp lệ ở mọi mức độ khó khi đấu với máy, không cần xem quảng cáo.",
+  "PurchaseBenefitOnce": "Thanh toán một lần. Không thuê bao. Khôi phục bằng tài khoản App Store của bạn.",
+  "PurchaseBenefits": "Mua một lần để gỡ quảng cáo biểu ngữ và quảng cáo khi mở ứng dụng, đồng thời mở khóa hoàn tác ở mức Khó và gợi ý nước đi hợp lệ mà không cần xem quảng cáo thưởng. Có thể khôi phục trên các thiết bị dùng cùng tài khoản App Store.",
+  "MatchLibrary": "Thư viện ván chơi",
+  "MatchLibrarySubtitle": "100 ván hoàn tất gần nhất của bạn, sẵn sàng để xem lại.",
+  "MatchLibraryEmptyTitle": "Câu chuyện của bạn bắt đầu từ đây",
+  "MatchLibraryEmptyBody": "Hoàn tất một ván chơi để lưu tại đây. Xem lại từng nước đi và tìm ý tưởng cho lần chơi tiếp theo.",
+  "MatchLibraryOpen": "Xem lại ván chơi",
+  "DeleteSavedMatch": "Xóa ván chơi",
+  "DeleteSavedMatchTitle": "Xóa ván chơi này?",
+  "DeleteSavedMatchMessage": "Bản phát lại này sẽ bị xóa khỏi thư viện. Số liệu thống kê của bạn vẫn được giữ nguyên.",
+  "Delete": "Xóa",
+  "MatchLibraryLoadError": "Không thể tải thư viện ván chơi của bạn.",
+  "MatchLibrarySaveError": "Không thể lưu ván này vào thư viện ván chơi.",
+  "TryAgain": "Thử lại",
+  "SavedMatchScore": "Đen {black} · Trắng {white}",
+  "@SavedMatchScore": {
+    "placeholders": {
+      "black": {},
+      "white": {}
+    }
+  },
+  "MatchLibraryDeleteError": "Không thể xóa ván chơi này. Vui lòng thử lại.",
+  "CoachTitle": "Huấn luyện chiến thuật",
+  "CoachAnalyzing": "Đang tìm một thế cờ hữu ích để tìm hiểu…",
+  "CoachUnavailable": "Hiện chưa thể dùng tính năng huấn luyện. Bạn vẫn có thể xem lại từng nước đi.",
+  "CoachNoPosition": "Ván này không có thế cờ nào còn nước đi để thử.",
+  "CoachTurnTitle": "Một thế cờ đáng xem lại",
+  "CoachPositionTitle": "Tìm hiểu thế cờ này",
+  "CoachSuggested": "Nước đi gợi ý: {coordinate}",
+  "@CoachSuggested": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachComparison": "Đã đi {actual} · Thử {suggested}",
+  "@CoachComparison": {
+    "placeholders": {
+      "actual": {},
+      "suggested": {}
+    }
+  },
+  "CoachMatched": "Bạn đã đi {coordinate}. Hãy xem lại ý tưởng đằng sau nước đi này.",
+  "@CoachMatched": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachScope": "Phân tích ngắn giúp gợi ý hướng thử, không đảm bảo đó là nước đi mạnh nhất.",
+  "CoachCorner": "Nước này chiếm một ô góc. Quân ở ô góc không thể bị lật.",
+  "CoachPass": "Đối thủ không có nước đáp trả hợp lệ nên bạn được đi tiếp.",
+  "CoachReplies": "Số nước đáp trả hợp lệ của đối thủ: {count}.",
+  "@CoachReplies": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "CoachAvoidCorner": "Một nước đi hợp lệ khác sẽ cho đối thủ chiếm góc ngay. Nước này tránh được nguy cơ đó.",
+  "CoachAllowsCorner": "Đối thủ có thể chiếm một ô góc ở lượt tiếp theo.",
+  "CoachEndsGame": "Sau nước này, cả hai bên đều không còn nước đi. Ván chơi kết thúc.",
+  "CoachJump": "Đến thế cờ này",
+  "CoachPractice": "Thử thế cờ này",
+  "CoachShareResult": "Chia sẻ kết quả",
+  "PracticeTitle": "Thử thế cờ này",
+  "PracticeInstructions": "Đặt quân vào bất kỳ ô được đánh dấu nào và xem điều gì thay đổi.",
+  "PracticeSafe": "Phần luyện tập không ảnh hưởng đến ván đã lưu hay số liệu thống kê.",
+  "PracticePlayed": "Bạn đã đi {coordinate}",
+  "@PracticePlayed": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "PracticeFlipped": "Số quân đã lật: {count}",
+  "@PracticeFlipped": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "PracticeReset": "Thử nước đi khác",
+  "PracticeNoMoves": "Bên này không có nước đi hợp lệ trong thế cờ hiện tại.",
+  "PracticeBoardLabel": "Bàn cờ luyện chiến thuật",
+  "CoachForPlayer": "Gợi ý cho quân {player}",
+  "@CoachForPlayer": {
+    "placeholders": {
+      "player": {}
+    }
+  },
+  "Puzzles": "Bài tập thực hành",
+  "PuzzlesSubtitle": "Chín thế cờ được chọn kỹ. Rèn từng kỹ năng một.",
+  "PuzzleProgress": "Đã giải {completed} trên {total}",
+  "@PuzzleProgress": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleSearch": "Tìm bài tập",
+  "PuzzleNoResults": "Không có bài tập phù hợp. Hãy thử tìm theo kỹ năng hoặc số bài.",
+  "PuzzleCornerSkill": "Chiếm ô góc",
+  "PuzzlePassSkill": "Giành thêm một lượt",
+  "PuzzleEndgameSkill": "Kết thúc bằng chiến thắng",
+  "PuzzleCornerDescription": "Tìm ô góc an toàn và hoàn thành đường kẹp quân.",
+  "PuzzlePassDescription": "Khiến đối thủ không còn nước đi hợp lệ.",
+  "PuzzleEndgameDescription": "Chơi các nước cuối trước những nước đáp trả tốt nhất.",
+  "PuzzleNumber": "Bài tập {number}",
+  "@PuzzleNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleCompleted": "Đã giải",
+  "PuzzleCornerObjective": "Cầm quân {color}. Chiếm ô góc {coordinate} trong một nước đi.",
+  "@PuzzleCornerObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      },
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzlePassObjective": "Cầm quân {color}. Buộc đối thủ bỏ lượt để bạn được đi tiếp mà không kết thúc ván chơi.",
+  "@PuzzlePassObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleEndgameObjective": "Cầm quân {color}. Thắng thế cờ tàn cuộc này trước những nước đáp trả tốt nhất.",
+  "@PuzzleEndgameObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleBoardLabel": "Bàn cờ bài tập thực hành",
+  "PuzzleHint": "Gợi ý {number} trên 3",
+  "@PuzzleHint": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleRevealHint": "Xem gợi ý",
+  "PuzzleHintCoordinate": "Thử {coordinate}.",
+  "@PuzzleHintCoordinate": {
+    "placeholders": {
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleCornerHintOne": "Quân ở ô góc không thể bị lật. Hãy tìm một đường quân có thể kẹp.",
+  "PuzzleCornerHintTwo": "Lần từ ô góc mục tiêu vào trong cho đến khi quân của bạn có thể kẹp quân đối thủ.",
+  "PuzzlePassHintOne": "Đối thủ chỉ bỏ lượt khi không còn nước đi hợp lệ.",
+  "PuzzlePassHintTwo": "So sánh các nước đi còn lại của đối thủ sau mỗi nước bạn định đi.",
+  "PuzzleEndgameHintOne": "Số quân cuối cùng quyết định người thắng. Hãy tính đến hết ván.",
+  "PuzzleEndgameHintTwo": "So sánh các nước đáp trả của đối thủ. Lật ít quân hơn có thể giúp bạn giữ nước đi cuối.",
+  "PuzzleCornerSuccess": "Đã chiếm được góc. Quân ở ô góc sẽ là của bạn đến hết ván.",
+  "PuzzlePassSuccess": "Bạn đã giành thêm một lượt. Đối thủ không có nước đi hợp lệ và ván chơi tiếp tục.",
+  "PuzzleEndgameSuccess": "Đã thắng tàn cuộc. Lựa chọn của bạn đứng vững trước những nước đáp trả tốt nhất.",
+  "PuzzleTryAgain": "Nước này chưa giải được thế cờ. Hãy bắt đầu lại và thử cách đi khác.",
+  "PuzzleEndgameTryAgain": "Cách đi này không thể đảm bảo chiến thắng nếu đối thủ chơi tối ưu. Hãy bắt đầu lại và so sánh nước khác.",
+  "PuzzleRestart": "Chơi lại bài tập",
+  "PuzzleNext": "Bài tập tiếp theo",
+  "PuzzleBackToArchive": "Về danh sách bài tập",
+  "PuzzleOpponentThinking": "Đang cân nhắc nước đáp trả tốt nhất…",
+  "PuzzleYourMove": "Đến lượt bạn",
+  "PuzzleAllComplete": "Đã giải cả chín bài tập. Hãy thử lại bất kỳ thế cờ nào để rèn thêm kỹ năng.",
+  "PuzzleCompletionSaveFailed": "Không thể lưu tiến độ. Hãy giữ màn hình này mở và thử lại.",
+  "PuzzleSaveProgress": "Lưu tiến độ"
 }

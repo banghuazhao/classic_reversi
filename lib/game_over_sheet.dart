@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
 
 import 'achievements_service.dart';
 import 'app_theme.dart';
@@ -8,6 +7,7 @@ import 'game_board.dart';
 import 'game_model.dart';
 import 'game_settings.dart';
 import 'generated/l10n.dart';
+import 'result_card.dart';
 
 Future<void> showGameOverSheet({
   required BuildContext context,
@@ -21,6 +21,7 @@ Future<void> showGameOverSheet({
   required VoidCallback onRematch,
   required VoidCallback onHome,
   required VoidCallback onReview,
+  DateTime? playedAt,
 }) {
   return showGeneralDialog<void>(
     context: context,
@@ -51,6 +52,7 @@ Future<void> showGameOverSheet({
                         onRematch: onRematch,
                         onHome: onHome,
                         onReview: onReview,
+                        playedAt: playedAt,
                       );
                       if (reduceMotion) {
                         return card;
@@ -85,6 +87,7 @@ class _GameOverCard extends StatelessWidget {
   final VoidCallback onRematch;
   final VoidCallback onHome;
   final VoidCallback onReview;
+  final DateTime? playedAt;
 
   const _GameOverCard({
     required this.model,
@@ -97,6 +100,7 @@ class _GameOverCard extends StatelessWidget {
     required this.onRematch,
     required this.onHome,
     required this.onReview,
+    this.playedAt,
   });
 
   bool get _isTie => model.blackScore == model.whiteScore;
@@ -121,27 +125,13 @@ class _GameOverCard extends StatelessWidget {
     return _humanWon == true ? s.YouWin : s.YouLose;
   }
 
-  String _shareText(BuildContext context) {
-    final s = S.of(context);
-    final result = _headline(context);
-    final mode = settings.isDailyChallenge
-        ? s.DailyChallenge
-        : settings.twoPlayerMode
-            ? s.TwoPlayersMode
-            : settings.difficulty.label(context);
-    return s.ShareResult(result, model.blackScore, model.whiteScore, mode);
-  }
-
-  Future<void> _share(BuildContext context) async {
-    final box = context.findRenderObject() as RenderBox?;
-    await SharePlus.instance.share(
-      ShareParams(
-        text: _shareText(context),
-        sharePositionOrigin:
-            box != null ? box.localToGlobal(Offset.zero) & box.size : null,
-      ),
-    );
-  }
+  Future<void> _share(BuildContext context) => showResultCard(
+        context,
+        model: model,
+        settings: settings,
+        playedAt: playedAt,
+        theme: theme,
+      );
 
   @override
   Widget build(BuildContext context) {

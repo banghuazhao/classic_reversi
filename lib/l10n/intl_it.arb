@@ -217,5 +217,224 @@
     }
   },
   "UndoWithAd": "Annulla · guarda un annuncio",
-  "HintWithAd": "Mosse valide · guarda un annuncio"
+  "HintWithAd": "Mosse valide · guarda un annuncio",
+  "NextMilestone": "Prossimo traguardo",
+  "MilestoneCompleted": "Completato",
+  "AchievementGamesProgress": "Partite: {current} di {target}",
+  "@AchievementGamesProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementStreakProgress": "Vittorie consecutive: {current} di {target}",
+  "@AchievementStreakProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementWinsProgress": "Vittorie: {current} di {target}",
+  "@AchievementWinsProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "ResultCardTitle": "Condividi il risultato",
+  "ResultCardPreparing": "Creazione della scheda del risultato…",
+  "ResultCardError": "Impossibile creare la scheda del risultato.",
+  "ResultCardShareFailed": "La condivisione non è disponibile al momento. Riprova.",
+  "ResultCardPreviewLabel": "{result}. {score}. {mode}. {date}.",
+  "@ResultCardPreviewLabel": {
+    "placeholders": {
+      "result": {},
+      "score": {},
+      "mode": {},
+      "date": {}
+    }
+  },
+  "PurchaseBenefitAds": "Nessun banner né pubblicità al ritorno nell’app.",
+  "PurchaseBenefitUndo": "Annulla una volta per turno al livello Difficile senza guardare pubblicità.",
+  "PurchaseBenefitHints": "Suggerimenti sulle mosse consentite a ogni livello contro il computer, senza guardare pubblicità.",
+  "PurchaseBenefitOnce": "Un solo pagamento. Nessun abbonamento. Ripristina con il tuo account App Store.",
+  "PurchaseBenefits": "Un acquisto una tantum rimuove i banner e la pubblicità al ritorno nell’app e sblocca l’annullamento al livello Difficile e i suggerimenti sulle mosse consentite senza pubblicità premio. Ripristinalo sui dispositivi che usano lo stesso account App Store.",
+  "MatchLibrary": "Archivio delle partite",
+  "MatchLibrarySubtitle": "Le tue ultime 100 partite completate, pronte da rivedere.",
+  "MatchLibraryEmptyTitle": "La tua storia inizia qui",
+  "MatchLibraryEmptyBody": "Completa una partita e apparirà qui. Ripercorri ogni mossa e scopri nuove idee da provare.",
+  "MatchLibraryOpen": "Rivedi la partita",
+  "DeleteSavedMatch": "Elimina partita",
+  "DeleteSavedMatchTitle": "Eliminare questa partita?",
+  "DeleteSavedMatchMessage": "Questa registrazione verrà rimossa dall’archivio. Le tue statistiche resteranno invariate.",
+  "Delete": "Elimina",
+  "MatchLibraryLoadError": "Impossibile caricare l’archivio delle partite.",
+  "MatchLibrarySaveError": "Impossibile salvare questa partita nell’archivio.",
+  "TryAgain": "Riprova",
+  "SavedMatchScore": "Nero {black} · Bianco {white}",
+  "@SavedMatchScore": {
+    "placeholders": {
+      "black": {},
+      "white": {}
+    }
+  },
+  "MatchLibraryDeleteError": "Impossibile eliminare questa partita. Riprova.",
+  "CoachTitle": "Allenatore di strategia",
+  "CoachAnalyzing": "Cerchiamo una posizione utile da esplorare…",
+  "CoachUnavailable": "L’analisi non è disponibile al momento. Puoi comunque rivedere tutte le mosse.",
+  "CoachNoPosition": "Questa partita non contiene posizioni giocabili da esplorare.",
+  "CoachTurnTitle": "Una posizione da rivedere",
+  "CoachPositionTitle": "Esplora questa posizione",
+  "CoachSuggested": "Mossa suggerita: {coordinate}",
+  "@CoachSuggested": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachComparison": "Giocata: {actual} · Da esplorare: {suggested}",
+  "@CoachComparison": {
+    "placeholders": {
+      "actual": {},
+      "suggested": {}
+    }
+  },
+  "CoachMatched": "Hai giocato {coordinate}. Riscopri le idee di questa mossa.",
+  "@CoachMatched": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachScope": "Una ricerca breve suggerisce idee da esplorare, ma non garantisce la mossa più forte.",
+  "CoachCorner": "Questa mossa conquista un angolo. Un disco nell’angolo non può essere capovolto.",
+  "CoachPass": "L’avversario non ha risposte consentite, quindi giochi di nuovo.",
+  "CoachReplies": "Risposte consentite all’avversario: {count}.",
+  "@CoachReplies": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "CoachAvoidCorner": "Un’altra mossa consentita permette all’avversario di conquistare subito un angolo. Questa evita la minaccia.",
+  "CoachAllowsCorner": "L’avversario può conquistare un angolo al prossimo turno.",
+  "CoachEndsGame": "Dopo questa mossa nessuno dei due può giocare. La partita termina.",
+  "CoachJump": "Vai a questa posizione",
+  "CoachPractice": "Prova questa posizione",
+  "CoachShareResult": "Condividi risultato",
+  "PracticeTitle": "Prova questa posizione",
+  "PracticeInstructions": "Gioca in una casella evidenziata e osserva cosa cambia.",
+  "PracticeSafe": "L’allenamento non influisce sulla partita salvata né sulle statistiche.",
+  "PracticePlayed": "Hai giocato {coordinate}",
+  "@PracticePlayed": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "PracticeFlipped": "Dischi capovolti: {count}",
+  "@PracticeFlipped": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "PracticeReset": "Prova un’altra mossa",
+  "PracticeNoMoves": "Questo colore non ha mosse consentite in questa posizione.",
+  "PracticeBoardLabel": "Scacchiera per allenare la strategia",
+  "CoachForPlayer": "Idee per {player}",
+  "@CoachForPlayer": {
+    "placeholders": {
+      "player": {}
+    }
+  },
+  "Puzzles": "Esercizi di strategia",
+  "PuzzlesSubtitle": "Nove posizioni scelte con cura. Sviluppa un’abilità alla volta.",
+  "PuzzleProgress": "{completed} di {total} risolti",
+  "@PuzzleProgress": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleSearch": "Cerca esercizi",
+  "PuzzleNoResults": "Nessun esercizio corrispondente. Prova un’abilità o il numero dell’esercizio.",
+  "PuzzleCornerSkill": "Conquista un angolo",
+  "PuzzlePassSkill": "Guadagna un altro turno",
+  "PuzzleEndgameSkill": "Concludi con una vittoria",
+  "PuzzleCornerDescription": "Individua un angolo sicuro e chiudi la linea di cattura.",
+  "PuzzlePassDescription": "Lascia l’avversario senza mosse consentite.",
+  "PuzzleEndgameDescription": "Gioca le ultime mosse contro le migliori risposte.",
+  "PuzzleNumber": "Esercizio {number}",
+  "@PuzzleNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleCompleted": "Risolto",
+  "PuzzleCornerObjective": "Gioca con il {color}. Conquista l’angolo {coordinate} in una mossa.",
+  "@PuzzleCornerObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      },
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzlePassObjective": "Gioca con il {color}. Costringi l’avversario a passare per giocare di nuovo, senza terminare la partita.",
+  "@PuzzlePassObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleEndgameObjective": "Gioca con il {color}. Vinci questo finale contro le migliori risposte.",
+  "@PuzzleEndgameObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleBoardLabel": "Scacchiera dell’esercizio",
+  "PuzzleHint": "Suggerimento {number} di 3",
+  "@PuzzleHint": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleRevealHint": "Mostra un suggerimento",
+  "PuzzleHintCoordinate": "Prova {coordinate}.",
+  "@PuzzleHintCoordinate": {
+    "placeholders": {
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleCornerHintOne": "I dischi negli angoli non possono essere capovolti. Cerca una linea da chiudere.",
+  "PuzzleCornerHintTwo": "Segui la linea dall’angolo indicato verso l’interno finché un tuo disco non chiude la fila avversaria.",
+  "PuzzlePassHintOne": "Si passa solo quando l’avversario non ha mosse consentite.",
+  "PuzzlePassHintTwo": "Confronta le mosse disponibili all’avversario dopo ciascuna delle tue possibili mosse.",
+  "PuzzleEndgameHintOne": "Il conteggio finale dei dischi decide il vincitore. Calcola fino alla fine.",
+  "PuzzleEndgameHintTwo": "Confronta le risposte dell’avversario. Una cattura più piccola può lasciarti l’ultima mossa.",
+  "PuzzleCornerSuccess": "Angolo conquistato. Questo disco resterà tuo fino alla fine della partita.",
+  "PuzzlePassSuccess": "Hai guadagnato un altro turno. L’avversario non ha mosse consentite e la partita continua.",
+  "PuzzleEndgameSuccess": "Finale vinto. Le tue scelte hanno retto alle migliori risposte.",
+  "PuzzleTryAgain": "Questa mossa non risolve la posizione. Ricomincia e prova un’altra linea.",
+  "PuzzleEndgameTryAgain": "Questa linea non garantisce la vittoria contro il gioco migliore. Ricomincia e confronta un’altra mossa.",
+  "PuzzleRestart": "Ricomincia l’esercizio",
+  "PuzzleNext": "Esercizio successivo",
+  "PuzzleBackToArchive": "Torna agli esercizi",
+  "PuzzleOpponentThinking": "Valutazione della risposta migliore…",
+  "PuzzleYourMove": "Tocca a te",
+  "PuzzleAllComplete": "Tutti e nove gli esercizi sono risolti. Rivisita qualsiasi posizione per affinare il tuo gioco.",
+  "PuzzleCompletionSaveFailed": "Impossibile salvare i progressi. Tieni aperta questa schermata e riprova.",
+  "PuzzleSaveProgress": "Salva progressi"
 }

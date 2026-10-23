@@ -15,6 +15,8 @@ import 'game_settings.dart';
 import 'generated/l10n.dart';
 import 'how_to_play_screen.dart';
 import 'main.dart';
+import 'match_library_screen.dart';
+import 'puzzles_screen.dart';
 import 'settings_screen.dart';
 import 'settings_service.dart';
 import 'stats_screen.dart';
@@ -462,6 +464,36 @@ class _StartScreenState extends State<StartScreen> with WidgetsBindingObserver {
                               )
                             : null,
                       ),
+                      LayoutBuilder(builder: (context, tileConstraints) {
+                        final scale =
+                            MediaQuery.textScalerOf(context).scale(16) / 16;
+                        final columns =
+                            tileConstraints.maxWidth >= 304 * scale ? 2 : 1;
+                        final tileWidth =
+                            (tileConstraints.maxWidth - (columns - 1) * 12) /
+                                columns;
+                        return Wrap(spacing: 12, runSpacing: 12, children: [
+                          SizedBox(
+                              width: tileWidth,
+                              child: _ExploreTile(
+                                title: s.Puzzles,
+                                icon: CupertinoIcons.square_grid_2x2,
+                                onPressed: () => Navigator.of(context).push(
+                                    fadeRoute(
+                                        (context) => const PuzzlesScreen())),
+                              )),
+                          SizedBox(
+                              width: tileWidth,
+                              child: _ExploreTile(
+                                title: s.MatchLibrary,
+                                icon: CupertinoIcons.clock,
+                                onPressed: () => Navigator.of(context).push(
+                                    fadeRoute((context) =>
+                                        const MatchLibraryScreen())),
+                              )),
+                        ]);
+                      }),
+                      const SizedBox(height: 12),
                       AppMenuRow(
                         icon: CupertinoIcons.book,
                         title: s.GuidedFirstGame,
@@ -573,6 +605,47 @@ class _SetupChoices<T> extends StatelessWidget {
             ),
           );
         }).toList(),
+      ),
+    );
+  }
+}
+
+class _ExploreTile extends StatelessWidget {
+  const _ExploreTile(
+      {required this.title, required this.icon, required this.onPressed});
+  final String title;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppChrome.cardColor,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: AppChrome.borderColor)),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onPressed,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 72),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(children: [
+              Icon(icon,
+                  size: 22,
+                  color: ThemeController.instance.theme.lastMoveBorder),
+              const SizedBox(width: 12),
+              Expanded(
+                  child: Text(title,
+                      style: const TextStyle(
+                          color: AppChrome.primaryText,
+                          fontSize: 16,
+                          height: 1.4,
+                          fontWeight: FontWeight.w600))),
+            ]),
+          ),
+        ),
       ),
     );
   }

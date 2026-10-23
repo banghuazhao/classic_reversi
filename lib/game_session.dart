@@ -43,7 +43,6 @@ class GameSessionService {
   GameSessionService._();
 
   static const _key = 'activeGameSession';
-  static const _version = 1;
   static const _maxSnapshotLength = 200000;
   static Future<void>? _pending;
 
@@ -70,7 +69,9 @@ class GameSessionService {
           if (stored is! String || stored.length > _maxSnapshotLength) {
             throw const FormatException('Invalid session storage');
           }
-          final session = _decode(stored);
+          final session = GameSessionCodec.decode(
+            GameSessionCodec._map(jsonDecode(stored)),
+          );
           final now = DateTime.now();
           final saved = session.savedAt.toLocal();
           final expiredDaily = session.settings.isDailyChallenge &&
@@ -87,29 +88,7 @@ class GameSessionService {
 
   static Future<void> save(GameSession session) {
     // Encode now, before waiting on storage, to capture this exact turn.
-    final encoded = jsonEncode({
-      'version': _version,
-      'savedAt': session.savedAt.toIso8601String(),
-      'settings': {
-        'difficulty': session.settings.difficulty.name,
-        'twoPlayerMode': session.settings.twoPlayerMode,
-        'humanColor': session.settings.humanColor.name,
-        'isDailyChallenge': session.settings.isDailyChallenge,
-        'boardSize': session.settings.boardSize,
-        'initialBoard': session.settings.initialBoard == null
-            ? null
-            : _encodeBoard(session.settings.initialBoard!),
-        'initialPlayer': session.settings.initialPlayer?.name,
-      },
-      'timeline': session.timeline.map(_encodeModel).toList(),
-      'undoHistory': session.undoHistory.map(_encodeModel).toList(),
-      'lastMove': session.lastMove == null
-          ? null
-          : {'x': session.lastMove!.x, 'y': session.lastMove!.y},
-      'canUndo': session.canUndo,
-      'hintsUnlocked': session.hintsUnlocked,
-      'rewardedUndoCharges': session.rewardedUndoCharges,
-    });
+    final encoded = jsonEncode(GameSessionCodec.encode(session));
     return _enqueue(() async {
       final preferences = await SharedPreferences.getInstance();
       await preferences.setString(_key, encoded);
@@ -120,6 +99,38 @@ class GameSessionService {
         final preferences = await SharedPreferences.getInstance();
         await preferences.remove(_key);
       });
+}
+
+/// Versioned board and chronology validation shared by active and saved games.
+/// The caller decides whether the decoded match must still be in progress.
+class GameSessionCodec {
+  GameSessionCodec._();
+
+  static const _version = 1;
+
+  static Map<String, Object?> encode(GameSession session) => {
+        'version': _version,
+        'savedAt': session.savedAt.toIso8601String(),
+        'settings': {
+          'difficulty': session.settings.difficulty.name,
+          'twoPlayerMode': session.settings.twoPlayerMode,
+          'humanColor': session.settings.humanColor.name,
+          'isDailyChallenge': session.settings.isDailyChallenge,
+          'boardSize': session.settings.boardSize,
+          'initialBoard': session.settings.initialBoard == null
+              ? null
+              : _encodeBoard(session.settings.initialBoard!),
+          'initialPlayer': session.settings.initialPlayer?.name,
+        },
+        'timeline': session.timeline.map(_encodeModel).toList(),
+        'undoHistory': session.undoHistory.map(_encodeModel).toList(),
+        'lastMove': session.lastMove == null
+            ? null
+            : {'x': session.lastMove!.x, 'y': session.lastMove!.y},
+        'canUndo': session.canUndo,
+        'hintsUnlocked': session.hintsUnlocked,
+        'rewardedUndoCharges': session.rewardedUndoCharges,
+      };
 
   static List<List<String>> _encodeBoard(GameBoard board) =>
       board.rows.map((row) => row.map((piece) => piece.name).toList()).toList();
@@ -129,8 +140,7 @@ class GameSessionService {
         'player': model.player.name,
       };
 
-  static GameSession _decode(String encoded) {
-    final data = _map(jsonDecode(encoded));
+  static GameSession decode(Map<String, dynamic> data) {
     if (data['version'] is! int || data['version'] != _version) {
       throw const FormatException('Unsupported session version');
     }

@@ -217,5 +217,224 @@
     }
   },
   "UndoWithAd": "Отменить ход · смотреть рекламу",
-  "HintWithAd": "Допустимые ходы · смотреть рекламу"
+  "HintWithAd": "Допустимые ходы · смотреть рекламу",
+  "NextMilestone": "Следующая цель",
+  "MilestoneCompleted": "Выполнено",
+  "AchievementGamesProgress": "Партий: {current} из {target}",
+  "@AchievementGamesProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementStreakProgress": "Побед подряд: {current} из {target}",
+  "@AchievementStreakProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementWinsProgress": "Побед: {current} из {target}",
+  "@AchievementWinsProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "ResultCardTitle": "Поделиться результатом",
+  "ResultCardPreparing": "Создаём карточку результата…",
+  "ResultCardError": "Не удалось создать карточку результата.",
+  "ResultCardShareFailed": "Сейчас не удаётся поделиться. Попробуйте ещё раз.",
+  "ResultCardPreviewLabel": "{result}. {score}. {mode}. {date}.",
+  "@ResultCardPreviewLabel": {
+    "placeholders": {
+      "result": {},
+      "score": {},
+      "mode": {},
+      "date": {}
+    }
+  },
+  "PurchaseBenefitAds": "Без баннеров и рекламы при возвращении в приложение.",
+  "PurchaseBenefitUndo": "Одна отмена хода за свой ход на сложном уровне без просмотра рекламы.",
+  "PurchaseBenefitHints": "Подсказки допустимых ходов на любом уровне игры с компьютером без просмотра рекламы.",
+  "PurchaseBenefitOnce": "Один платёж. Без подписки. Восстановление через вашу учётную запись App Store.",
+  "PurchaseBenefits": "Разовая покупка убирает баннеры и рекламу при возвращении в приложение, а также открывает отмену хода на сложном уровне и подсказки допустимых ходов без рекламы за награду. Покупку можно восстановить на устройствах с той же учётной записью App Store.",
+  "MatchLibrary": "Архив партий",
+  "MatchLibrarySubtitle": "Ваши последние 100 завершённых партий для просмотра по ходам.",
+  "MatchLibraryEmptyTitle": "Ваша история начинается здесь",
+  "MatchLibraryEmptyBody": "Завершите партию, и она появится здесь. Просматривайте ходы и находите новые идеи для игры.",
+  "MatchLibraryOpen": "Просмотреть партию",
+  "DeleteSavedMatch": "Удалить партию",
+  "DeleteSavedMatchTitle": "Удалить эту партию?",
+  "DeleteSavedMatchMessage": "Эта запись будет удалена из архива. Ваша статистика не изменится.",
+  "Delete": "Удалить",
+  "MatchLibraryLoadError": "Не удалось загрузить архив партий.",
+  "MatchLibrarySaveError": "Не удалось сохранить эту партию в архив.",
+  "TryAgain": "Попробовать ещё раз",
+  "SavedMatchScore": "Чёрные {black} · Белые {white}",
+  "@SavedMatchScore": {
+    "placeholders": {
+      "black": {},
+      "white": {}
+    }
+  },
+  "MatchLibraryDeleteError": "Не удалось удалить партию. Попробуйте ещё раз.",
+  "CoachTitle": "Тренер по стратегии",
+  "CoachAnalyzing": "Ищем интересную позицию для разбора…",
+  "CoachUnavailable": "Сейчас разбор недоступен. Вы по-прежнему можете просмотреть все ходы.",
+  "CoachNoPosition": "В этой партии нет позиций с доступными ходами для разбора.",
+  "CoachTurnTitle": "Позиция, к которой стоит вернуться",
+  "CoachPositionTitle": "Разберите эту позицию",
+  "CoachSuggested": "Предлагаемый ход: {coordinate}",
+  "@CoachSuggested": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachComparison": "В партии: {actual} · Для разбора: {suggested}",
+  "@CoachComparison": {
+    "placeholders": {
+      "actual": {},
+      "suggested": {}
+    }
+  },
+  "CoachMatched": "Вы сыграли {coordinate}. Вернитесь к идеям этого хода.",
+  "@CoachMatched": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachScope": "Неглубокий поиск предлагает идеи для разбора, но не гарантирует самый сильный ход.",
+  "CoachCorner": "Этот ход занимает угол. Угловую фишку невозможно перевернуть.",
+  "CoachPass": "У соперника нет допустимого ответа, поэтому вы ходите снова.",
+  "CoachReplies": "Допустимых ответов соперника: {count}.",
+  "@CoachReplies": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "CoachAvoidCorner": "Другой допустимый ход сразу отдаёт сопернику угол. Этот ход позволяет избежать угрозы.",
+  "CoachAllowsCorner": "На следующем ходу соперник может занять угол.",
+  "CoachEndsGame": "После этого хода ни одна сторона не может ходить. Партия заканчивается.",
+  "CoachJump": "Перейти к этой позиции",
+  "CoachPractice": "Попробовать эту позицию",
+  "CoachShareResult": "Поделиться результатом",
+  "PracticeTitle": "Попробуйте эту позицию",
+  "PracticeInstructions": "Сыграйте в любую отмеченную клетку и изучите изменения.",
+  "PracticeSafe": "Тренировка не влияет на сохранённую партию и статистику.",
+  "PracticePlayed": "Ваш ход: {coordinate}",
+  "@PracticePlayed": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "PracticeFlipped": "Перевёрнуто фишек: {count}",
+  "@PracticeFlipped": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "PracticeReset": "Попробовать другой ход",
+  "PracticeNoMoves": "У этой стороны нет допустимых ходов в данной позиции.",
+  "PracticeBoardLabel": "Доска для тренировки стратегии",
+  "CoachForPlayer": "Идеи для игрока {player}",
+  "@CoachForPlayer": {
+    "placeholders": {
+      "player": {}
+    }
+  },
+  "Puzzles": "Тренировочные задачи",
+  "PuzzlesSubtitle": "Девять тщательно подобранных позиций. Развивайте навыки шаг за шагом.",
+  "PuzzleProgress": "Решено: {completed} из {total}",
+  "@PuzzleProgress": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleSearch": "Поиск задач",
+  "PuzzleNoResults": "Подходящих задач нет. Попробуйте название навыка или номер задачи.",
+  "PuzzleCornerSkill": "Займите угол",
+  "PuzzlePassSkill": "Получите ещё один ход",
+  "PuzzleEndgameSkill": "Завершите победой",
+  "PuzzleCornerDescription": "Найдите безопасный угол и замкните линию захвата.",
+  "PuzzlePassDescription": "Лишите соперника допустимых ходов.",
+  "PuzzleEndgameDescription": "Сыграйте последние ходы против лучших ответов соперника.",
+  "PuzzleNumber": "Задача {number}",
+  "@PuzzleNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleCompleted": "Решено",
+  "PuzzleCornerObjective": "Играйте цветом {color}. Займите угол {coordinate} за один ход.",
+  "@PuzzleCornerObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      },
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzlePassObjective": "Играйте цветом {color}. Вынудите соперника пропустить ход, чтобы походить снова, не заканчивая партию.",
+  "@PuzzlePassObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleEndgameObjective": "Играйте цветом {color}. Выиграйте этот эндшпиль против лучших ответов соперника.",
+  "@PuzzleEndgameObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleBoardLabel": "Доска тренировочной задачи",
+  "PuzzleHint": "Подсказка {number} из 3",
+  "@PuzzleHint": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleRevealHint": "Показать подсказку",
+  "PuzzleHintCoordinate": "Попробуйте {coordinate}.",
+  "@PuzzleHintCoordinate": {
+    "placeholders": {
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleCornerHintOne": "Угловые фишки нельзя перевернуть. Найдите линию, которую можно замкнуть.",
+  "PuzzleCornerHintTwo": "Проследите линию от нужного угла к центру: ваша фишка должна замкнуть ряд фишек соперника.",
+  "PuzzlePassHintOne": "Пропуск хода происходит только тогда, когда у соперника нет допустимых ходов.",
+  "PuzzlePassHintTwo": "Сравните доступные ходы соперника после каждого вашего возможного хода.",
+  "PuzzleEndgameHintOne": "Победителя определяет итоговое число фишек. Просчитайте партию до конца.",
+  "PuzzleEndgameHintTwo": "Сравните ответы соперника. Захват меньшего числа фишек может сохранить за вами последний ход.",
+  "PuzzleCornerSuccess": "Угол занят. Эта фишка останется вашей до конца партии.",
+  "PuzzlePassSuccess": "Вы получили ещё один ход. У соперника нет допустимого хода, и партия продолжается.",
+  "PuzzleEndgameSuccess": "Эндшпиль выигран. Ваши решения устояли против лучших ответов соперника.",
+  "PuzzleTryAgain": "Этот ход не решает задачу. Начните заново и попробуйте другую линию.",
+  "PuzzleEndgameTryAgain": "Эта линия не гарантирует победу против лучшей игры. Начните заново и сравните другой ход.",
+  "PuzzleRestart": "Начать задачу заново",
+  "PuzzleNext": "Следующая задача",
+  "PuzzleBackToArchive": "К списку задач",
+  "PuzzleOpponentThinking": "Ищем лучший ответ…",
+  "PuzzleYourMove": "Ваш ход",
+  "PuzzleAllComplete": "Все девять задач решены. Возвращайтесь к любой позиции, чтобы отточить игру.",
+  "PuzzleCompletionSaveFailed": "Не удалось сохранить прогресс. Оставьте этот экран открытым и попробуйте ещё раз.",
+  "PuzzleSaveProgress": "Сохранить прогресс"
 }

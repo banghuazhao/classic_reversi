@@ -659,10 +659,10 @@ class S {
     );
   }
 
-  /// `A one-time purchase removes banner and app-open ads. The purchase is linked to your App Store account and can be restored on your other devices.`
+  /// `A one-time purchase removes banner and app-open ads and unlocks Hard-mode undo and legal-move hints without rewarded ads. Restore it on devices using the same App Store account.`
   String get PurchaseBenefits {
     return Intl.message(
-      'A one-time purchase removes banner and app-open ads. The purchase is linked to your App Store account and can be restored on your other devices.',
+      'A one-time purchase removes banner and app-open ads and unlocks Hard-mode undo and legal-move hints without rewarded ads. Restore it on devices using the same App Store account.',
       name: 'PurchaseBenefits',
       desc: '',
       args: [],
@@ -1679,6 +1679,941 @@ class S {
     return Intl.message(
       'Legal moves · watch an ad',
       name: 'HintWithAd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next milestone`
+  String get NextMilestone {
+    return Intl.message(
+      'Next milestone',
+      name: 'NextMilestone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Completed`
+  String get MilestoneCompleted {
+    return Intl.message(
+      'Completed',
+      name: 'MilestoneCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Games: {current} of {target}`
+  String AchievementGamesProgress(Object current, Object target) {
+    return Intl.message(
+      'Games: $current of $target',
+      name: 'AchievementGamesProgress',
+      desc: '',
+      args: [current, target],
+    );
+  }
+
+  /// `Consecutive wins: {current} of {target}`
+  String AchievementStreakProgress(Object current, Object target) {
+    return Intl.message(
+      'Consecutive wins: $current of $target',
+      name: 'AchievementStreakProgress',
+      desc: '',
+      args: [current, target],
+    );
+  }
+
+  /// `Wins: {current} of {target}`
+  String AchievementWinsProgress(Object current, Object target) {
+    return Intl.message(
+      'Wins: $current of $target',
+      name: 'AchievementWinsProgress',
+      desc: '',
+      args: [current, target],
+    );
+  }
+
+  /// `Share your result`
+  String get ResultCardTitle {
+    return Intl.message(
+      'Share your result',
+      name: 'ResultCardTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Creating your result card…`
+  String get ResultCardPreparing {
+    return Intl.message(
+      'Creating your result card…',
+      name: 'ResultCardPreparing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your result card could not be created.`
+  String get ResultCardError {
+    return Intl.message(
+      'Your result card could not be created.',
+      name: 'ResultCardError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sharing is unavailable right now. Please try again.`
+  String get ResultCardShareFailed {
+    return Intl.message(
+      'Sharing is unavailable right now. Please try again.',
+      name: 'ResultCardShareFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{result}. {score}. {mode}. {date}.`
+  String ResultCardPreviewLabel(
+    Object result,
+    Object score,
+    Object mode,
+    Object date,
+  ) {
+    return Intl.message(
+      '$result. $score. $mode. $date.',
+      name: 'ResultCardPreviewLabel',
+      desc: '',
+      args: [result, score, mode, date],
+    );
+  }
+
+  /// `No banner or app-open ads.`
+  String get PurchaseBenefitAds {
+    return Intl.message(
+      'No banner or app-open ads.',
+      name: 'PurchaseBenefitAds',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Undo once per turn on Hard without watching an ad.`
+  String get PurchaseBenefitUndo {
+    return Intl.message(
+      'Undo once per turn on Hard without watching an ad.',
+      name: 'PurchaseBenefitUndo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Legal-move hints on every computer difficulty without watching an ad.`
+  String get PurchaseBenefitHints {
+    return Intl.message(
+      'Legal-move hints on every computer difficulty without watching an ad.',
+      name: 'PurchaseBenefitHints',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One payment. No subscription. Restore with your App Store account.`
+  String get PurchaseBenefitOnce {
+    return Intl.message(
+      'One payment. No subscription. Restore with your App Store account.',
+      name: 'PurchaseBenefitOnce',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Match library`
+  String get MatchLibrary {
+    return Intl.message(
+      'Match library',
+      name: 'MatchLibrary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your last 100 completed games, ready to replay.`
+  String get MatchLibrarySubtitle {
+    return Intl.message(
+      'Your last 100 completed games, ready to replay.',
+      name: 'MatchLibrarySubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your story starts here`
+  String get MatchLibraryEmptyTitle {
+    return Intl.message(
+      'Your story starts here',
+      name: 'MatchLibraryEmptyTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finish a game and it will appear here. Revisit every move and discover what to try next.`
+  String get MatchLibraryEmptyBody {
+    return Intl.message(
+      'Finish a game and it will appear here. Revisit every move and discover what to try next.',
+      name: 'MatchLibraryEmptyBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Review match`
+  String get MatchLibraryOpen {
+    return Intl.message(
+      'Review match',
+      name: 'MatchLibraryOpen',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete match`
+  String get DeleteSavedMatch {
+    return Intl.message(
+      'Delete match',
+      name: 'DeleteSavedMatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete this match?`
+  String get DeleteSavedMatchTitle {
+    return Intl.message(
+      'Delete this match?',
+      name: 'DeleteSavedMatchTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This replay will be removed from your library. Your statistics will stay the same.`
+  String get DeleteSavedMatchMessage {
+    return Intl.message(
+      'This replay will be removed from your library. Your statistics will stay the same.',
+      name: 'DeleteSavedMatchMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete`
+  String get Delete {
+    return Intl.message('Delete', name: 'Delete', desc: '', args: []);
+  }
+
+  /// `Your match library could not be loaded.`
+  String get MatchLibraryLoadError {
+    return Intl.message(
+      'Your match library could not be loaded.',
+      name: 'MatchLibraryLoadError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This game could not be saved to your match library.`
+  String get MatchLibrarySaveError {
+    return Intl.message(
+      'This game could not be saved to your match library.',
+      name: 'MatchLibrarySaveError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try again`
+  String get TryAgain {
+    return Intl.message('Try again', name: 'TryAgain', desc: '', args: []);
+  }
+
+  /// `Black {black} · White {white}`
+  String SavedMatchScore(Object black, Object white) {
+    return Intl.message(
+      'Black $black · White $white',
+      name: 'SavedMatchScore',
+      desc: '',
+      args: [black, white],
+    );
+  }
+
+  /// `This match could not be deleted. Please try again.`
+  String get MatchLibraryDeleteError {
+    return Intl.message(
+      'This match could not be deleted. Please try again.',
+      name: 'MatchLibraryDeleteError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Strategy coach`
+  String get CoachTitle {
+    return Intl.message(
+      'Strategy coach',
+      name: 'CoachTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Looking for a useful position to explore…`
+  String get CoachAnalyzing {
+    return Intl.message(
+      'Looking for a useful position to explore…',
+      name: 'CoachAnalyzing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Coaching is unavailable right now. You can still replay every move.`
+  String get CoachUnavailable {
+    return Intl.message(
+      'Coaching is unavailable right now. You can still replay every move.',
+      name: 'CoachUnavailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `There are no playable positions to explore in this game.`
+  String get CoachNoPosition {
+    return Intl.message(
+      'There are no playable positions to explore in this game.',
+      name: 'CoachNoPosition',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A position worth revisiting`
+  String get CoachTurnTitle {
+    return Intl.message(
+      'A position worth revisiting',
+      name: 'CoachTurnTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Explore this position`
+  String get CoachPositionTitle {
+    return Intl.message(
+      'Explore this position',
+      name: 'CoachPositionTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Suggested move: {coordinate}`
+  String CoachSuggested(Object coordinate) {
+    return Intl.message(
+      'Suggested move: $coordinate',
+      name: 'CoachSuggested',
+      desc: '',
+      args: [coordinate],
+    );
+  }
+
+  /// `Played {actual} · Explore {suggested}`
+  String CoachComparison(Object actual, Object suggested) {
+    return Intl.message(
+      'Played $actual · Explore $suggested',
+      name: 'CoachComparison',
+      desc: '',
+      args: [actual, suggested],
+    );
+  }
+
+  /// `You played {coordinate}. Revisit the ideas behind it.`
+  String CoachMatched(Object coordinate) {
+    return Intl.message(
+      'You played $coordinate. Revisit the ideas behind it.',
+      name: 'CoachMatched',
+      desc: '',
+      args: [coordinate],
+    );
+  }
+
+  /// `A short search suggests ideas to explore; it does not guarantee the strongest move.`
+  String get CoachScope {
+    return Intl.message(
+      'A short search suggests ideas to explore; it does not guarantee the strongest move.',
+      name: 'CoachScope',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This move claims a corner. A corner disc cannot be flipped.`
+  String get CoachCorner {
+    return Intl.message(
+      'This move claims a corner. A corner disc cannot be flipped.',
+      name: 'CoachCorner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your opponent has no legal reply, so you play again.`
+  String get CoachPass {
+    return Intl.message(
+      'Your opponent has no legal reply, so you play again.',
+      name: 'CoachPass',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Legal replies for your opponent: {count}.`
+  String CoachReplies(Object count) {
+    return Intl.message(
+      'Legal replies for your opponent: $count.',
+      name: 'CoachReplies',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Another legal move gives your opponent an immediate corner capture. This move avoids that threat.`
+  String get CoachAvoidCorner {
+    return Intl.message(
+      'Another legal move gives your opponent an immediate corner capture. This move avoids that threat.',
+      name: 'CoachAvoidCorner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your opponent can capture a corner on the next turn.`
+  String get CoachAllowsCorner {
+    return Intl.message(
+      'Your opponent can capture a corner on the next turn.',
+      name: 'CoachAllowsCorner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Neither side can move after this play. The game ends.`
+  String get CoachEndsGame {
+    return Intl.message(
+      'Neither side can move after this play. The game ends.',
+      name: 'CoachEndsGame',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Go to this position`
+  String get CoachJump {
+    return Intl.message(
+      'Go to this position',
+      name: 'CoachJump',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try this position`
+  String get CoachPractice {
+    return Intl.message(
+      'Try this position',
+      name: 'CoachPractice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share result`
+  String get CoachShareResult {
+    return Intl.message(
+      'Share result',
+      name: 'CoachShareResult',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try this position`
+  String get PracticeTitle {
+    return Intl.message(
+      'Try this position',
+      name: 'PracticeTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Play any marked square and inspect what changes.`
+  String get PracticeInstructions {
+    return Intl.message(
+      'Play any marked square and inspect what changes.',
+      name: 'PracticeInstructions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Practice is separate from your saved game and statistics.`
+  String get PracticeSafe {
+    return Intl.message(
+      'Practice is separate from your saved game and statistics.',
+      name: 'PracticeSafe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You played {coordinate}`
+  String PracticePlayed(Object coordinate) {
+    return Intl.message(
+      'You played $coordinate',
+      name: 'PracticePlayed',
+      desc: '',
+      args: [coordinate],
+    );
+  }
+
+  /// `Discs flipped: {count}`
+  String PracticeFlipped(Object count) {
+    return Intl.message(
+      'Discs flipped: $count',
+      name: 'PracticeFlipped',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Try another move`
+  String get PracticeReset {
+    return Intl.message(
+      'Try another move',
+      name: 'PracticeReset',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This side has no legal move in this position.`
+  String get PracticeNoMoves {
+    return Intl.message(
+      'This side has no legal move in this position.',
+      name: 'PracticeNoMoves',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Strategy practice board`
+  String get PracticeBoardLabel {
+    return Intl.message(
+      'Strategy practice board',
+      name: 'PracticeBoardLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ideas for {player}`
+  String CoachForPlayer(Object player) {
+    return Intl.message(
+      'Ideas for $player',
+      name: 'CoachForPlayer',
+      desc: '',
+      args: [player],
+    );
+  }
+
+  /// `Practice puzzles`
+  String get Puzzles {
+    return Intl.message(
+      'Practice puzzles',
+      name: 'Puzzles',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Nine carefully chosen positions. Build one skill at a time.`
+  String get PuzzlesSubtitle {
+    return Intl.message(
+      'Nine carefully chosen positions. Build one skill at a time.',
+      name: 'PuzzlesSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{completed} of {total} solved`
+  String PuzzleProgress(int completed, int total) {
+    return Intl.message(
+      '$completed of $total solved',
+      name: 'PuzzleProgress',
+      desc: '',
+      args: [completed, total],
+    );
+  }
+
+  /// `Search puzzles`
+  String get PuzzleSearch {
+    return Intl.message(
+      'Search puzzles',
+      name: 'PuzzleSearch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No matching puzzles. Try a skill or puzzle number.`
+  String get PuzzleNoResults {
+    return Intl.message(
+      'No matching puzzles. Try a skill or puzzle number.',
+      name: 'PuzzleNoResults',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Claim a corner`
+  String get PuzzleCornerSkill {
+    return Intl.message(
+      'Claim a corner',
+      name: 'PuzzleCornerSkill',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Earn another turn`
+  String get PuzzlePassSkill {
+    return Intl.message(
+      'Earn another turn',
+      name: 'PuzzlePassSkill',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finish with a win`
+  String get PuzzleEndgameSkill {
+    return Intl.message(
+      'Finish with a win',
+      name: 'PuzzleEndgameSkill',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Spot a safe corner and close the capture line.`
+  String get PuzzleCornerDescription {
+    return Intl.message(
+      'Spot a safe corner and close the capture line.',
+      name: 'PuzzleCornerDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Leave your opponent without a legal move.`
+  String get PuzzlePassDescription {
+    return Intl.message(
+      'Leave your opponent without a legal move.',
+      name: 'PuzzlePassDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Play the final moves against the best replies.`
+  String get PuzzleEndgameDescription {
+    return Intl.message(
+      'Play the final moves against the best replies.',
+      name: 'PuzzleEndgameDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Puzzle {number}`
+  String PuzzleNumber(int number) {
+    return Intl.message(
+      'Puzzle $number',
+      name: 'PuzzleNumber',
+      desc: '',
+      args: [number],
+    );
+  }
+
+  /// `Solved`
+  String get PuzzleCompleted {
+    return Intl.message('Solved', name: 'PuzzleCompleted', desc: '', args: []);
+  }
+
+  /// `Play as {color}. Capture corner {coordinate} in one move.`
+  String PuzzleCornerObjective(String color, String coordinate) {
+    return Intl.message(
+      'Play as $color. Capture corner $coordinate in one move.',
+      name: 'PuzzleCornerObjective',
+      desc: '',
+      args: [color, coordinate],
+    );
+  }
+
+  /// `Play as {color}. Force a pass so you move again, without ending the game.`
+  String PuzzlePassObjective(String color) {
+    return Intl.message(
+      'Play as $color. Force a pass so you move again, without ending the game.',
+      name: 'PuzzlePassObjective',
+      desc: '',
+      args: [color],
+    );
+  }
+
+  /// `Play as {color}. Win this endgame against the best replies.`
+  String PuzzleEndgameObjective(String color) {
+    return Intl.message(
+      'Play as $color. Win this endgame against the best replies.',
+      name: 'PuzzleEndgameObjective',
+      desc: '',
+      args: [color],
+    );
+  }
+
+  /// `Practice puzzle board`
+  String get PuzzleBoardLabel {
+    return Intl.message(
+      'Practice puzzle board',
+      name: 'PuzzleBoardLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hint {number} of 3`
+  String PuzzleHint(int number) {
+    return Intl.message(
+      'Hint $number of 3',
+      name: 'PuzzleHint',
+      desc: '',
+      args: [number],
+    );
+  }
+
+  /// `Reveal a hint`
+  String get PuzzleRevealHint {
+    return Intl.message(
+      'Reveal a hint',
+      name: 'PuzzleRevealHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try {coordinate}.`
+  String PuzzleHintCoordinate(String coordinate) {
+    return Intl.message(
+      'Try $coordinate.',
+      name: 'PuzzleHintCoordinate',
+      desc: '',
+      args: [coordinate],
+    );
+  }
+
+  /// `Corner discs cannot be flipped. Look for a line you can close.`
+  String get PuzzleCornerHintOne {
+    return Intl.message(
+      'Corner discs cannot be flipped. Look for a line you can close.',
+      name: 'PuzzleCornerHintOne',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Trace inward from the target corner until your own disc brackets the opponent.`
+  String get PuzzleCornerHintTwo {
+    return Intl.message(
+      'Trace inward from the target corner until your own disc brackets the opponent.',
+      name: 'PuzzleCornerHintTwo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `A pass happens only when the opponent has no legal move.`
+  String get PuzzlePassHintOne {
+    return Intl.message(
+      'A pass happens only when the opponent has no legal move.',
+      name: 'PuzzlePassHintOne',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Compare the opponent’s available moves after each candidate.`
+  String get PuzzlePassHintTwo {
+    return Intl.message(
+      'Compare the opponent’s available moves after each candidate.',
+      name: 'PuzzlePassHintTwo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The final disc count decides the winner. Count through to the end.`
+  String get PuzzleEndgameHintOne {
+    return Intl.message(
+      'The final disc count decides the winner. Count through to the end.',
+      name: 'PuzzleEndgameHintOne',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Compare the opponent’s replies. A smaller capture may keep the last move.`
+  String get PuzzleEndgameHintTwo {
+    return Intl.message(
+      'Compare the opponent’s replies. A smaller capture may keep the last move.',
+      name: 'PuzzleEndgameHintTwo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Corner secured. A corner disc stays yours for the rest of the game.`
+  String get PuzzleCornerSuccess {
+    return Intl.message(
+      'Corner secured. A corner disc stays yours for the rest of the game.',
+      name: 'PuzzleCornerSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You earned another turn. Your opponent has no legal move, and the game continues.`
+  String get PuzzlePassSuccess {
+    return Intl.message(
+      'You earned another turn. Your opponent has no legal move, and the game continues.',
+      name: 'PuzzlePassSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Endgame won. Your choices held up against the best replies.`
+  String get PuzzleEndgameSuccess {
+    return Intl.message(
+      'Endgame won. Your choices held up against the best replies.',
+      name: 'PuzzleEndgameSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `That move does not solve this position. Restart and try another line.`
+  String get PuzzleTryAgain {
+    return Intl.message(
+      'That move does not solve this position. Restart and try another line.',
+      name: 'PuzzleTryAgain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This line cannot force a win against best play. Restart and compare another move.`
+  String get PuzzleEndgameTryAgain {
+    return Intl.message(
+      'This line cannot force a win against best play. Restart and compare another move.',
+      name: 'PuzzleEndgameTryAgain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restart puzzle`
+  String get PuzzleRestart {
+    return Intl.message(
+      'Restart puzzle',
+      name: 'PuzzleRestart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next puzzle`
+  String get PuzzleNext {
+    return Intl.message('Next puzzle', name: 'PuzzleNext', desc: '', args: []);
+  }
+
+  /// `Back to puzzles`
+  String get PuzzleBackToArchive {
+    return Intl.message(
+      'Back to puzzles',
+      name: 'PuzzleBackToArchive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Considering the best reply…`
+  String get PuzzleOpponentThinking {
+    return Intl.message(
+      'Considering the best reply…',
+      name: 'PuzzleOpponentThinking',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your move`
+  String get PuzzleYourMove {
+    return Intl.message(
+      'Your move',
+      name: 'PuzzleYourMove',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All nine puzzles solved. Revisit any position to sharpen your play.`
+  String get PuzzleAllComplete {
+    return Intl.message(
+      'All nine puzzles solved. Revisit any position to sharpen your play.',
+      name: 'PuzzleAllComplete',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Progress could not be saved. Keep this screen open and try again.`
+  String get PuzzleCompletionSaveFailed {
+    return Intl.message(
+      'Progress could not be saved. Keep this screen open and try again.',
+      name: 'PuzzleCompletionSaveFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save progress`
+  String get PuzzleSaveProgress {
+    return Intl.message(
+      'Save progress',
+      name: 'PuzzleSaveProgress',
       desc: '',
       args: [],
     );

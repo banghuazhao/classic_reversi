@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'achievements_service.dart';
+import 'achievement_progress.dart';
 import 'app_chrome.dart';
 import 'generated/l10n.dart';
 import 'theme_controller.dart';
@@ -50,6 +51,11 @@ class _StatsScreenState extends State<StatsScreen> {
                     padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
                     children: [
                       _SummaryCard(stats: stats),
+                      if (AchievementProgress.nextMilestone(stats)
+                          case final goal?) ...[
+                        const SizedBox(height: 16),
+                        _NextMilestoneCard(progress: goal),
+                      ],
                       const SizedBox(height: 24),
                       LayoutBuilder(
                         builder: (context, constraints) {
@@ -170,7 +176,7 @@ class _StatsScreenState extends State<StatsScreen> {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 12),
                             child: Text(
-                              '${stats.unlockedAchievements.length}/${AchievementId.values.length}',
+                              '${AchievementProgress.forStats(stats).where((goal) => goal.completed).length}/${AchievementId.values.length}',
                               style: const TextStyle(
                                 fontFamily: 'Roboto',
                                 fontSize: 14,
@@ -181,13 +187,8 @@ class _StatsScreenState extends State<StatsScreen> {
                           ),
                         ],
                       ),
-                      ...AchievementId.values.map(
-                        (id) => _AchievementRow(
-                          title: id.title(context),
-                          unlocked: stats.unlockedAchievements.contains(
-                            id.storageKey,
-                          ),
-                        ),
+                      ...AchievementProgress.forStats(stats).map(
+                        (goal) => _AchievementRow(progress: goal),
                       ),
                     ],
                   ),
@@ -399,49 +400,124 @@ class _WideMetricCard extends StatelessWidget {
   }
 }
 
-class _AchievementRow extends StatelessWidget {
-  const _AchievementRow({required this.title, required this.unlocked});
+String _progressLabel(BuildContext context, AchievementProgress progress) {
+  final s = S.of(context);
+  return switch (progress.metric) {
+    AchievementMetric.games =>
+      s.AchievementGamesProgress(progress.current, progress.target),
+    AchievementMetric.streak =>
+      s.AchievementStreakProgress(progress.current, progress.target),
+    AchievementMetric.wins ||
+    AchievementMetric.hardWins ||
+    AchievementMetric.perfectWins ||
+    AchievementMetric.dailyWins =>
+      s.AchievementWinsProgress(progress.current, progress.target),
+  };
+}
 
-  final String title;
-  final bool unlocked;
+class _NextMilestoneCard extends StatelessWidget {
+  const _NextMilestoneCard({required this.progress});
+  final AchievementProgress progress;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppInfoCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(S.of(context).NextMilestone,
+              style: TextStyle(
+                  color: ThemeController.instance.theme.lastMoveBorder,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          Text(progress.id.title(context),
+              style: AppChrome.titleStyle.copyWith(fontSize: 18)),
+          const SizedBox(height: 12),
+          _MilestoneMeter(progress: progress),
+        ],
+      ),
+    );
+  }
+}
+
+class _MilestoneMeter extends StatelessWidget {
+  const _MilestoneMeter({required this.progress});
+  final AchievementProgress progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = _progressLabel(context, progress);
+    return Semantics(
+      label: progress.id.title(context),
+      value: label,
+      child: ExcludeSemantics(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(label,
+                style: const TextStyle(
+                    color: AppChrome.secondaryText, fontSize: 14, height: 1.4)),
+            const SizedBox(height: 8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                  value: progress.fraction,
+                  minHeight: 6,
+                  backgroundColor: AppChrome.borderColor,
+                  color: ThemeController.instance.theme.lastMoveBorder),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AchievementRow extends StatelessWidget {
+  const _AchievementRow({required this.progress});
+  final AchievementProgress progress;
 
   @override
   Widget build(BuildContext context) {
     final palette = ThemeController.instance.theme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: unlocked ? AppChrome.cardColor : AppChrome.subtleCardColor,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppChrome.borderColor),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          child: Row(
-            children: [
-              Icon(
-                unlocked ? CupertinoIcons.star_fill : CupertinoIcons.lock_fill,
-                color:
-                    unlocked ? palette.lastMoveBorder : AppChrome.secondaryText,
-                size: 20,
+      child: AppInfoCard(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+                progress.completed
+                    ? CupertinoIcons.star_fill
+                    : CupertinoIcons.lock_fill,
+                color: progress.completed
+                    ? palette.lastMoveBorder
+                    : AppChrome.secondaryText,
+                size: 22),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(progress.id.title(context),
+                      style: const TextStyle(
+                          fontSize: 16,
+                          height: 1.4,
+                          fontWeight: FontWeight.w600,
+                          color: AppChrome.primaryText)),
+                  const SizedBox(height: 8),
+                  if (progress.completed)
+                    Text(S.of(context).MilestoneCompleted,
+                        style: const TextStyle(
+                            fontSize: 14, color: AppChrome.secondaryText))
+                  else
+                    _MilestoneMeter(progress: progress),
+                ],
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: unlocked
-                        ? AppChrome.primaryText
-                        : AppChrome.secondaryText,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

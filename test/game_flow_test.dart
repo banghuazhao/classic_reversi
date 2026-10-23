@@ -14,6 +14,7 @@ import 'package:classic_reversi/game_session.dart';
 import 'package:classic_reversi/game_settings.dart';
 import 'package:classic_reversi/generated/l10n.dart';
 import 'package:classic_reversi/main.dart';
+import 'package:classic_reversi/match_library.dart';
 import 'package:classic_reversi/settings_screen.dart';
 
 Widget localized(Widget home) => MaterialApp(
@@ -290,7 +291,7 @@ void main() {
   });
 
   testWidgets(
-      'completed game clears its save and opens replay above the result',
+      'completed game archives its replay, clears its save, and survives rematch',
       (tester) async {
     final history = fullGame();
     final before = history[history.length - 2];
@@ -309,6 +310,13 @@ void main() {
     await tester.pump(const Duration(milliseconds: 250));
     await tester.pumpAndSettle();
     expect(await loadSession(tester), isNull);
+    final archived = await flushStorage(tester, MatchLibraryService.load());
+    expect(archived, hasLength(1));
+    expect(archived.single.history, hasLength(2));
+    expect(archived.single.history.first.board.rows, before.board.rows);
+    expect(archived.single.finalModel.board.rows, history.last.board.rows);
+    expect(archived.single.settings.initialBoard!.rows, before.board.rows);
+    expect(archived.single.settings.twoPlayerMode, isTrue);
     await tester.tap(find.text('Review game'));
     await tester.pumpAndSettle();
     expect(find.text('Final position'), findsOneWidget);
@@ -319,6 +327,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Rematch'), findsOneWidget);
     expect(await loadSession(tester), isNull);
+    await tester.tap(find.text('Rematch'));
+    await tester.pumpAndSettle();
+    expect((await loadSession(tester))!.timeline, hasLength(1));
+    final afterRematch = await flushStorage(tester, MatchLibraryService.load());
+    expect(afterRematch, hasLength(1));
+    expect(afterRematch.single.id, archived.single.id);
+    expect(afterRematch.single.history, hasLength(2));
+    expect(afterRematch.single.finalModel.board.rows, history.last.board.rows);
   });
 
   testWidgets(

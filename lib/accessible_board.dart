@@ -5,6 +5,7 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 
 import 'feedback_service.dart';
+import 'app_chrome.dart';
 import 'flip_piece.dart';
 import 'game_board.dart';
 import 'game_materials.dart';
@@ -22,6 +23,7 @@ class AccessibleBoard extends StatefulWidget {
     this.onMove,
     this.lastMove,
     this.maxExtent = 460,
+    this.showCoordinates = false,
   });
 
   final GameBoard board;
@@ -30,6 +32,7 @@ class AccessibleBoard extends StatefulWidget {
   final void Function(int x, int y)? onMove;
   final Position? lastMove;
   final double maxExtent;
+  final bool showCoordinates;
 
   @override
   State<AccessibleBoard> createState() => _AccessibleBoardState();
@@ -127,7 +130,8 @@ class _AccessibleBoardState extends State<AccessibleBoard> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final extent = math.min(constraints.maxWidth, widget.maxExtent);
-        final cellSize = (extent - 20) / widget.board.size;
+        final coordinateGutter = widget.showCoordinates ? 24.0 : 0.0;
+        final cellSize = (extent - 20 - coordinateGutter) / widget.board.size;
         return Align(
           alignment: Alignment.topCenter,
           widthFactor: 1,
@@ -148,97 +152,162 @@ class _AccessibleBoardState extends State<AccessibleBoard> {
               includeSemantics: false,
               onKeyEvent: _onKey,
               onFocusChange: (value) => setState(() => _hasFocus = value),
-              child: MaterialBoard(
-                boardSize: widget.board.size,
-                cellSize: cellSize,
-                theme: palette,
-                child: Column(
-                  children: List.generate(widget.board.size, (y) {
-                    return Row(
-                      children: List.generate(widget.board.size, (x) {
-                        final piece = widget.board.getPieceAtLocation(x, y);
-                        final legal = _isLegal(x, y);
-                        final isLastMove =
-                            widget.lastMove?.x == x && widget.lastMove?.y == y;
-                        final selected =
-                            _hasFocus && _selected.x == x && _selected.y == y;
-                        return Semantics(
-                          label: _cellLabel(s, x, y),
-                          button: legal,
-                          selected: selected,
-                          sortKey: OrdinalSortKey(
-                            (y * widget.board.size + x).toDouble(),
-                          ),
-                          onTap: legal ? () => _activate(x, y) : null,
-                          child: ExcludeSemantics(
-                            child: GestureDetector(
-                              key: ValueKey('accessible-cell-$x-$y'),
-                              behavior: HitTestBehavior.opaque,
-                              onTap: legal
-                                  ? () {
-                                      _selected = Position(x, y);
-                                      _activate(x, y);
-                                    }
-                                  : null,
-                              child: SizedBox.square(
-                                dimension: cellSize,
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    FlipPiece(
-                                      type: piece,
-                                      size: cellSize,
-                                      isLastMove: isLastMove,
-                                      theme: palette,
-                                      reduceMotion: reduceMotion,
-                                      effectScale:
-                                          FeedbackService.instance.effectScale,
-                                    ),
-                                    if (legal)
-                                      Center(
-                                        child: Container(
-                                          width: cellSize * 0.28,
-                                          height: cellSize * 0.28,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: palette.lastMoveBorder,
-                                            border: Border.all(
-                                              color: Colors.white,
-                                              width: 1.5,
+              child: _BoardCoordinates(
+                enabled: widget.showCoordinates,
+                board: MaterialBoard(
+                  boardSize: widget.board.size,
+                  cellSize: cellSize,
+                  theme: palette,
+                  child: Column(
+                    children: List.generate(widget.board.size, (y) {
+                      return Row(
+                        children: List.generate(widget.board.size, (x) {
+                          final piece = widget.board.getPieceAtLocation(x, y);
+                          final legal = _isLegal(x, y);
+                          final isLastMove = widget.lastMove?.x == x &&
+                              widget.lastMove?.y == y;
+                          final selected =
+                              _hasFocus && _selected.x == x && _selected.y == y;
+                          return Semantics(
+                            label: _cellLabel(s, x, y),
+                            button: legal,
+                            selected: selected,
+                            sortKey: OrdinalSortKey(
+                              (y * widget.board.size + x).toDouble(),
+                            ),
+                            onTap: legal ? () => _activate(x, y) : null,
+                            child: ExcludeSemantics(
+                              child: GestureDetector(
+                                key: ValueKey('accessible-cell-$x-$y'),
+                                behavior: HitTestBehavior.opaque,
+                                onTap: legal
+                                    ? () {
+                                        _selected = Position(x, y);
+                                        _activate(x, y);
+                                      }
+                                    : null,
+                                child: SizedBox.square(
+                                  dimension: cellSize,
+                                  child: Stack(
+                                    fit: StackFit.expand,
+                                    children: [
+                                      FlipPiece(
+                                        type: piece,
+                                        size: cellSize,
+                                        isLastMove: isLastMove,
+                                        theme: palette,
+                                        reduceMotion: reduceMotion,
+                                        effectScale: FeedbackService
+                                            .instance.effectScale,
+                                      ),
+                                      if (legal)
+                                        Center(
+                                          child: Container(
+                                            width: cellSize * 0.28,
+                                            height: cellSize * 0.28,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: palette.lastMoveBorder,
+                                              border: Border.all(
+                                                color: Colors.white,
+                                                width: 1.5,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    if (selected)
-                                      Positioned.fill(
-                                        child: Container(
-                                          margin: const EdgeInsets.all(2),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                              4,
-                                            ),
-                                            border: Border.all(
-                                              color: Colors.white,
-                                              width: 3,
+                                      if (selected)
+                                        Positioned.fill(
+                                          child: Container(
+                                            margin: const EdgeInsets.all(2),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                4,
+                                              ),
+                                              border: Border.all(
+                                                color: Colors.white,
+                                                width: 3,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      }),
-                    );
-                  }),
+                          );
+                        }),
+                      );
+                    }),
+                  ),
                 ),
               ),
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class _BoardCoordinates extends StatelessWidget {
+  const _BoardCoordinates({required this.enabled, required this.board});
+
+  final bool enabled;
+  final MaterialBoard board;
+
+  Widget _label(String value, Key key) => ExcludeSemantics(
+        child: Text(value,
+            key: key,
+            textScaler: TextScaler.noScaling,
+            style:
+                const TextStyle(fontSize: 12, color: AppChrome.secondaryText)),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    if (!enabled) return board;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 24 + board.frameWidth),
+          child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(board.boardSize, (x) {
+                final column = String.fromCharCode(65 + x);
+                return SizedBox(
+                    width: board.cellSize,
+                    height: 20,
+                    child: Center(
+                        child:
+                            _label(column, ValueKey('board-column-$column'))));
+              })),
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: board.frameWidth),
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(
+                    board.boardSize,
+                    (y) => SizedBox(
+                        width: 24,
+                        height: board.cellSize,
+                        child: Center(
+                            child: _label(
+                                '${y + 1}', ValueKey('board-row-${y + 1}')))),
+                  )),
+            ),
+            board,
+          ],
+        ),
+      ],
     );
   }
 }

@@ -95,14 +95,25 @@ class AppPageHeader extends StatelessWidget {
             icon: const Icon(CupertinoIcons.back, color: AppChrome.primaryText),
           ),
           Expanded(
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                color: AppChrome.primaryText,
+            child: Semantics(
+              header: true,
+              label: title,
+              child: ExcludeSemantics(
+                child: Tooltip(
+                  message: title,
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: AppChrome.primaryText,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),

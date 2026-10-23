@@ -107,7 +107,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                   style: const TextStyle(
                     fontFamily: 'Roboto',
                     fontSize: 22,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     color: AppChrome.primaryText,
                   ),
                 ),
@@ -122,6 +122,29 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                     color: AppChrome.secondaryText,
                   ),
                 ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          AppInfoCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _Benefit(
+                    icon: CupertinoIcons.shield_lefthalf_fill,
+                    text: s.PurchaseBenefitAds),
+                const SizedBox(height: 16),
+                _Benefit(
+                    icon: CupertinoIcons.arrow_uturn_left,
+                    text: s.PurchaseBenefitUndo),
+                const SizedBox(height: 16),
+                _Benefit(
+                    icon: CupertinoIcons.lightbulb,
+                    text: s.PurchaseBenefitHints),
+                const SizedBox(height: 16),
+                _Benefit(
+                    icon: CupertinoIcons.checkmark_seal,
+                    text: s.PurchaseBenefitOnce),
               ],
             ),
           ),
@@ -174,6 +197,25 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           ],
         ],
       ),
+    );
+  }
+}
+
+class _Benefit extends StatelessWidget {
+  const _Benefit({required this.icon, required this.text});
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon,
+            size: 22, color: ThemeController.instance.theme.lastMoveBorder),
+        const SizedBox(width: 12),
+        Expanded(child: Text(text, style: AppChrome.bodyStyle)),
+      ],
     );
   }
 }

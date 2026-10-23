@@ -19,11 +19,15 @@
 - **Four difficulty levels** — Super Easy uses a smaller 6×6 board; Easy, Medium, and Hard play on the classic 8×8 board. New players start on Easy.
 - **Save and continue** — unfinished games, computer turns, and undo history are saved after each move and restored across launches.
 - **Guided practice** — learn captures, turns, and corner strategy by playing short interactive lessons.
-- **Game review** — inspect the final board and replay every move after a match.
+- **Match library** — keep the latest 100 completed games with dates, results, board previews, and move-by-move replay.
+- **Strategy coach** — explore suggested moves, revisit a possible turning point, and practice a position without affecting your saved game.
+- **Curated puzzles** — build corner, forced-pass, and endgame skills through nine exercises with progressive hints and saved progress.
 - **Choose who goes first** — play as Black, let the computer open, or leave it to chance.
 - **Local 2-player mode** — pass-and-play against a friend on the same device.
 - **Undo and legal move hints** — available directly on easier levels, with rewarded options on harder levels and an ad-free purchase option on supported platforms.
-- **Daily challenges and achievements** — play a daily position and track wins, streaks, and milestones.
+- **Daily challenges and achievements** — play a daily position and see progress toward wins, streaks, and your next milestone.
+- **Shareable result cards** — preview and share a PNG of the final board, score, mode, and date.
+- **Clear ad-free benefits** — review the one-time upgrade's ad removal, Hard undo, and legal-move hint benefits before purchasing.
 - **Accessible play** — descriptive board cells, keyboard navigation, turn announcements, larger text, reduced motion, and three board themes.
 - Responsive layouts for phones and tablets in portrait and landscape, with clear turn/pass messages and restart protection.
 

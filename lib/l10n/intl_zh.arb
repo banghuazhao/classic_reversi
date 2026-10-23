@@ -242,5 +242,224 @@
     }
   },
   "UndoWithAd": "悔棋 · 观看广告",
-  "HintWithAd": "合法落子点 · 观看广告"
+  "HintWithAd": "合法落子点 · 观看广告",
+  "NextMilestone": "下个目标",
+  "MilestoneCompleted": "已完成",
+  "AchievementGamesProgress": "对局：{current}/{target}",
+  "@AchievementGamesProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementStreakProgress": "连胜：{current}/{target}",
+  "@AchievementStreakProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementWinsProgress": "获胜：{current}/{target}",
+  "@AchievementWinsProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "ResultCardTitle": "分享战绩",
+  "ResultCardPreparing": "正在制作战绩卡…",
+  "ResultCardError": "无法制作战绩卡。",
+  "ResultCardShareFailed": "暂时无法分享，请重试。",
+  "ResultCardPreviewLabel": "{result}。{score}。{mode}。{date}。",
+  "@ResultCardPreviewLabel": {
+    "placeholders": {
+      "result": {},
+      "score": {},
+      "mode": {},
+      "date": {}
+    }
+  },
+  "PurchaseBenefitAds": "移除横幅广告和开屏广告。",
+  "PurchaseBenefitUndo": "困难难度每回合可悔棋一次，无需观看广告。",
+  "PurchaseBenefitHints": "所有电脑对战难度均可显示合法落子提示，无需观看广告。",
+  "PurchaseBenefitOnce": "一次购买，无需订阅。可通过你的 App Store 账户恢复。",
+  "PurchaseBenefits": "一次购买即可移除横幅广告和开屏广告，并解锁困难难度悔棋与合法落子提示，无需观看激励广告。使用同一 App Store 账户的设备均可恢复购买。",
+  "MatchLibrary": "对局收藏",
+  "MatchLibrarySubtitle": "保留最近完成的100局，随时重温每一步。",
+  "MatchLibraryEmptyTitle": "你的棋局故事，从这里开始",
+  "MatchLibraryEmptyBody": "完成一局后，对局就会保存在这里。回顾每一步，发现下次可以尝试的新思路。",
+  "MatchLibraryOpen": "重温对局",
+  "DeleteSavedMatch": "删除对局",
+  "DeleteSavedMatchTitle": "删除这局对局？",
+  "DeleteSavedMatchMessage": "这局对局的复盘记录将从收藏中移除，统计数据保持不变。",
+  "Delete": "删除",
+  "MatchLibraryLoadError": "无法加载对局收藏。",
+  "MatchLibrarySaveError": "无法将这局对局保存到收藏。",
+  "TryAgain": "重试",
+  "SavedMatchScore": "黑棋 {black} · 白棋 {white}",
+  "@SavedMatchScore": {
+    "placeholders": {
+      "black": {},
+      "white": {}
+    }
+  },
+  "MatchLibraryDeleteError": "无法删除这局对局，请重试。",
+  "CoachTitle": "策略教练",
+  "CoachAnalyzing": "正在寻找值得研究的局面…",
+  "CoachUnavailable": "暂时无法使用教练功能，你仍然可以逐步复盘。",
+  "CoachNoPosition": "这局对局中没有可供尝试落子的局面。",
+  "CoachTurnTitle": "值得回顾的局面",
+  "CoachPositionTitle": "研究这个局面",
+  "CoachSuggested": "建议落子：{coordinate}",
+  "@CoachSuggested": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachComparison": "实际落子 {actual} · 尝试 {suggested}",
+  "@CoachComparison": {
+    "placeholders": {
+      "actual": {},
+      "suggested": {}
+    }
+  },
+  "CoachMatched": "你下在了{coordinate}，不妨回顾这一步的思路。",
+  "@CoachMatched": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachScope": "简短搜索会提供值得尝试的思路，但不保证是最强的一步。",
+  "CoachCorner": "这一步可以占据角位，角位上的棋子不会被翻转。",
+  "CoachPass": "对手没有合法应手，因此你可以再走一步。",
+  "CoachReplies": "对手的合法应手数量：{count}。",
+  "@CoachReplies": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "CoachAvoidCorner": "另一个合法落子会让对手立即占角，这一步避开了该威胁。",
+  "CoachAllowsCorner": "对手可以在下一回合占据角位。",
+  "CoachEndsGame": "走完这一步后，双方都无法落子，对局结束。",
+  "CoachJump": "前往这个局面",
+  "CoachPractice": "试下这个局面",
+  "CoachShareResult": "分享战绩",
+  "PracticeTitle": "试下这个局面",
+  "PracticeInstructions": "在任意标记的格子落子，观察局面如何变化。",
+  "PracticeSafe": "练习不会影响已保存的对局和统计数据。",
+  "PracticePlayed": "你下在了{coordinate}",
+  "@PracticePlayed": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "PracticeFlipped": "翻转棋子：{count}",
+  "@PracticeFlipped": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "PracticeReset": "尝试其他落子",
+  "PracticeNoMoves": "当前局面中，这一方没有合法落子点。",
+  "PracticeBoardLabel": "策略练习棋盘",
+  "CoachForPlayer": "{player}的落子思路",
+  "@CoachForPlayer": {
+    "placeholders": {
+      "player": {}
+    }
+  },
+  "Puzzles": "棋局练习",
+  "PuzzlesSubtitle": "九个精选局面，每次练好一项技巧。",
+  "PuzzleProgress": "已解开 {completed}/{total}",
+  "@PuzzleProgress": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleSearch": "搜索练习题",
+  "PuzzleNoResults": "没有匹配的练习题，请尝试搜索技巧或题目编号。",
+  "PuzzleCornerSkill": "占据角位",
+  "PuzzlePassSkill": "争取再走一步",
+  "PuzzleEndgameSkill": "赢下残局",
+  "PuzzleCornerDescription": "找到安全的角位，形成夹击并翻子。",
+  "PuzzlePassDescription": "让对手没有合法落子点。",
+  "PuzzleEndgameDescription": "应对最佳应手，走好最后几步。",
+  "PuzzleNumber": "第 {number} 题",
+  "@PuzzleNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleCompleted": "已解开",
+  "PuzzleCornerObjective": "执{color}，一步占据{coordinate}角位。",
+  "@PuzzleCornerObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      },
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzlePassObjective": "执{color}，在不结束对局的情况下，让对手跳过回合，自己再走一步。",
+  "@PuzzlePassObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleEndgameObjective": "执{color}，应对最佳应手并赢下这个残局。",
+  "@PuzzleEndgameObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleBoardLabel": "练习题棋盘",
+  "PuzzleHint": "提示 {number}/3",
+  "@PuzzleHint": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleRevealHint": "查看提示",
+  "PuzzleHintCoordinate": "试试{coordinate}。",
+  "@PuzzleHintCoordinate": {
+    "placeholders": {
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleCornerHintOne": "角位上的棋子不会被翻转，找一条可以形成夹击的线路。",
+  "PuzzleCornerHintTwo": "从目标角位向内寻找，直到你的棋子能夹住对手棋子。",
+  "PuzzlePassHintOne": "只有对手没有合法落子点时，才会跳过回合。",
+  "PuzzlePassHintTwo": "比较每个候选落子之后，对手还可以走哪些位置。",
+  "PuzzleEndgameHintOne": "最终棋子数量决定胜负，试着推算到最后。",
+  "PuzzleEndgameHintTwo": "比较对手的应手。少翻一些棋子，可能有助于保留最后一步。",
+  "PuzzleCornerSuccess": "成功占角！角位棋子将一直属于你，直到对局结束。",
+  "PuzzlePassSuccess": "你争取到了下一步！对手没有合法落子点，对局继续。",
+  "PuzzleEndgameSuccess": "成功赢下残局！你的选择经受住了最佳应手的考验。",
+  "PuzzleTryAgain": "这一步还未达成目标，请重新开始，尝试其他走法。",
+  "PuzzleEndgameTryAgain": "面对最佳应对，这条路线无法确保获胜。请重新开始，比较其他落子。",
+  "PuzzleRestart": "重新练习",
+  "PuzzleNext": "下一题",
+  "PuzzleBackToArchive": "返回练习列表",
+  "PuzzleOpponentThinking": "正在考虑最佳应手…",
+  "PuzzleYourMove": "轮到你落子",
+  "PuzzleAllComplete": "九题全部解开！随时重温任意局面，继续磨练棋艺。",
+  "PuzzleCompletionSaveFailed": "无法保存进度，请保持此页面打开并重试。",
+  "PuzzleSaveProgress": "保存进度"
 }

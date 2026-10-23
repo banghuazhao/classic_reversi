@@ -77,7 +77,7 @@
   "PurchaseAlreadyOwned": "You already own Remove Ads.",
   "RestoreSuccess": "Purchases restored.",
   "RestoreNothing": "No purchases to restore.",
-  "PurchaseBenefits": "A one-time purchase removes banner and app-open ads. The purchase is linked to your App Store account and can be restored on your other devices.",
+  "PurchaseBenefits": "A one-time purchase removes banner and app-open ads and unlocks Hard-mode undo and legal-move hints without rewarded ads. Restore it on devices using the same App Store account.",
   "RestorePurchaseHelp": "Already purchased? Restore it from your App Store account.",
   "PurchaseSettingsSubtitle": "See purchase benefits or restore an existing purchase",
   "Settings": "Settings",
@@ -268,5 +268,223 @@
     }
   },
   "UndoWithAd": "Undo · watch an ad",
-  "HintWithAd": "Legal moves · watch an ad"
+  "HintWithAd": "Legal moves · watch an ad",
+  "NextMilestone": "Next milestone",
+  "MilestoneCompleted": "Completed",
+  "AchievementGamesProgress": "Games: {current} of {target}",
+  "@AchievementGamesProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementStreakProgress": "Consecutive wins: {current} of {target}",
+  "@AchievementStreakProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementWinsProgress": "Wins: {current} of {target}",
+  "@AchievementWinsProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "ResultCardTitle": "Share your result",
+  "ResultCardPreparing": "Creating your result card…",
+  "ResultCardError": "Your result card could not be created.",
+  "ResultCardShareFailed": "Sharing is unavailable right now. Please try again.",
+  "ResultCardPreviewLabel": "{result}. {score}. {mode}. {date}.",
+  "@ResultCardPreviewLabel": {
+    "placeholders": {
+      "result": {},
+      "score": {},
+      "mode": {},
+      "date": {}
+    }
+  },
+  "PurchaseBenefitAds": "No banner or app-open ads.",
+  "PurchaseBenefitUndo": "Undo once per turn on Hard without watching an ad.",
+  "PurchaseBenefitHints": "Legal-move hints on every computer difficulty without watching an ad.",
+  "PurchaseBenefitOnce": "One payment. No subscription. Restore with your App Store account.",
+  "MatchLibrary": "Match library",
+  "MatchLibrarySubtitle": "Your last 100 completed games, ready to replay.",
+  "MatchLibraryEmptyTitle": "Your story starts here",
+  "MatchLibraryEmptyBody": "Finish a game and it will appear here. Revisit every move and discover what to try next.",
+  "MatchLibraryOpen": "Review match",
+  "DeleteSavedMatch": "Delete match",
+  "DeleteSavedMatchTitle": "Delete this match?",
+  "DeleteSavedMatchMessage": "This replay will be removed from your library. Your statistics will stay the same.",
+  "Delete": "Delete",
+  "MatchLibraryLoadError": "Your match library could not be loaded.",
+  "MatchLibrarySaveError": "This game could not be saved to your match library.",
+  "TryAgain": "Try again",
+  "SavedMatchScore": "Black {black} · White {white}",
+  "@SavedMatchScore": {
+    "placeholders": {
+      "black": {},
+      "white": {}
+    }
+  },
+  "MatchLibraryDeleteError": "This match could not be deleted. Please try again.",
+  "CoachTitle": "Strategy coach",
+  "CoachAnalyzing": "Looking for a useful position to explore…",
+  "CoachUnavailable": "Coaching is unavailable right now. You can still replay every move.",
+  "CoachNoPosition": "There are no playable positions to explore in this game.",
+  "CoachTurnTitle": "A position worth revisiting",
+  "CoachPositionTitle": "Explore this position",
+  "CoachSuggested": "Suggested move: {coordinate}",
+  "@CoachSuggested": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachComparison": "Played {actual} · Explore {suggested}",
+  "@CoachComparison": {
+    "placeholders": {
+      "actual": {},
+      "suggested": {}
+    }
+  },
+  "CoachMatched": "You played {coordinate}. Revisit the ideas behind it.",
+  "@CoachMatched": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachScope": "A short search suggests ideas to explore; it does not guarantee the strongest move.",
+  "CoachCorner": "This move claims a corner. A corner disc cannot be flipped.",
+  "CoachPass": "Your opponent has no legal reply, so you play again.",
+  "CoachReplies": "Legal replies for your opponent: {count}.",
+  "@CoachReplies": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "CoachAvoidCorner": "Another legal move gives your opponent an immediate corner capture. This move avoids that threat.",
+  "CoachAllowsCorner": "Your opponent can capture a corner on the next turn.",
+  "CoachEndsGame": "Neither side can move after this play. The game ends.",
+  "CoachJump": "Go to this position",
+  "CoachPractice": "Try this position",
+  "CoachShareResult": "Share result",
+  "PracticeTitle": "Try this position",
+  "PracticeInstructions": "Play any marked square and inspect what changes.",
+  "PracticeSafe": "Practice is separate from your saved game and statistics.",
+  "PracticePlayed": "You played {coordinate}",
+  "@PracticePlayed": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "PracticeFlipped": "Discs flipped: {count}",
+  "@PracticeFlipped": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "PracticeReset": "Try another move",
+  "PracticeNoMoves": "This side has no legal move in this position.",
+  "PracticeBoardLabel": "Strategy practice board",
+  "CoachForPlayer": "Ideas for {player}",
+  "@CoachForPlayer": {
+    "placeholders": {
+      "player": {}
+    }
+  },
+  "Puzzles": "Practice puzzles",
+  "PuzzlesSubtitle": "Nine carefully chosen positions. Build one skill at a time.",
+  "PuzzleProgress": "{completed} of {total} solved",
+  "@PuzzleProgress": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleSearch": "Search puzzles",
+  "PuzzleNoResults": "No matching puzzles. Try a skill or puzzle number.",
+  "PuzzleCornerSkill": "Claim a corner",
+  "PuzzlePassSkill": "Earn another turn",
+  "PuzzleEndgameSkill": "Finish with a win",
+  "PuzzleCornerDescription": "Spot a safe corner and close the capture line.",
+  "PuzzlePassDescription": "Leave your opponent without a legal move.",
+  "PuzzleEndgameDescription": "Play the final moves against the best replies.",
+  "PuzzleNumber": "Puzzle {number}",
+  "@PuzzleNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleCompleted": "Solved",
+  "PuzzleCornerObjective": "Play as {color}. Capture corner {coordinate} in one move.",
+  "@PuzzleCornerObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      },
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzlePassObjective": "Play as {color}. Force a pass so you move again, without ending the game.",
+  "@PuzzlePassObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleEndgameObjective": "Play as {color}. Win this endgame against the best replies.",
+  "@PuzzleEndgameObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleBoardLabel": "Practice puzzle board",
+  "PuzzleHint": "Hint {number} of 3",
+  "@PuzzleHint": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleRevealHint": "Reveal a hint",
+  "PuzzleHintCoordinate": "Try {coordinate}.",
+  "@PuzzleHintCoordinate": {
+    "placeholders": {
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleCornerHintOne": "Corner discs cannot be flipped. Look for a line you can close.",
+  "PuzzleCornerHintTwo": "Trace inward from the target corner until your own disc brackets the opponent.",
+  "PuzzlePassHintOne": "A pass happens only when the opponent has no legal move.",
+  "PuzzlePassHintTwo": "Compare the opponent’s available moves after each candidate.",
+  "PuzzleEndgameHintOne": "The final disc count decides the winner. Count through to the end.",
+  "PuzzleEndgameHintTwo": "Compare the opponent’s replies. A smaller capture may keep the last move.",
+  "PuzzleCornerSuccess": "Corner secured. A corner disc stays yours for the rest of the game.",
+  "PuzzlePassSuccess": "You earned another turn. Your opponent has no legal move, and the game continues.",
+  "PuzzleEndgameSuccess": "Endgame won. Your choices held up against the best replies.",
+  "PuzzleTryAgain": "That move does not solve this position. Restart and try another line.",
+  "PuzzleEndgameTryAgain": "This line cannot force a win against best play. Restart and compare another move.",
+  "PuzzleRestart": "Restart puzzle",
+  "PuzzleNext": "Next puzzle",
+  "PuzzleBackToArchive": "Back to puzzles",
+  "PuzzleOpponentThinking": "Considering the best reply…",
+  "PuzzleYourMove": "Your move",
+  "PuzzleAllComplete": "All nine puzzles solved. Revisit any position to sharpen your play.",
+  "PuzzleCompletionSaveFailed": "Progress could not be saved. Keep this screen open and try again.",
+  "PuzzleSaveProgress": "Save progress"
 }

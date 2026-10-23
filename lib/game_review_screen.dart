@@ -2,20 +2,33 @@ import 'package:flutter/material.dart';
 
 import 'accessible_board.dart';
 import 'app_chrome.dart';
+import 'feedback_service.dart';
 import 'game_board.dart';
 import 'game_model.dart';
+import 'game_settings.dart';
 import 'gameplay_activity.dart';
 import 'generated/l10n.dart';
+import 'result_card.dart';
+import 'strategy_coach.dart';
+import 'strategy_practice_screen.dart';
 import 'theme_controller.dart';
 
 /// An immutable chronology, including the opening and the completed board.
 /// Review always opens on the final position so the result is easy to inspect.
 class GameReviewScreen extends StatefulWidget {
-  GameReviewScreen({super.key, required List<GameModel> history})
-      : assert(history.isNotEmpty),
+  GameReviewScreen({
+    super.key,
+    required List<GameModel> history,
+    this.settings,
+    this.playedAt,
+    this.positionAnalyzer = StrategyCoach.analyze,
+  })  : assert(history.isNotEmpty),
         history = List.unmodifiable(history);
 
   final List<GameModel> history;
+  final GameSettings? settings;
+  final DateTime? playedAt;
+  final Future<StrategyAdvice?> Function(GameModel) positionAnalyzer;
 
   @override
   State<GameReviewScreen> createState() => _GameReviewScreenState();
@@ -23,18 +36,68 @@ class GameReviewScreen extends StatefulWidget {
 
 class _GameReviewScreenState extends State<GameReviewScreen> {
   late int _index;
+  int _adviceGeneration = 0;
+  int _historyGeneration = 0;
+  StrategyAdvice? _advice;
+  StrategyTurningPoint? _turningPoint;
+  bool _loadingAdvice = false;
+  bool _loadingHistory = true;
+  bool _adviceFailed = false;
+  bool _historyFailed = false;
 
   @override
   void initState() {
     super.initState();
     _index = widget.history.length - 1;
     GameplayActivity.begin(this);
+    _analyzeHistory();
   }
 
   @override
   void dispose() {
+    _adviceGeneration++;
+    _historyGeneration++;
     GameplayActivity.end(this);
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant GameReviewScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.history.length != widget.history.length ||
+        !identical(oldWidget.history.last.board, widget.history.last.board) ||
+        oldWidget.settings != widget.settings) {
+      _index = widget.history.length - 1;
+      _adviceGeneration++;
+      _advice = null;
+      _analyzeHistory();
+    }
+  }
+
+  void _analyzeHistory() {
+    final generation = ++_historyGeneration;
+    _turningPoint = null;
+    _loadingHistory = true;
+    _historyFailed = false;
+    final settings = widget.settings;
+    StrategyCoach.findTurningPoint(
+      widget.history,
+      player: settings != null && !settings.twoPlayerMode
+          ? settings.humanColor
+          : null,
+    ).then((point) {
+      if (!mounted || generation != _historyGeneration) return;
+      setState(() {
+        _turningPoint = point;
+        _loadingHistory = false;
+      });
+    }).catchError((Object error) {
+      if (!mounted || generation != _historyGeneration) return;
+      setState(() {
+        _historyFailed = true;
+        _loadingHistory = false;
+      });
+    });
   }
 
   Position? _moveAt(int index) {
@@ -62,8 +125,113 @@ class _GameReviewScreenState extends State<GameReviewScreen> {
     ].where((corner) => corner == piece).length;
   }
 
-  void _goTo(int index) {
-    setState(() => _index = index.clamp(0, widget.history.length - 1));
+  void _goTo(int index, {bool requestAdvice = true}) {
+    final nextIndex = index.clamp(0, widget.history.length - 1);
+    final generation = ++_adviceGeneration;
+    setState(() {
+      _index = nextIndex;
+      _advice = null;
+      _adviceFailed = false;
+      _loadingAdvice = nextIndex < widget.history.length - 1;
+    });
+    if (!_loadingAdvice || !requestAdvice) return;
+    Future<StrategyAdvice?>.sync(
+            () => widget.positionAnalyzer(widget.history[nextIndex]))
+        .then((advice) {
+      if (!mounted || generation != _adviceGeneration) return;
+      setState(() {
+        _advice = advice;
+        _loadingAdvice = false;
+      });
+    }).catchError((Object error) {
+      if (!mounted || generation != _adviceGeneration) return;
+      setState(() {
+        _adviceFailed = true;
+        _loadingAdvice = false;
+      });
+    });
+  }
+
+  Widget _coachCard(S s) {
+    final finalPosition = _index == widget.history.length - 1;
+    final point = _turningPoint;
+    final advice = finalPosition ? point?.advice : _advice;
+    final loading = finalPosition ? _loadingHistory : _loadingAdvice;
+    final failed = finalPosition ? _historyFailed : _adviceFailed;
+    final sourceIndex = finalPosition ? point?.index : _index;
+    final transition = FeedbackService.instance.reduceMotion ||
+            MediaQuery.disableAnimationsOf(context)
+        ? Duration.zero
+        : const Duration(milliseconds: 200);
+    return AppInfoCard(
+      key: const ValueKey('coach-card'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(s.CoachTitle, style: AppChrome.titleStyle),
+          const SizedBox(height: 12),
+          if (loading)
+            Text(s.CoachAnalyzing, style: AppChrome.bodyStyle)
+          else if (failed)
+            Text(s.CoachUnavailable, style: AppChrome.bodyStyle)
+          else if (advice == null || sourceIndex == null)
+            Text(s.CoachNoPosition, style: AppChrome.bodyStyle)
+          else ...[
+            Text(finalPosition ? s.CoachTurnTitle : s.CoachPositionTitle,
+                style:
+                    AppChrome.bodyStyle.copyWith(fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
+            Text(
+                s.CoachForPlayer(
+                    advice.player == PieceType.black ? s.Black : s.White),
+                style: AppChrome.bodyStyle),
+            const SizedBox(height: 12),
+            Text(
+              finalPosition && point != null
+                  ? point.offersAlternative
+                      ? s.CoachComparison(
+                          StrategyCoach.coordinate(point.actualMove),
+                          StrategyCoach.coordinate(advice.move))
+                      : s.CoachMatched(StrategyCoach.coordinate(advice.move))
+                  : s.CoachSuggested(StrategyCoach.coordinate(advice.move)),
+              style: AppChrome.bodyStyle.copyWith(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+            Text(strategyExplanation(s, advice), style: AppChrome.bodyStyle),
+            const SizedBox(height: 16),
+            if (finalPosition)
+              OutlinedButton(
+                key: const ValueKey('coach-jump'),
+                onPressed: () => _goTo(sourceIndex),
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Text(s.CoachJump, textAlign: TextAlign.center)),
+              ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              key: const ValueKey('coach-practice'),
+              style: appPrimaryButtonStyle(),
+              onPressed: () =>
+                  Navigator.of(context).push(PageRouteBuilder<void>(
+                transitionDuration: transition,
+                reverseTransitionDuration: transition,
+                pageBuilder: (_, animation, secondaryAnimation) =>
+                    StrategyPracticeScreen(
+                        position: widget.history[sourceIndex]),
+                transitionsBuilder: (_, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
+              )),
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Text(s.CoachPractice, textAlign: TextAlign.center)),
+            ),
+            const SizedBox(height: 16),
+            Text(s.CoachScope,
+                style: AppChrome.bodyStyle.copyWith(fontSize: 13)),
+          ],
+        ],
+      ),
+    );
   }
 
   @override
@@ -139,7 +307,12 @@ class _GameReviewScreenState extends State<GameReviewScreen> {
                 s.ReviewMove(value.round(), total),
             activeColor: palette.lastMoveBorder,
             inactiveColor: AppChrome.borderColor,
-            onChanged: total == 0 ? null : (value) => _goTo(value.round()),
+            // Repaint while scrubbing; start one analysis on release rather
+            // than spawning an isolate for every intermediate slider value.
+            onChanged: total == 0
+                ? null
+                : (value) => _goTo(value.round(), requestAdvice: false),
+            onChangeEnd: total == 0 ? null : (value) => _goTo(value.round()),
           ),
           Wrap(
             spacing: 8,
@@ -190,8 +363,34 @@ class _GameReviewScreenState extends State<GameReviewScreen> {
     );
     final board = AccessibleBoard(
       board: model.board,
+      showCoordinates: true,
       lastMove: _moveAt(_index),
       label: s.ReviewBoardLabel,
+    );
+    final sidePanel = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        controls,
+        if (widget.settings != null) ...[
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            key: const ValueKey('review-share-result'),
+            onPressed: () => showResultCard(
+              context,
+              model: widget.history.last,
+              settings: widget.settings!,
+              playedAt: widget.playedAt,
+              theme: ThemeController.instance.theme,
+            ),
+            icon: const Icon(Icons.ios_share_rounded),
+            label: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Text(s.CoachShareResult, textAlign: TextAlign.center)),
+          ),
+        ],
+        const SizedBox(height: 24),
+        _coachCard(s),
+      ],
     );
     return AppGradientScaffold(
       title: s.ReviewGame,
@@ -206,7 +405,7 @@ class _GameReviewScreenState extends State<GameReviewScreen> {
                     children: [
                       Expanded(flex: 6, child: board),
                       const SizedBox(width: 24),
-                      Expanded(flex: 5, child: controls),
+                      Expanded(flex: 5, child: sidePanel),
                     ],
                   )
                 : Column(
@@ -214,7 +413,7 @@ class _GameReviewScreenState extends State<GameReviewScreen> {
                     children: [
                       Center(child: board),
                       const SizedBox(height: 24),
-                      controls,
+                      sidePanel,
                     ],
                   ),
           );

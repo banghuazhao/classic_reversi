@@ -241,5 +241,224 @@
     }
   },
   "UndoWithAd": "悔棋 · 觀看廣告",
-  "HintWithAd": "合法落子點 · 觀看廣告"
+  "HintWithAd": "合法落子點 · 觀看廣告",
+  "NextMilestone": "下個目標",
+  "MilestoneCompleted": "已完成",
+  "AchievementGamesProgress": "對局：{current}/{target}",
+  "@AchievementGamesProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementStreakProgress": "連勝：{current}/{target}",
+  "@AchievementStreakProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "AchievementWinsProgress": "獲勝：{current}/{target}",
+  "@AchievementWinsProgress": {
+    "placeholders": {
+      "current": {},
+      "target": {}
+    }
+  },
+  "ResultCardTitle": "分享戰績",
+  "ResultCardPreparing": "正在製作戰績卡…",
+  "ResultCardError": "無法製作戰績卡。",
+  "ResultCardShareFailed": "暫時無法分享，請再試一次。",
+  "ResultCardPreviewLabel": "{result}。{score}。{mode}。{date}。",
+  "@ResultCardPreviewLabel": {
+    "placeholders": {
+      "result": {},
+      "score": {},
+      "mode": {},
+      "date": {}
+    }
+  },
+  "PurchaseBenefitAds": "移除橫幅廣告和啟動應用程式時的廣告。",
+  "PurchaseBenefitUndo": "困難難度每回合可悔棋一次，毋須觀看廣告。",
+  "PurchaseBenefitHints": "所有電腦對戰難度均可顯示合法落子提示，毋須觀看廣告。",
+  "PurchaseBenefitOnce": "一次購買，毋須訂閱。可透過你的 App Store 帳戶還原。",
+  "PurchaseBenefits": "一次購買即可移除橫幅廣告和啟動應用程式時的廣告，並解鎖困難難度悔棋與合法落子提示，毋須觀看獎勵廣告。使用同一 App Store 帳戶的裝置均可還原購買。",
+  "MatchLibrary": "對局收藏",
+  "MatchLibrarySubtitle": "保留最近完成的100局，隨時重溫每一步。",
+  "MatchLibraryEmptyTitle": "你的棋局故事，從這裏開始",
+  "MatchLibraryEmptyBody": "完成一局後，對局就會儲存在這裏。回顧每一步，發現下次可以嘗試的新思路。",
+  "MatchLibraryOpen": "重溫對局",
+  "DeleteSavedMatch": "刪除對局",
+  "DeleteSavedMatchTitle": "刪除這局對局？",
+  "DeleteSavedMatchMessage": "這局對局的重溫紀錄將從收藏中移除，統計數據維持不變。",
+  "Delete": "刪除",
+  "MatchLibraryLoadError": "無法載入對局收藏。",
+  "MatchLibrarySaveError": "無法將這局對局儲存到收藏。",
+  "TryAgain": "再試一次",
+  "SavedMatchScore": "黑棋 {black} · 白棋 {white}",
+  "@SavedMatchScore": {
+    "placeholders": {
+      "black": {},
+      "white": {}
+    }
+  },
+  "MatchLibraryDeleteError": "無法刪除這局對局，請再試一次。",
+  "CoachTitle": "策略教練",
+  "CoachAnalyzing": "正在尋找值得研究的局面…",
+  "CoachUnavailable": "暫時無法使用教練功能，你仍然可以逐步重溫對局。",
+  "CoachNoPosition": "這局對局中沒有可供嘗試落子的局面。",
+  "CoachTurnTitle": "值得回顧的局面",
+  "CoachPositionTitle": "研究這個局面",
+  "CoachSuggested": "建議落子：{coordinate}",
+  "@CoachSuggested": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachComparison": "實際落子 {actual} · 嘗試 {suggested}",
+  "@CoachComparison": {
+    "placeholders": {
+      "actual": {},
+      "suggested": {}
+    }
+  },
+  "CoachMatched": "你下在了{coordinate}，不妨回顧這一步的思路。",
+  "@CoachMatched": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachScope": "簡短搜尋會提供值得嘗試的思路，但不保證是最強的一步。",
+  "CoachCorner": "這一步可以佔據角位，角位上的棋子不會被翻轉。",
+  "CoachPass": "對手沒有合法應手，因此你可以再走一步。",
+  "CoachReplies": "對手的合法應手數量：{count}。",
+  "@CoachReplies": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "CoachAvoidCorner": "另一個合法落子會讓對手立即佔角，這一步避開了該威脅。",
+  "CoachAllowsCorner": "對手可以在下一回合佔據角位。",
+  "CoachEndsGame": "走完這一步後，雙方都無法落子，對局結束。",
+  "CoachJump": "前往這個局面",
+  "CoachPractice": "試下這個局面",
+  "CoachShareResult": "分享戰績",
+  "PracticeTitle": "試下這個局面",
+  "PracticeInstructions": "在任何標示的格子落子，觀察局面如何變化。",
+  "PracticeSafe": "練習不會影響已儲存的對局和統計數據。",
+  "PracticePlayed": "你下在了{coordinate}",
+  "@PracticePlayed": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "PracticeFlipped": "翻轉棋子：{count}",
+  "@PracticeFlipped": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "PracticeReset": "嘗試其他落子",
+  "PracticeNoMoves": "目前局面中，這一方沒有合法落子點。",
+  "PracticeBoardLabel": "策略練習棋盤",
+  "CoachForPlayer": "{player}的落子思路",
+  "@CoachForPlayer": {
+    "placeholders": {
+      "player": {}
+    }
+  },
+  "Puzzles": "棋局練習",
+  "PuzzlesSubtitle": "九個精選局面，每次練好一項技巧。",
+  "PuzzleProgress": "已解開 {completed}/{total}",
+  "@PuzzleProgress": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleSearch": "搜尋練習題",
+  "PuzzleNoResults": "沒有相符的練習題，請嘗試搜尋技巧或題目編號。",
+  "PuzzleCornerSkill": "佔據角位",
+  "PuzzlePassSkill": "爭取再走一步",
+  "PuzzleEndgameSkill": "贏下殘局",
+  "PuzzleCornerDescription": "找到安全的角位，形成夾擊並翻子。",
+  "PuzzlePassDescription": "讓對手沒有合法落子點。",
+  "PuzzleEndgameDescription": "應對最佳應手，走好最後幾步。",
+  "PuzzleNumber": "第 {number} 題",
+  "@PuzzleNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleCompleted": "已解開",
+  "PuzzleCornerObjective": "執{color}，一步佔據{coordinate}角位。",
+  "@PuzzleCornerObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      },
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzlePassObjective": "執{color}，在不結束對局的情況下，讓對手跳過回合，自己再走一步。",
+  "@PuzzlePassObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleEndgameObjective": "執{color}，應對最佳應手並贏下這個殘局。",
+  "@PuzzleEndgameObjective": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleBoardLabel": "練習題棋盤",
+  "PuzzleHint": "提示 {number}/3",
+  "@PuzzleHint": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "PuzzleRevealHint": "查看提示",
+  "PuzzleHintCoordinate": "試試{coordinate}。",
+  "@PuzzleHintCoordinate": {
+    "placeholders": {
+      "coordinate": {
+        "type": "String"
+      }
+    }
+  },
+  "PuzzleCornerHintOne": "角位上的棋子不會被翻轉，找一條可以形成夾擊的路線。",
+  "PuzzleCornerHintTwo": "從目標角位向內尋找，直到你的棋子能夾住對手棋子。",
+  "PuzzlePassHintOne": "只有對手沒有合法落子點時，才會跳過回合。",
+  "PuzzlePassHintTwo": "比較每個候選落子之後，對手還可以走哪些位置。",
+  "PuzzleEndgameHintOne": "最終棋子數量決定勝負，試著推算到最後。",
+  "PuzzleEndgameHintTwo": "比較對手的應手。少翻一些棋子，可能有助保留最後一步。",
+  "PuzzleCornerSuccess": "成功佔角！角位棋子將一直屬於你，直到對局結束。",
+  "PuzzlePassSuccess": "你爭取到了下一步！對手沒有合法落子點，對局繼續。",
+  "PuzzleEndgameSuccess": "成功贏下殘局！你的選擇經受住了最佳應手的考驗。",
+  "PuzzleTryAgain": "這一步尚未達成目標，請重新開始，嘗試其他走法。",
+  "PuzzleEndgameTryAgain": "面對最佳應對，這條路線無法確保獲勝。請重新開始，比較其他落子。",
+  "PuzzleRestart": "重新練習",
+  "PuzzleNext": "下一題",
+  "PuzzleBackToArchive": "返回練習列表",
+  "PuzzleOpponentThinking": "正在考慮最佳應手…",
+  "PuzzleYourMove": "輪到你落子",
+  "PuzzleAllComplete": "九題全部解開！隨時重溫任何局面，繼續磨練棋藝。",
+  "PuzzleCompletionSaveFailed": "無法儲存進度，請保持此頁面開啟並再試一次。",
+  "PuzzleSaveProgress": "儲存進度"
 }
