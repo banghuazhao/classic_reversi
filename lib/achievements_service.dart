@@ -54,6 +54,7 @@ class PlayerStats {
   final int winsEasy;
   final int winsMedium;
   final int winsHard;
+  final int winsExpert;
   final int perfectWins;
   final int dailyCompletions;
   final Set<String> unlockedAchievements;
@@ -69,6 +70,7 @@ class PlayerStats {
     required this.winsEasy,
     required this.winsMedium,
     required this.winsHard,
+    this.winsExpert = 0,
     required this.perfectWins,
     required this.dailyCompletions,
     required this.unlockedAchievements,
@@ -116,6 +118,8 @@ class AchievementsService {
       winsEasy: await SettingsService.getWinsForDifficulty(Difficulty.easy),
       winsMedium: await SettingsService.getWinsForDifficulty(Difficulty.medium),
       winsHard: await SettingsService.getWinsForDifficulty(Difficulty.hard),
+      winsExpert:
+          await SettingsService.getWinsForDifficulty(Difficulty.expert),
       perfectWins: await SettingsService.getPerfectWins(),
       dailyCompletions: await SettingsService.getDailyCompletions(),
       unlockedAchievements: await SettingsService.getUnlockedAchievements(),
@@ -201,7 +205,8 @@ class AchievementsService {
       if (streak >= 5) {
         await tryUnlock(AchievementId.winStreak5);
       }
-      if (settings.difficulty == Difficulty.hard) {
+      // Beating Expert also proves a Hard-level win.
+      if (settings.difficulty.isAdvanced) {
         await tryUnlock(AchievementId.winHard);
       }
 

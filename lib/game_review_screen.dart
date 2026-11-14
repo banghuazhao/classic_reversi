@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'Tools/purchase_service.dart';
 import 'accessible_board.dart';
 import 'app_chrome.dart';
 import 'feedback_service.dart';
@@ -8,6 +9,7 @@ import 'game_model.dart';
 import 'game_settings.dart';
 import 'gameplay_activity.dart';
 import 'generated/l10n.dart';
+import 'premium_screen.dart';
 import 'result_card.dart';
 import 'strategy_coach.dart';
 import 'strategy_practice_screen.dart';
@@ -22,6 +24,7 @@ class GameReviewScreen extends StatefulWidget {
     this.settings,
     this.playedAt,
     this.positionAnalyzer = StrategyCoach.analyze,
+    this.gameAnalyzer = StrategyCoach.analyzeGame,
   })  : assert(history.isNotEmpty),
         history = List.unmodifiable(history);
 
@@ -29,6 +32,10 @@ class GameReviewScreen extends StatefulWidget {
   final GameSettings? settings;
   final DateTime? playedAt;
   final Future<StrategyAdvice?> Function(GameModel) positionAnalyzer;
+
+  /// Premium move-by-move analysis. Its turning point also feeds the coach.
+  final Future<GameAnalysis> Function(List<GameModel> history,
+      {PieceType? player}) gameAnalyzer;
 
   @override
   State<GameReviewScreen> createState() => _GameReviewScreenState();
@@ -44,12 +51,15 @@ class _GameReviewScreenState extends State<GameReviewScreen> {
   bool _loadingHistory = true;
   bool _adviceFailed = false;
   bool _historyFailed = false;
+  GameAnalysis? _analysis;
+  bool _analysisRequested = false;
 
   @override
   void initState() {
     super.initState();
     _index = widget.history.length - 1;
     GameplayActivity.begin(this);
+    PurchaseService.instance.addListener(_onEntitlementChanged);
     _analyzeHistory();
   }
 
@@ -57,8 +67,26 @@ class _GameReviewScreenState extends State<GameReviewScreen> {
   void dispose() {
     _adviceGeneration++;
     _historyGeneration++;
+    PurchaseService.instance.removeListener(_onEntitlementChanged);
     GameplayActivity.end(this);
     super.dispose();
+  }
+
+  void _onEntitlementChanged() {
+    if (!mounted) return;
+    // Unlocking Premium here starts the full analysis immediately.
+    if (isPremiumUser && !_analysisRequested) {
+      setState(_analyzeHistory);
+    } else {
+      setState(() {});
+    }
+  }
+
+  PieceType? get _analyzedPlayer {
+    final settings = widget.settings;
+    return settings != null && !settings.twoPlayerMode
+        ? settings.humanColor
+        : null;
   }
 
   @override
@@ -77,14 +105,32 @@ class _GameReviewScreenState extends State<GameReviewScreen> {
   void _analyzeHistory() {
     final generation = ++_historyGeneration;
     _turningPoint = null;
+    _analysis = null;
     _loadingHistory = true;
     _historyFailed = false;
-    final settings = widget.settings;
+    _analysisRequested = isPremiumUser;
+    if (_analysisRequested) {
+      Future<GameAnalysis>.sync(() =>
+              widget.gameAnalyzer(widget.history, player: _analyzedPlayer))
+          .then((analysis) {
+        if (!mounted || generation != _historyGeneration) return;
+        setState(() {
+          _analysis = analysis;
+          _turningPoint = analysis.turningPoint;
+          _loadingHistory = false;
+        });
+      }).catchError((Object error) {
+        if (!mounted || generation != _historyGeneration) return;
+        setState(() {
+          _historyFailed = true;
+          _loadingHistory = false;
+        });
+      });
+      return;
+    }
     StrategyCoach.findTurningPoint(
       widget.history,
-      player: settings != null && !settings.twoPlayerMode
-          ? settings.humanColor
-          : null,
+      player: _analyzedPlayer,
     ).then((point) {
       if (!mounted || generation != _historyGeneration) return;
       setState(() {
@@ -235,6 +281,102 @@ class _GameReviewScreenState extends State<GameReviewScreen> {
                   style: AppChrome.bodyStyle.copyWith(fontSize: 13)),
             ],
           ],
+        ),
+      ),
+    );
+  }
+
+  String _playerLabel(S s, PieceType player) {
+    final color = player == PieceType.black ? s.Black : s.White;
+    final settings = widget.settings;
+    if (settings == null || settings.twoPlayerMode) return color;
+    return player == settings.humanColor
+        ? s.YouColor(color)
+        : s.ComputerColor(color);
+  }
+
+  Widget _analysisCard(S s) {
+    final accent = ThemeController.instance.theme.lastMoveBorder;
+    final premium = isPremiumUser;
+    final analysis = _analysis;
+    final header = Row(
+      children: [
+        Icon(Icons.workspace_premium_rounded, color: accent, size: 22),
+        const SizedBox(width: 8),
+        Expanded(child: Text(s.AnalysisTitle, style: AppChrome.titleStyle)),
+      ],
+    );
+    final List<Widget> body;
+    if (!premium) {
+      body = [
+        Text(s.AnalysisLockedBody, style: AppChrome.bodyStyle),
+        const SizedBox(height: 16),
+        OutlinedButton.icon(
+          key: const ValueKey('analysis-unlock'),
+          onPressed: () => Navigator.of(context).push(PageRouteBuilder<void>(
+            pageBuilder: (_, __, ___) => const PremiumScreen(),
+            transitionsBuilder: (_, animation, __, child) =>
+                FadeTransition(opacity: animation, child: child),
+          )),
+          icon: const Icon(Icons.lock_open_rounded),
+          label: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Text(s.UnlockWithPremium, textAlign: TextAlign.center),
+          ),
+        ),
+      ];
+    } else if (_loadingHistory) {
+      body = [Text(s.AnalysisLoading, style: AppChrome.bodyStyle)];
+    } else if (_historyFailed || analysis == null) {
+      body = [Text(s.CoachUnavailable, style: AppChrome.bodyStyle)];
+    } else if (analysis.players.isEmpty) {
+      body = [Text(s.AnalysisNoMoves, style: AppChrome.bodyStyle)];
+    } else {
+      final players = [PieceType.black, PieceType.white]
+          .where(analysis.players.containsKey);
+      body = [
+        for (final player in players) ...[
+          _AccuracyRow(
+            label: _playerLabel(s, player),
+            accuracy: analysis.players[player]!,
+            accent: accent,
+          ),
+          const SizedBox(height: 16),
+        ],
+        Text(s.AnalysisKeyMoments,
+            style: AppChrome.bodyStyle.copyWith(
+                color: AppChrome.primaryText, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 8),
+        if (analysis.keyMoments.isEmpty)
+          Text(s.AnalysisClean, style: AppChrome.bodyStyle)
+        else
+          for (final moment in analysis.keyMoments)
+            _MomentRow(
+              key: ValueKey('analysis-moment-${moment.index}'),
+              title: s.AnalysisMoment(
+                moment.index + 1,
+                StrategyCoach.coordinate(moment.played),
+                StrategyCoach.coordinate(moment.suggested),
+              ),
+              subtitle: [
+                if (players.length > 1) _playerLabel(s, moment.player),
+                moment.quality == MoveQuality.mistake
+                    ? s.AnalysisMistake
+                    : s.AnalysisInaccuracy,
+              ].join(' · '),
+              accent: accent,
+              onTap: () => _goTo(moment.index),
+            ),
+      ];
+    }
+    return Semantics(
+      container: true,
+      liveRegion: true,
+      child: AppInfoCard(
+        key: const ValueKey('analysis-card'),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [header, const SizedBox(height: 12), ...body],
         ),
       ),
     );
@@ -396,6 +538,8 @@ class _GameReviewScreenState extends State<GameReviewScreen> {
         ],
         const SizedBox(height: 24),
         _coachCard(s),
+        const SizedBox(height: 16),
+        _analysisCard(s),
       ],
     );
     return AppGradientScaffold(
@@ -512,6 +656,116 @@ class _ReviewControl extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       icon: Icon(icon, size: 27),
+    );
+  }
+}
+
+class _AccuracyRow extends StatelessWidget {
+  const _AccuracyRow({
+    required this.label,
+    required this.accuracy,
+    required this.accent,
+  });
+
+  final String label;
+  final PlayerAccuracy accuracy;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    return MergeSemantics(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label,
+                    style: AppChrome.bodyStyle.copyWith(
+                        color: AppChrome.primaryText,
+                        fontWeight: FontWeight.w600)),
+                const SizedBox(height: 4),
+                Text(
+                  s.AnalysisCounts(accuracy.best, accuracy.good,
+                      accuracy.inaccuracies, accuracy.mistakes),
+                  style: AppChrome.bodyStyle.copyWith(fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '${accuracy.accuracy}%',
+                style: TextStyle(
+                  color: accent,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                  height: 1.1,
+                ),
+              ),
+              Text(s.AnalysisAccuracy,
+                  style: AppChrome.bodyStyle.copyWith(fontSize: 12)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MomentRow extends StatelessWidget {
+  const _MomentRow({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.accent,
+    required this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
+  final Color accent;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: [
+                Icon(Icons.flag_rounded, size: 20, color: accent),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title,
+                          style: AppChrome.bodyStyle
+                              .copyWith(color: AppChrome.primaryText)),
+                      Text(subtitle,
+                          style: AppChrome.bodyStyle.copyWith(fontSize: 13)),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.chevron_right_rounded,
+                    color: AppChrome.secondaryText),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

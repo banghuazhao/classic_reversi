@@ -6,7 +6,7 @@ Fitur:
 - Tantangan harian, statistik, dan pencapaian
 - Tema, suara, dan haptik
 - Petunjuk dan undo opsional (dengan iklan berhadiah)
-- Pembelian sekali untuk hapus iklan
+- Premium, pembelian sekali: tanpa iklan, urungkan dan tip pelatih tanpa batas, level Ahli, analisis permainan, dan tema papan tambahan
 - Panduan cara bermain
 
 Nikmati strategi Reversi klasik dengan antarmuka yang bersih dan modern.

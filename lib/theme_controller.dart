@@ -1,32 +1,48 @@
 import 'package:flutter/foundation.dart';
 
+import 'Tools/purchase_service.dart';
 import 'app_theme.dart';
 import 'settings_service.dart';
 
-/// Notifies the UI when the player changes board theme.
+/// Notifies the UI when the player changes board theme, or when a Premium
+/// theme becomes available or unavailable with the Premium entitlement.
 class ThemeController extends ChangeNotifier {
-  ThemeController._();
+  ThemeController._() {
+    PurchaseService.instance.addListener(_onEntitlementChanged);
+  }
   static final ThemeController instance = ThemeController._();
 
-  BoardThemeId _themeId = BoardThemeId.classic;
-  AppTheme _theme = AppTheme.classic;
+  BoardThemeId _selected = BoardThemeId.classic;
+  bool _premium = false;
 
-  BoardThemeId get themeId => _themeId;
-  AppTheme get theme => _theme;
+  /// The theme in effect. A saved Premium theme falls back to Classic while
+  /// Premium is not active, and returns as soon as it is.
+  BoardThemeId get themeId => _selected.requiresPremium && !isPremiumUser
+      ? BoardThemeId.classic
+      : _selected;
+  AppTheme get theme => AppTheme.forId(themeId);
+
+  void _onEntitlementChanged() {
+    final premium = isPremiumUser;
+    if (premium == _premium) return;
+    _premium = premium;
+    if (_selected.requiresPremium) notifyListeners();
+  }
 
   Future<void> load() async {
-    _themeId = await SettingsService.getBoardTheme();
-    _theme = AppTheme.forId(_themeId);
+    _premium = isPremiumUser;
+    _selected = await SettingsService.getBoardTheme();
     notifyListeners();
   }
 
-  Future<void> setTheme(BoardThemeId id) async {
-    if (_themeId == id) {
-      return;
-    }
-    _themeId = id;
-    _theme = AppTheme.forId(id);
-    await SettingsService.setBoardTheme(id);
+  /// Returns false, without changing anything, for a Premium theme while
+  /// Premium is not active.
+  Future<bool> setTheme(BoardThemeId id) async {
+    if (id.requiresPremium && !isPremiumUser) return false;
+    if (_selected == id) return true;
+    _selected = id;
     notifyListeners();
+    await SettingsService.setBoardTheme(id);
+    return true;
   }
 }

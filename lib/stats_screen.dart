@@ -124,7 +124,7 @@ class _StatsScreenState extends State<StatsScreen> {
                             final columns = max(
                               1,
                               min(
-                                4,
+                                5,
                                 (constraints.maxWidth / (104 * scale)).floor(),
                               ),
                             );
@@ -147,6 +147,10 @@ class _StatsScreenState extends State<StatsScreen> {
                               _DifficultyStat(
                                 label: s.DifficultyHard,
                                 value: stats.winsHard,
+                              ),
+                              _DifficultyStat(
+                                label: s.DifficultyExpert,
+                                value: stats.winsExpert,
                               ),
                             ];
                             return Wrap(

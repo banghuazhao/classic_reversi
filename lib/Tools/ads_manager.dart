@@ -170,7 +170,7 @@ class AdsManager {
   }
 }
 
-/// Loads and shows a rewarded ad. If ads are removed via IAP, grants the
+/// Loads and shows a rewarded ad. For Premium users (or with ads off) it grants the
 /// reward immediately without showing an ad.
 class RewardedAdHelper {
   RewardedAd? _ad;
@@ -181,7 +181,7 @@ class RewardedAdHelper {
 
   /// True when the user can earn rewards without watching an ad.
   static bool get grantsWithoutAd =>
-      !AdsManager.adsEnabled || PurchaseService.instance.isAdsRemoved;
+      !AdsManager.adsEnabled || PurchaseService.instance.isPremium;
 
   Future<bool> load({Duration timeout = const Duration(seconds: 12)}) async {
     if (grantsWithoutAd) {

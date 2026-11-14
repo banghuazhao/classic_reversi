@@ -5,8 +5,33 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../settings_service.dart';
 
-/// Product ID for the one-time Remove Ads non-consumable (iOS App Store).
-const String kRemoveAdsProductId = 'com.appsbay.classicReversi.remove_ads';
+/// App Store product for the one-time Premium unlock. The identifier predates
+/// the Premium name and cannot be renamed in App Store Connect.
+const String kPremiumProductIdIOS = 'com.appsbay.classicReversi.remove_ads';
+
+/// Google Play product for the same one-time Premium unlock.
+const String kPremiumProductIdAndroid = 'com.appsbay.classic_reversi.premium';
+
+/// Daily coach tips available without Premium.
+const int kFreeDailyCoachTips = 3;
+
+/// Store product identifier for the running platform.
+String premiumProductIdFor(TargetPlatform platform) =>
+    platform == TargetPlatform.android
+        ? kPremiumProductIdAndroid
+        : kPremiumProductIdIOS;
+
+/// Everything a Premium user receives. Used by the Premium screen and by
+/// locked controls to explain what an upgrade includes.
+enum PremiumFeature {
+  adFree,
+  unlimitedUndo,
+  unlimitedTips,
+  hints,
+  expertAi,
+  gameAnalysis,
+  themes,
+}
 
 /// User-facing outcome of a buy or restore attempt.
 enum PurchaseFeedback {
@@ -20,25 +45,27 @@ enum PurchaseFeedback {
   alreadyOwned,
 }
 
-/// Abstract purchase API so Android billing can be added later behind the
-/// same interface without changing call sites.
+/// Abstract purchase API so screens can be tested with a fake store.
 abstract class PurchaseServiceBase extends ChangeNotifier {
-  bool get isAdsRemoved;
+  bool get isPremium;
   bool get isAvailable;
   bool get isPurchaseInProgress;
   bool get isSupportedPlatform;
-  ProductDetails? get removeAdsProduct;
+  ProductDetails? get premiumProduct;
   String? get localizedPrice;
+
+  /// Store name shown in restore help, e.g. "App Store" or "Google Play".
+  String get storeName;
 
   Future<void> init();
   Future<void> disposeService();
   Future<void> loadProducts();
-  Future<PurchaseFeedback> buyRemoveAds();
+  Future<PurchaseFeedback> buyPremium();
   Future<PurchaseFeedback> restorePurchases({bool silent = false});
 }
 
-/// iOS StoreKit-backed purchase service. On Android/web this is a no-op
-/// shell: ads stay on and purchase UI should stay hidden.
+/// StoreKit / Play Billing backed Premium service. On web and desktop this
+/// is a no-op shell: ads stay on and the purchase button stays hidden.
 class PurchaseService extends PurchaseServiceBase {
   PurchaseService._();
 
@@ -46,8 +73,8 @@ class PurchaseService extends PurchaseServiceBase {
 
   InAppPurchase? _iap;
   StreamSubscription<List<PurchaseDetails>>? _subscription;
-  ProductDetails? _removeAdsProduct;
-  bool _isAdsRemoved = false;
+  ProductDetails? _premiumProduct;
+  bool _isPremium = false;
   bool _isAvailable = false;
   bool _isPurchaseInProgress = false;
   bool _initialized = false;
@@ -59,8 +86,10 @@ class PurchaseService extends PurchaseServiceBase {
     return _iap ??= InAppPurchase.instance;
   }
 
+  String get _productId => premiumProductIdFor(defaultTargetPlatform);
+
   @override
-  bool get isAdsRemoved => _isAdsRemoved;
+  bool get isPremium => _isPremium;
 
   @override
   bool get isAvailable => _isAvailable;
@@ -70,13 +99,21 @@ class PurchaseService extends PurchaseServiceBase {
 
   @override
   bool get isSupportedPlatform =>
-      !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.android);
 
   @override
-  ProductDetails? get removeAdsProduct => _removeAdsProduct;
+  ProductDetails? get premiumProduct => _premiumProduct;
 
   @override
-  String? get localizedPrice => _removeAdsProduct?.price;
+  String? get localizedPrice => _premiumProduct?.price;
+
+  @override
+  String get storeName =>
+      defaultTargetPlatform == TargetPlatform.android
+          ? 'Google Play'
+          : 'App Store';
 
   @override
   Future<void> init() async {
@@ -85,8 +122,8 @@ class PurchaseService extends PurchaseServiceBase {
     }
     _initialized = true;
 
-    // Local cache first so purchased users skip ads before the store answers.
-    _isAdsRemoved = await SettingsService.getAdsRemoved();
+    // Local cache first so Premium users skip ads before the store answers.
+    _isPremium = await SettingsService.getPremiumUnlocked();
     notifyListeners();
 
     if (!isSupportedPlatform) {
@@ -96,7 +133,7 @@ class PurchaseService extends PurchaseServiceBase {
     _subscription = _store.purchaseStream.listen(
       _onPurchaseUpdated,
       onError: (Object error) {
-        print('Purchase stream error: $error');
+        debugPrint('Purchase stream error: $error');
         _finishPurchaseAttempt(PurchaseFeedback.failed);
       },
     );
@@ -104,7 +141,7 @@ class PurchaseService extends PurchaseServiceBase {
     try {
       _isAvailable = await _store.isAvailable();
     } catch (error) {
-      print('IAP availability check failed: $error');
+      debugPrint('IAP availability check failed: $error');
       _isAvailable = false;
     }
 
@@ -128,43 +165,53 @@ class PurchaseService extends PurchaseServiceBase {
   @override
   Future<void> loadProducts() async {
     if (!isSupportedPlatform || !_isAvailable) {
-      _removeAdsProduct = null;
-      notifyListeners();
+      // Runs synchronously when called from a widget's initState, so only
+      // notify on a real change; listeners may not rebuild during build.
+      if (_premiumProduct != null) {
+        _premiumProduct = null;
+        notifyListeners();
+      }
       return;
     }
 
     try {
-      final response =
-          await _store.queryProductDetails({kRemoveAdsProductId});
+      final response = await _store.queryProductDetails({_productId});
       if (response.error != null) {
-        print('queryProductDetails error: ${response.error}');
+        debugPrint('queryProductDetails error: ${response.error}');
       }
-      _removeAdsProduct = response.productDetails
+      _premiumProduct = response.productDetails
           .cast<ProductDetails?>()
           .firstWhere(
-            (p) => p?.id == kRemoveAdsProductId,
+            (p) => p?.id == _productId,
             orElse: () => null,
           );
     } catch (error) {
-      print('loadProducts failed: $error');
-      _removeAdsProduct = null;
+      debugPrint('loadProducts failed: $error');
+      _premiumProduct = null;
     }
     notifyListeners();
   }
 
   @override
-  Future<PurchaseFeedback> buyRemoveAds() async {
+  Future<PurchaseFeedback> buyPremium() async {
     if (!isSupportedPlatform) {
       return PurchaseFeedback.unavailable;
     }
-    if (!_isAvailable || _removeAdsProduct == null) {
+    if (_isPremium) {
+      return PurchaseFeedback.alreadyOwned;
+    }
+    if (!_isAvailable || _premiumProduct == null) {
+      if (!_isAvailable) {
+        try {
+          _isAvailable = await _store.isAvailable();
+        } catch (error) {
+          debugPrint('IAP availability retry failed: $error');
+        }
+      }
       await loadProducts();
-      if (!_isAvailable || _removeAdsProduct == null) {
+      if (!_isAvailable || _premiumProduct == null) {
         return PurchaseFeedback.unavailable;
       }
-    }
-    if (_isAdsRemoved) {
-      return PurchaseFeedback.alreadyOwned;
     }
     if (_isPurchaseInProgress) {
       return PurchaseFeedback.pending;
@@ -174,30 +221,22 @@ class PurchaseService extends PurchaseServiceBase {
     notifyListeners();
 
     _purchaseCompleter = Completer<PurchaseFeedback>();
-    final purchaseParam = PurchaseParam(productDetails: _removeAdsProduct!);
+    final purchaseParam = PurchaseParam(productDetails: _premiumProduct!);
 
     try {
       final started =
           await _store.buyNonConsumable(purchaseParam: purchaseParam);
       if (!started) {
-        _isPurchaseInProgress = false;
-        notifyListeners();
-        final result = PurchaseFeedback.failed;
-        _purchaseCompleter?.complete(result);
-        _purchaseCompleter = null;
-        return result;
+        _finishPurchaseAttempt(PurchaseFeedback.failed);
+        return PurchaseFeedback.failed;
       }
     } catch (error) {
-      print('buyRemoveAds failed: $error');
-      _isPurchaseInProgress = false;
-      notifyListeners();
-      final result = PurchaseFeedback.failed;
-      _purchaseCompleter?.complete(result);
-      _purchaseCompleter = null;
-      return result;
+      debugPrint('buyPremium failed: $error');
+      _finishPurchaseAttempt(PurchaseFeedback.failed);
+      return PurchaseFeedback.failed;
     }
 
-    return _purchaseCompleter!.future;
+    return _purchaseCompleter?.future ?? Future.value(PurchaseFeedback.failed);
   }
 
   @override
@@ -208,6 +247,11 @@ class PurchaseService extends PurchaseServiceBase {
     if (!_isAvailable) {
       return PurchaseFeedback.unavailable;
     }
+    // A second tap while a restore is running should observe the same result.
+    final pending = _restoreCompleter;
+    if (pending != null && !pending.isCompleted) {
+      return pending.future;
+    }
 
     if (!silent) {
       _isPurchaseInProgress = true;
@@ -215,38 +259,33 @@ class PurchaseService extends PurchaseServiceBase {
     }
 
     _sawOwnedDuringRestore = false;
-    _restoreCompleter = Completer<PurchaseFeedback>();
+    final completer = Completer<PurchaseFeedback>();
+    _restoreCompleter = completer;
 
     try {
       await _store.restorePurchases();
     } catch (error) {
-      print('restorePurchases failed: $error');
-      if (!silent) {
-        _isPurchaseInProgress = false;
-        notifyListeners();
-      }
-      final result = PurchaseFeedback.failed;
-      _restoreCompleter?.complete(result);
-      _restoreCompleter = null;
-      return result;
+      debugPrint('restorePurchases failed: $error');
+      _finishRestoreAttempt(PurchaseFeedback.failed, silent: silent);
+      return PurchaseFeedback.failed;
     }
 
-    // StoreKit may deliver restores asynchronously; give the stream a moment.
+    // Stores may deliver restores asynchronously; give the stream a moment.
     Future<void>.delayed(const Duration(seconds: 2), () {
-      if (_restoreCompleter != null && !_restoreCompleter!.isCompleted) {
-        final result = _sawOwnedDuringRestore || _isAdsRemoved
+      if (identical(_restoreCompleter, completer) && !completer.isCompleted) {
+        final result = _sawOwnedDuringRestore || _isPremium
             ? PurchaseFeedback.restoreSuccess
             : PurchaseFeedback.restoreNothing;
         _finishRestoreAttempt(result, silent: silent);
       }
     });
 
-    return _restoreCompleter!.future;
+    return completer.future;
   }
 
   Future<void> _onPurchaseUpdated(List<PurchaseDetails> purchases) async {
     for (final purchase in purchases) {
-      if (purchase.productID != kRemoveAdsProductId) {
+      if (purchase.productID != _productId) {
         if (purchase.pendingCompletePurchase) {
           await _store.completePurchase(purchase);
         }
@@ -256,10 +295,16 @@ class PurchaseService extends PurchaseServiceBase {
       switch (purchase.status) {
         case PurchaseStatus.purchased:
         case PurchaseStatus.restored:
+          if (!await verifyPurchase(purchase)) {
+            _finishPurchaseAttempt(PurchaseFeedback.failed);
+            break;
+          }
           await _grantEntitlement();
           if (purchase.status == PurchaseStatus.restored) {
             _sawOwnedDuringRestore = true;
           }
+          // Play purchases are refunded unless acknowledged; StoreKit needs
+          // the transaction finished. completePurchase does both.
           if (purchase.pendingCompletePurchase) {
             await _store.completePurchase(purchase);
           }
@@ -272,18 +317,30 @@ class PurchaseService extends PurchaseServiceBase {
           }
           break;
         case PurchaseStatus.pending:
-          // Ask to Buy / approval — keep ads suppressed during purchase.
-          notifyListeners();
+          // Ask to Buy / slow payment methods. The purchase completes later.
+          if (_purchaseCompleter != null) {
+            _finishPurchaseAttempt(PurchaseFeedback.pending);
+          } else {
+            notifyListeners();
+          }
           break;
         case PurchaseStatus.error:
           if (purchase.pendingCompletePurchase) {
             await _store.completePurchase(purchase);
           }
-          final code = purchase.error?.code ?? '';
-          final message = purchase.error?.message ?? '';
-          final cancelled = code == 'purchase_canceled' ||
-              code == 'storekit2_purchase_cancelled' ||
-              message.toLowerCase().contains('cancel');
+          final code = (purchase.error?.code ?? '').toLowerCase();
+          final message = (purchase.error?.message ?? '').toLowerCase();
+          // Play reports an existing non-consumable as itemAlreadyOwned.
+          final alreadyOwned = code.contains('itemalreadyowned') ||
+              message.contains('itemalreadyowned') ||
+              message.contains('already owned');
+          if (alreadyOwned) {
+            await _grantEntitlement();
+            _finishPurchaseAttempt(PurchaseFeedback.alreadyOwned);
+            break;
+          }
+          final cancelled = code.contains('cancel') ||
+              message.contains('cancel');
           _finishPurchaseAttempt(
             cancelled ? PurchaseFeedback.cancelled : PurchaseFeedback.failed,
           );
@@ -298,27 +355,26 @@ class PurchaseService extends PurchaseServiceBase {
     }
 
     // If a restore was waiting and we already saw owned products, finish early.
-    if (_restoreCompleter != null &&
-        !_restoreCompleter!.isCompleted &&
-        _sawOwnedDuringRestore) {
+    final restore = _restoreCompleter;
+    if (restore != null && !restore.isCompleted && _sawOwnedDuringRestore) {
       _finishRestoreAttempt(PurchaseFeedback.restoreSuccess);
     }
   }
 
   Future<void> _grantEntitlement() async {
-    if (_isAdsRemoved) {
+    if (_isPremium) {
       return;
     }
-    _isAdsRemoved = true;
-    await SettingsService.setAdsRemoved(true);
+    _isPremium = true;
+    await SettingsService.setPremiumUnlocked(true);
     notifyListeners();
   }
 
   /// Test-only: set entitlement without talking to the store.
   @visibleForTesting
-  Future<void> debugSetAdsRemoved(bool value) async {
-    _isAdsRemoved = value;
-    await SettingsService.setAdsRemoved(value);
+  Future<void> debugSetPremium(bool value) async {
+    _isPremium = value;
+    await SettingsService.setPremiumUnlocked(value);
     notifyListeners();
   }
 
@@ -332,10 +388,11 @@ class PurchaseService extends PurchaseServiceBase {
 
   void _finishPurchaseAttempt(PurchaseFeedback result) {
     _isPurchaseInProgress = false;
-    if (_purchaseCompleter != null && !_purchaseCompleter!.isCompleted) {
-      _purchaseCompleter!.complete(result);
-    }
+    final completer = _purchaseCompleter;
     _purchaseCompleter = null;
+    if (completer != null && !completer.isCompleted) {
+      completer.complete(result);
+    }
     notifyListeners();
   }
 
@@ -343,18 +400,22 @@ class PurchaseService extends PurchaseServiceBase {
     if (!silent) {
       _isPurchaseInProgress = false;
     }
-    if (_restoreCompleter != null && !_restoreCompleter!.isCompleted) {
-      _restoreCompleter!.complete(result);
-    }
+    final completer = _restoreCompleter;
     _restoreCompleter = null;
+    if (completer != null && !completer.isCompleted) {
+      completer.complete(result);
+    }
     notifyListeners();
   }
 }
+
+/// Whether the player owns Premium.
+bool get isPremiumUser => PurchaseService.instance.isPremium;
 
 /// Convenience: whether ads should run (platform-agnostic).
 bool get shouldShowAds {
   if (kIsWeb) {
     return false;
   }
-  return !PurchaseService.instance.isAdsRemoved;
+  return !PurchaseService.instance.isPremium;
 }

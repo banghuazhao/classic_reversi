@@ -642,6 +642,51 @@ class MaterialMoveHint extends StatelessWidget {
   }
 }
 
+/// Marks the square suggested by a coach tip: a gold ring with a small star,
+/// distinct from legal-move dots. It settles in once and then stays still.
+class CoachTipMarker extends StatelessWidget {
+  final double size;
+  final Color color;
+  final bool reduceMotion;
+
+  const CoachTipMarker({
+    super.key,
+    required this.size,
+    required this.color,
+    this.reduceMotion = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final reduceMotion = this.reduceMotion ||
+        (MediaQuery.maybeOf(context)?.disableAnimations ?? false);
+    final marker = SizedBox.square(
+      dimension: size,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: color, width: math.max(2, size * 0.07)),
+          boxShadow: [
+            BoxShadow(color: color.withAlpha(110), blurRadius: size * 0.18),
+          ],
+        ),
+        child: Center(
+          child: Icon(Icons.auto_awesome, size: size * 0.42, color: color),
+        ),
+      ),
+    );
+    if (reduceMotion) return marker;
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 1.35, end: 1),
+      duration: const Duration(milliseconds: 360),
+      curve: Curves.easeOutBack,
+      builder: (context, scale, child) =>
+          Transform.scale(scale: scale, child: child),
+      child: marker,
+    );
+  }
+}
+
 /// A single end-of-match sweep that highlights the winning discs and, for a
 /// player victory, releases a restrained burst of board-local confetti.
 class EndgameBoardCelebration extends StatefulWidget {

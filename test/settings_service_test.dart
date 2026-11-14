@@ -49,10 +49,10 @@ void main() {
   });
 
   test('adsRemoved defaults to false and round-trips', () async {
-    expect(await SettingsService.getAdsRemoved(), isFalse);
+    expect(await SettingsService.getPremiumUnlocked(), isFalse);
 
-    await SettingsService.setAdsRemoved(true);
-    expect(await SettingsService.getAdsRemoved(), isTrue);
+    await SettingsService.setPremiumUnlocked(true);
+    expect(await SettingsService.getPremiumUnlocked(), isTrue);
   });
 
   test('sound and haptics default to enabled', () async {

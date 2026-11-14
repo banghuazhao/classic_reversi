@@ -7,7 +7,9 @@ import 'package:flutter/widgets.dart';
 import 'game_board.dart';
 import 'generated/l10n.dart';
 
-enum BoardThemeId { classic, night, contrast }
+/// Appended values keep stored indexes stable. [royal] and [ember] are
+/// Premium themes.
+enum BoardThemeId { classic, night, contrast, royal, ember }
 
 extension BoardThemeIdLabel on BoardThemeId {
   String label(BuildContext context) {
@@ -18,8 +20,15 @@ extension BoardThemeIdLabel on BoardThemeId {
         return S.of(context).ThemeNight;
       case BoardThemeId.contrast:
         return S.of(context).ThemeContrast;
+      case BoardThemeId.royal:
+        return S.of(context).ThemeRoyal;
+      case BoardThemeId.ember:
+        return S.of(context).ThemeEmber;
     }
   }
+
+  bool get requiresPremium =>
+      this == BoardThemeId.royal || this == BoardThemeId.ember;
 }
 
 /// Visual palette for the board and chrome. Selected via settings.
@@ -196,6 +205,92 @@ class AppTheme {
     },
   );
 
+  /// Premium: deep violet felt framed in gold.
+  static const royal = AppTheme(
+    backgroundStart: Color(0xff2E1F3D),
+    backgroundFinish: Color(0xff1A1124),
+    thinking: Color(0xa0ffffff),
+    lastMoveBorder: Color(0xffF2C46D),
+    hintDot: Color(0x60ffffff),
+    buttonFill: Color(0xff3D2A52),
+    scoreWhite: Color(0xffffffff),
+    scoreBlack: Color(0xff000000),
+    tableGrainLight: Color(0xffb79be0),
+    tableGrainDark: Color(0xff12081c),
+    boardFrameLight: Color(0xffd4a64a),
+    boardFrameMid: Color(0xff8e6a24),
+    boardFrameDark: Color(0xff3b2a0c),
+    boardFrameHighlight: Color(0xfffff0b3),
+    boardSurfaceLight: Color(0xff4b3a78),
+    boardSurfaceDark: Color(0xff221848),
+    boardCellLight: Color(0xffa99be0),
+    boardCellDark: Color(0xff100a2a),
+    boardGrooveLight: Color(0xff7d6cc0),
+    boardGrooveDark: Color(0xff0a0620),
+    pieceGradients: {
+      PieceType.black: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xff36323f), Color(0xff050408), Color(0xff1a1720)],
+        stops: [0, 0.62, 1],
+      ),
+      PieceType.white: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xffffffff), Color(0xffe2dbcc), Color(0xfff8f2e6)],
+        stops: [0, 0.68, 1],
+      ),
+      PieceType.empty: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0x50ffffff), Color(0x30ffffff)],
+      ),
+    },
+  );
+
+  /// Premium: warm crimson felt with a copper frame.
+  static const ember = AppTheme(
+    backgroundStart: Color(0xff3A1A17),
+    backgroundFinish: Color(0xff1F0E0C),
+    thinking: Color(0xa0ffffff),
+    lastMoveBorder: Color(0xffFFA86B),
+    hintDot: Color(0x60ffffff),
+    buttonFill: Color(0xff4E2420),
+    scoreWhite: Color(0xffffffff),
+    scoreBlack: Color(0xff000000),
+    tableGrainLight: Color(0xffffb38a),
+    tableGrainDark: Color(0xff2a0805),
+    boardFrameLight: Color(0xffb4683f),
+    boardFrameMid: Color(0xff7a3b20),
+    boardFrameDark: Color(0xff2f1208),
+    boardFrameHighlight: Color(0xffffc49a),
+    boardSurfaceLight: Color(0xff8a3a33),
+    boardSurfaceDark: Color(0xff441613),
+    boardCellLight: Color(0xffeaa89c),
+    boardCellDark: Color(0xff240807),
+    boardGrooveLight: Color(0xffbd6e64),
+    boardGrooveDark: Color(0xff180505),
+    pieceGradients: {
+      PieceType.black: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xff3a3434), Color(0xff060404), Color(0xff1c1616)],
+        stops: [0, 0.62, 1],
+      ),
+      PieceType.white: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xffffffff), Color(0xffe6d9cf), Color(0xfffaf1ea)],
+        stops: [0, 0.68, 1],
+      ),
+      PieceType.empty: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0x50ffffff), Color(0x30ffffff)],
+      ),
+    },
+  );
+
   static AppTheme forId(BoardThemeId id) {
     switch (id) {
       case BoardThemeId.classic:
@@ -204,6 +299,10 @@ class AppTheme {
         return night;
       case BoardThemeId.contrast:
         return contrast;
+      case BoardThemeId.royal:
+        return royal;
+      case BoardThemeId.ember:
+        return ember;
     }
   }
 }

@@ -9,9 +9,9 @@ import 'generated/l10n.dart';
 
 /// How strong the CPU opponent plays. Only relevant outside of 2-player mode.
 ///
-/// [superEasy] is intentionally last so the stored indexes for the original
-/// three difficulties remain backward compatible.
-enum Difficulty { easy, medium, hard, superEasy }
+/// New levels are appended so stored indexes remain backward compatible.
+/// [expert] is the Premium opponent.
+enum Difficulty { easy, medium, hard, superEasy, expert }
 
 extension DifficultyLabel on Difficulty {
   String label(BuildContext context) {
@@ -24,8 +24,25 @@ extension DifficultyLabel on Difficulty {
         return S.of(context).DifficultyMedium;
       case Difficulty.hard:
         return S.of(context).DifficultyHard;
+      case Difficulty.expert:
+        return S.of(context).DifficultyExpert;
     }
   }
+
+  /// Difficulties offered in game setup, from gentlest to strongest.
+  static const ordered = [
+    Difficulty.superEasy,
+    Difficulty.easy,
+    Difficulty.medium,
+    Difficulty.hard,
+    Difficulty.expert,
+  ];
+
+  bool get requiresPremium => this == Difficulty.expert;
+
+  /// Levels where undo and legal-move hints cost a rewarded ad without
+  /// Premium.
+  bool get isAdvanced => this == Difficulty.hard || this == Difficulty.expert;
 
   int get boardSize => this == Difficulty.superEasy
       ? GameBoard.compactSize

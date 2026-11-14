@@ -7,7 +7,7 @@ import 'package:classic_reversi/game_settings.dart';
 import 'package:classic_reversi/generated/l10n.dart';
 import 'package:classic_reversi/how_to_play_screen.dart';
 import 'package:classic_reversi/main.dart';
-import 'package:classic_reversi/purchase_screen.dart';
+import 'package:classic_reversi/premium_screen.dart';
 import 'package:classic_reversi/settings_screen.dart';
 import 'package:classic_reversi/start_screen.dart';
 import 'package:classic_reversi/stats_screen.dart';
@@ -64,7 +64,7 @@ void main() {
           'Home': const StartScreen(),
           'Settings': const SettingsScreen(),
           'Stats': const StatsScreen(),
-          'Purchase': PurchaseScreen(purchaseService: _FakePurchaseService()),
+          'Purchase': PremiumScreen(purchaseService: _FakePurchaseService()),
           'Rules': const HowToPlayScreen(),
           'Tutorial': const TutorialScreen(),
         };
@@ -221,7 +221,7 @@ void main() {
       'an unexpected purchase exception resets busy state and permits retry',
       (tester) async {
     final service = _FakePurchaseService()..failNext = true;
-    await tester.pumpWidget(_app(PurchaseScreen(purchaseService: service)));
+    await tester.pumpWidget(_app(PremiumScreen(purchaseService: service)));
     await tester.pumpAndSettle();
     final purchase =
         find.byWidgetPredicate((widget) => widget is ElevatedButton);
@@ -288,7 +288,7 @@ String _lastLabel(String screen) => switch (screen) {
       'Home' => S.current.Rules,
       'Settings' => S.current.PrivacyPolicySubtitle,
       'Stats' => S.current.AchGames50,
-      'Purchase' => S.current.RestorePurchaseHelp,
+      'Purchase' => S.current.RestorePurchaseHelp('App Store'),
       'Rules' => S.current.HowToControlsBody,
       'Tutorial' => S.current.TutorialSkip,
       _ => throw ArgumentError(screen),
@@ -322,7 +322,7 @@ class _FakePurchaseService extends PurchaseServiceBase {
   bool failNext = false;
   int buyCalls = 0;
   @override
-  bool get isAdsRemoved => false;
+  bool get isPremium => false;
   @override
   bool get isAvailable => true;
   @override
@@ -330,9 +330,11 @@ class _FakePurchaseService extends PurchaseServiceBase {
   @override
   bool get isSupportedPlatform => true;
   @override
-  ProductDetails? get removeAdsProduct => null;
+  ProductDetails? get premiumProduct => null;
   @override
-  String? get localizedPrice => r'$4.99';
+  String? get localizedPrice => r'$2.99';
+  @override
+  String get storeName => 'App Store';
   @override
   Future<void> init() async {}
   @override
@@ -340,7 +342,7 @@ class _FakePurchaseService extends PurchaseServiceBase {
   @override
   Future<void> loadProducts() async {}
   @override
-  Future<PurchaseFeedback> buyRemoveAds() async {
+  Future<PurchaseFeedback> buyPremium() async {
     buyCalls++;
     if (failNext) {
       failNext = false;

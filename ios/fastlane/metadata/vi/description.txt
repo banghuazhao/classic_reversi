@@ -6,7 +6,7 @@ Tính năng:
 - Thử thách hàng ngày, thống kê và thành tựu
 - Chủ đề, âm thanh và rung cảm ứng
 - Gợi ý và hoàn tác tùy chọn (xem quảng cáo nhận thưởng)
-- Mua một lần để gỡ quảng cáo
+- Premium (mua một lần): không quảng cáo, hoàn tác và gợi ý của huấn luyện viên không giới hạn, cấp Chuyên gia, phân tích ván chơi và giao diện bàn cờ bổ sung
 - Hướng dẫn cách chơi
 
 Thưởng thức chiến thuật Reversi cổ điển với giao diện gọn gàng, hiện đại.

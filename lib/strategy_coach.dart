@@ -47,9 +47,79 @@ class StrategyTurningPoint {
       !StrategyCoach.sameMove(actualMove, advice.move);
 }
 
+/// How a played move compares with the coach's suggestion.
+enum MoveQuality { best, good, inaccuracy, mistake }
+
+/// One decision in a completed game. [index] is the position before the move.
+class MoveAssessment {
+  const MoveAssessment({
+    required this.index,
+    required this.player,
+    required this.played,
+    required this.suggested,
+    required this.gap,
+    required this.quality,
+  });
+
+  final int index;
+  final PieceType player;
+  final Position played;
+  final Position suggested;
+
+  /// Heuristic score lost compared with the suggestion (0 for the best move).
+  final int gap;
+  final MoveQuality quality;
+}
+
+/// Move-quality totals for one side. Forced moves are not counted.
+class PlayerAccuracy {
+  const PlayerAccuracy({
+    required this.player,
+    required this.best,
+    required this.good,
+    required this.inaccuracies,
+    required this.mistakes,
+  });
+
+  final PieceType player;
+  final int best;
+  final int good;
+  final int inaccuracies;
+  final int mistakes;
+
+  int get moves => best + good + inaccuracies + mistakes;
+
+  /// 0–100, weighting each decision by its quality.
+  int get accuracy => moves == 0
+      ? 100
+      : ((best * 100 + good * 85 + inaccuracies * 50 + mistakes * 15) / moves)
+          .round();
+}
+
+/// A move-by-move report for a finished game (Premium).
+class GameAnalysis {
+  GameAnalysis({
+    required Map<PieceType, PlayerAccuracy> players,
+    required List<MoveAssessment> keyMoments,
+    required this.turningPoint,
+  })  : players = Map.unmodifiable(players),
+        keyMoments = List.unmodifiable(keyMoments);
+
+  /// Totals for every analysed side that made at least one decision.
+  final Map<PieceType, PlayerAccuracy> players;
+
+  /// Up to three of the costliest inaccuracies and mistakes, in game order.
+  final List<MoveAssessment> keyMoments;
+  final StrategyTurningPoint? turningPoint;
+}
+
 /// Expensive work runs outside the UI isolate. Each root move explores at most
 /// eight opponent replies; replay analysis visits at most 64 game positions.
 abstract final class StrategyCoach {
+  /// Score gaps at or below these limits count as good / inaccurate moves.
+  static const goodGap = 30;
+  static const inaccuracyGap = 120;
+
   static Future<StrategyAdvice?> analyze(GameModel position,
           {Position? chosenMove}) =>
       compute(_analyze, _AnalysisRequest(position, chosenMove));
@@ -57,6 +127,19 @@ abstract final class StrategyCoach {
   static Future<StrategyTurningPoint?> findTurningPoint(List<GameModel> history,
           {PieceType? player}) =>
       compute(_findTurningPoint, _HistoryRequest(List.of(history), player));
+
+  /// Full report used by Premium game analysis. Its turning point is the same
+  /// one [findTurningPoint] returns.
+  static Future<GameAnalysis> analyzeGame(List<GameModel> history,
+          {PieceType? player}) =>
+      compute(_analyzeGame, _HistoryRequest(List.of(history), player));
+
+  static MoveQuality qualityFor(int gap, {required bool sameMove}) {
+    if (sameMove || gap <= 0) return MoveQuality.best;
+    if (gap <= goodGap) return MoveQuality.good;
+    if (gap <= inaccuracyGap) return MoveQuality.inaccuracy;
+    return MoveQuality.mistake;
+  }
 
   static String coordinate(Position move) =>
       '${String.fromCharCode(65 + move.x)}${move.y + 1}';
@@ -218,9 +301,14 @@ StrategyAdvice? _analyze(_AnalysisRequest request) {
   return _facts(model, selected, selectedScore, legal);
 }
 
-StrategyTurningPoint? _findTurningPoint(_HistoryRequest request) {
+StrategyTurningPoint? _findTurningPoint(_HistoryRequest request) =>
+    _analyzeGame(request).turningPoint;
+
+GameAnalysis _analyzeGame(_HistoryRequest request) {
   StrategyTurningPoint? selected;
   var priority = -(1 << 30);
+  final assessments = <MoveAssessment>[];
+  final counts = <PieceType, List<int>>{};
   for (var index = 0;
       index < request.history.length - 1 && index < 64;
       index++) {
@@ -230,10 +318,9 @@ StrategyTurningPoint? _findTurningPoint(_HistoryRequest request) {
     }
     final actual =
         StrategyCoach.placedMove(model.board, request.history[index + 1].board);
+    final legal = model.board.getMovesForPlayer(model.player);
     if (actual == null ||
-        !model.board
-            .getMovesForPlayer(model.player)
-            .any((move) => StrategyCoach.sameMove(move, actual))) {
+        !legal.any((move) => StrategyCoach.sameMove(move, actual))) {
       continue;
     }
     final advice = _analyze(_AnalysisRequest(model, null));
@@ -252,6 +339,42 @@ StrategyTurningPoint? _findTurningPoint(_HistoryRequest request) {
       selected = StrategyTurningPoint(
           index: index, actualMove: actual, advice: advice);
     }
+    // A forced move is not a decision, so it does not affect accuracy.
+    if (legal.length < 2) continue;
+    final quality = StrategyCoach.qualityFor(gap, sameMove: !different);
+    counts.putIfAbsent(model.player, () => [0, 0, 0, 0])[quality.index]++;
+    assessments.add(MoveAssessment(
+      index: index,
+      player: model.player,
+      played: actual,
+      suggested: advice.move,
+      gap: gap,
+      quality: quality,
+    ));
   }
-  return selected;
+  final keyMoments = assessments
+      .where((item) =>
+          item.quality == MoveQuality.inaccuracy ||
+          item.quality == MoveQuality.mistake)
+      .toList()
+    ..sort((a, b) {
+      final byGap = b.gap.compareTo(a.gap);
+      return byGap != 0 ? byGap : a.index.compareTo(b.index);
+    });
+  final shown = keyMoments.take(3).toList()
+    ..sort((a, b) => a.index.compareTo(b.index));
+  return GameAnalysis(
+    players: {
+      for (final entry in counts.entries)
+        entry.key: PlayerAccuracy(
+          player: entry.key,
+          best: entry.value[MoveQuality.best.index],
+          good: entry.value[MoveQuality.good.index],
+          inaccuracies: entry.value[MoveQuality.inaccuracy.index],
+          mistakes: entry.value[MoveQuality.mistake.index],
+        ),
+    },
+    keyMoments: shown,
+    turningPoint: selected,
+  );
 }

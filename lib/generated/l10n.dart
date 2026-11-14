@@ -404,10 +404,10 @@ class S {
     );
   }
 
-  /// `Undo returns to the position before your last move. Hint highlights legal squares. Restart begins the same game setup again. Settings changes sound, haptics, and theme. Home returns to the beginning screen.`
+  /// `Undo returns to the position before your last move. Hint highlights legal squares. Coach tip suggests a strong move and explains why. Restart begins the same game setup again. Settings changes sound, haptics, and theme. Home returns to the beginning screen.`
   String get HowToControlsBody {
     return Intl.message(
-      'Undo returns to the position before your last move. Hint highlights legal squares. Restart begins the same game setup again. Settings changes sound, haptics, and theme. Home returns to the beginning screen.',
+      'Undo returns to the position before your last move. Hint highlights legal squares. Coach tip suggests a strong move and explains why. Restart begins the same game setup again. Settings changes sound, haptics, and theme. Home returns to the beginning screen.',
       name: 'HowToControlsBody',
       desc: '',
       args: [],
@@ -559,11 +559,6 @@ class S {
     return Intl.message('Tie', name: 'Tie', desc: '', args: []);
   }
 
-  /// `Remove Ads`
-  String get RemoveAds {
-    return Intl.message('Remove Ads', name: 'RemoveAds', desc: '', args: []);
-  }
-
   /// `Restore Purchases`
   String get RestorePurchases {
     return Intl.message(
@@ -572,11 +567,6 @@ class S {
       desc: '',
       args: [],
     );
-  }
-
-  /// `Ads removed`
-  String get AdsRemoved {
-    return Intl.message('Ads removed', name: 'AdsRemoved', desc: '', args: []);
   }
 
   /// `Purchases are currently unavailable.`
@@ -589,10 +579,10 @@ class S {
     );
   }
 
-  /// `Ads have been removed. Thank you!`
+  /// `Welcome to Premium! Every feature is now unlocked.`
   String get PurchaseSuccess {
     return Intl.message(
-      'Ads have been removed. Thank you!',
+      'Welcome to Premium! Every feature is now unlocked.',
       name: 'PurchaseSuccess',
       desc: '',
       args: [],
@@ -629,10 +619,10 @@ class S {
     );
   }
 
-  /// `You already own Remove Ads.`
+  /// `You already own Premium.`
   String get PurchaseAlreadyOwned {
     return Intl.message(
-      'You already own Remove Ads.',
+      'You already own Premium.',
       name: 'PurchaseAlreadyOwned',
       desc: '',
       args: [],
@@ -659,33 +649,13 @@ class S {
     );
   }
 
-  /// `A one-time purchase removes banner and app-open ads and unlocks Hard-mode undo and legal-move hints without rewarded ads. Restore it on devices using the same App Store account.`
-  String get PurchaseBenefits {
+  /// `Already purchased? Restore it from your {store} account.`
+  String RestorePurchaseHelp(Object store) {
     return Intl.message(
-      'A one-time purchase removes banner and app-open ads and unlocks Hard-mode undo and legal-move hints without rewarded ads. Restore it on devices using the same App Store account.',
-      name: 'PurchaseBenefits',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Already purchased? Restore it from your App Store account.`
-  String get RestorePurchaseHelp {
-    return Intl.message(
-      'Already purchased? Restore it from your App Store account.',
+      'Already purchased? Restore it from your $store account.',
       name: 'RestorePurchaseHelp',
       desc: '',
-      args: [],
-    );
-  }
-
-  /// `See purchase benefits or restore an existing purchase`
-  String get PurchaseSettingsSubtitle {
-    return Intl.message(
-      'See purchase benefits or restore an existing purchase',
-      name: 'PurchaseSettingsSubtitle',
-      desc: '',
-      args: [],
+      args: [store],
     );
   }
 
@@ -1789,46 +1759,6 @@ class S {
     );
   }
 
-  /// `No banner or app-open ads.`
-  String get PurchaseBenefitAds {
-    return Intl.message(
-      'No banner or app-open ads.',
-      name: 'PurchaseBenefitAds',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Undo once per turn on Hard without watching an ad.`
-  String get PurchaseBenefitUndo {
-    return Intl.message(
-      'Undo once per turn on Hard without watching an ad.',
-      name: 'PurchaseBenefitUndo',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Legal-move hints on every computer difficulty without watching an ad.`
-  String get PurchaseBenefitHints {
-    return Intl.message(
-      'Legal-move hints on every computer difficulty without watching an ad.',
-      name: 'PurchaseBenefitHints',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `One payment. No subscription. Restore with your App Store account.`
-  String get PurchaseBenefitOnce {
-    return Intl.message(
-      'One payment. No subscription. Restore with your App Store account.',
-      name: 'PurchaseBenefitOnce',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Match library`
   String get MatchLibrary {
     return Intl.message(
@@ -2634,6 +2564,511 @@ class S {
     return Intl.message(
       'Puzzle progress could not be loaded. Try again.',
       name: 'PuzzleProgressLoadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Premium`
+  String get Premium {
+    return Intl.message('Premium', name: 'Premium', desc: '', args: []);
+  }
+
+  /// `Go Premium`
+  String get GoPremium {
+    return Intl.message('Go Premium', name: 'GoPremium', desc: '', args: []);
+  }
+
+  /// `Premium active`
+  String get PremiumActive {
+    return Intl.message(
+      'Premium active',
+      name: 'PremiumActive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get Premium`
+  String get GetPremium {
+    return Intl.message('Get Premium', name: 'GetPremium', desc: '', args: []);
+  }
+
+  /// `Get Premium · {price}`
+  String GetPremiumWithPrice(Object price) {
+    return Intl.message(
+      'Get Premium · $price',
+      name: 'GetPremiumWithPrice',
+      desc: '',
+      args: [price],
+    );
+  }
+
+  /// `Upgrade to Premium`
+  String get PremiumHeadline {
+    return Intl.message(
+      'Upgrade to Premium',
+      name: 'PremiumHeadline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Play ad-free and unlock advanced tools that sharpen every game.`
+  String get PremiumSubheadline {
+    return Intl.message(
+      'Play ad-free and unlock advanced tools that sharpen every game.',
+      name: 'PremiumSubheadline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You're a Premium player`
+  String get PremiumWelcomeTitle {
+    return Intl.message(
+      'You\'re a Premium player',
+      name: 'PremiumWelcomeTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Thank you for your support. Every Premium feature is unlocked.`
+  String get PremiumWelcomeBody {
+    return Intl.message(
+      'Thank you for your support. Every Premium feature is unlocked.',
+      name: 'PremiumWelcomeBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Premium includes`
+  String get PremiumIncludes {
+    return Intl.message(
+      'Premium includes',
+      name: 'PremiumIncludes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ad-free play`
+  String get PremiumAdFreeTitle {
+    return Intl.message(
+      'Ad-free play',
+      name: 'PremiumAdFreeTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No banner, app-open, or rewarded ads.`
+  String get PremiumAdFreeBody {
+    return Intl.message(
+      'No banner, app-open, or rewarded ads.',
+      name: 'PremiumAdFreeBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unlimited undo`
+  String get PremiumUndoTitle {
+    return Intl.message(
+      'Unlimited undo',
+      name: 'PremiumUndoTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Take back as many moves as you like, on every difficulty.`
+  String get PremiumUndoBody {
+    return Intl.message(
+      'Take back as many moves as you like, on every difficulty.',
+      name: 'PremiumUndoBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unlimited coach tips`
+  String get PremiumTipsTitle {
+    return Intl.message(
+      'Unlimited coach tips',
+      name: 'PremiumTipsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get a strong move and the reason behind it, anytime. Free players get {count} tips a day.`
+  String PremiumTipsBody(Object count) {
+    return Intl.message(
+      'Get a strong move and the reason behind it, anytime. Free players get $count tips a day.',
+      name: 'PremiumTipsBody',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Legal-move hints everywhere`
+  String get PremiumHintsTitle {
+    return Intl.message(
+      'Legal-move hints everywhere',
+      name: 'PremiumHintsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `See every legal square on Medium, Hard, and Expert without ads.`
+  String get PremiumHintsBody {
+    return Intl.message(
+      'See every legal square on Medium, Hard, and Expert without ads.',
+      name: 'PremiumHintsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expert opponent`
+  String get PremiumExpertTitle {
+    return Intl.message(
+      'Expert opponent',
+      name: 'PremiumExpertTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Challenge the strongest computer, with deeper search and perfect endgames.`
+  String get PremiumExpertBody {
+    return Intl.message(
+      'Challenge the strongest computer, with deeper search and perfect endgames.',
+      name: 'PremiumExpertBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Full game analysis`
+  String get PremiumAnalysisTitle {
+    return Intl.message(
+      'Full game analysis',
+      name: 'PremiumAnalysisTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Accuracy scores and the key mistakes of every game, one tap from the position.`
+  String get PremiumAnalysisBody {
+    return Intl.message(
+      'Accuracy scores and the key mistakes of every game, one tap from the position.',
+      name: 'PremiumAnalysisBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exclusive board themes`
+  String get PremiumThemesTitle {
+    return Intl.message(
+      'Exclusive board themes',
+      name: 'PremiumThemesTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Royal and Ember tables, reserved for Premium.`
+  String get PremiumThemesBody {
+    return Intl.message(
+      'Royal and Ember tables, reserved for Premium.',
+      name: 'PremiumThemesBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One payment. No subscription. Restore anytime with your {store} account.`
+  String PremiumOneTime(Object store) {
+    return Intl.message(
+      'One payment. No subscription. Restore anytime with your $store account.',
+      name: 'PremiumOneTime',
+      desc: '',
+      args: [store],
+    );
+  }
+
+  /// `Ad-free play, unlimited undo and tips, Expert AI, and more`
+  String get PremiumSettingsSubtitle {
+    return Intl.message(
+      'Ad-free play, unlimited undo and tips, Expert AI, and more',
+      name: 'PremiumSettingsSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Thank you! Every Premium feature is unlocked.`
+  String get PremiumSettingsActiveSubtitle {
+    return Intl.message(
+      'Thank you! Every Premium feature is unlocked.',
+      name: 'PremiumSettingsActiveSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{theme} · Premium`
+  String PremiumThemeLabel(Object theme) {
+    return Intl.message(
+      '$theme · Premium',
+      name: 'PremiumThemeLabel',
+      desc: '',
+      args: [theme],
+    );
+  }
+
+  /// `Requires Premium`
+  String get PremiumRequired {
+    return Intl.message(
+      'Requires Premium',
+      name: 'PremiumRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unlock with Premium`
+  String get UnlockWithPremium {
+    return Intl.message(
+      'Unlock with Premium',
+      name: 'UnlockWithPremium',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Royal`
+  String get ThemeRoyal {
+    return Intl.message('Royal', name: 'ThemeRoyal', desc: '', args: []);
+  }
+
+  /// `Ember`
+  String get ThemeEmber {
+    return Intl.message('Ember', name: 'ThemeEmber', desc: '', args: []);
+  }
+
+  /// `Expert`
+  String get DifficultyExpert {
+    return Intl.message('Expert', name: 'DifficultyExpert', desc: '', args: []);
+  }
+
+  /// `Expert searches deeper and plays endgames perfectly. It may take a moment to think.`
+  String get ExpertSetupNote {
+    return Intl.message(
+      'Expert searches deeper and plays endgames perfectly. It may take a moment to think.',
+      name: 'ExpertSetupNote',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Undo · unlimited`
+  String get UndoUnlimited {
+    return Intl.message(
+      'Undo · unlimited',
+      name: 'UndoUnlimited',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Coach tip`
+  String get CoachTip {
+    return Intl.message('Coach tip', name: 'CoachTip', desc: '', args: []);
+  }
+
+  /// `Coach tip · {count} free today`
+  String CoachTipsLeft(Object count) {
+    return Intl.message(
+      'Coach tip · $count free today',
+      name: 'CoachTipsLeft',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Coach tip · watch an ad`
+  String get CoachTipWithAd {
+    return Intl.message(
+      'Coach tip · watch an ad',
+      name: 'CoachTipWithAd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Coach tip: try {coordinate}.`
+  String CoachTipSuggestion(Object coordinate) {
+    return Intl.message(
+      'Coach tip: try $coordinate.',
+      name: 'CoachTipSuggestion',
+      desc: '',
+      args: [coordinate],
+    );
+  }
+
+  /// `Today's free tips are used`
+  String get CoachTipLimitTitle {
+    return Intl.message(
+      'Today\'s free tips are used',
+      name: 'CoachTipLimitTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You've used all {count} free coach tips for today. Watch a short ad for one more, or go Premium for unlimited tips.`
+  String CoachTipLimitMessage(Object count) {
+    return Intl.message(
+      'You\'ve used all $count free coach tips for today. Watch a short ad for one more, or go Premium for unlimited tips.',
+      name: 'CoachTipLimitMessage',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Watch ad`
+  String get CoachTipWatchAd {
+    return Intl.message(
+      'Watch ad',
+      name: 'CoachTipWatchAd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Suggested by the coach`
+  String get BoardSuggestedMove {
+    return Intl.message(
+      'Suggested by the coach',
+      name: 'BoardSuggestedMove',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Game analysis`
+  String get AnalysisTitle {
+    return Intl.message(
+      'Game analysis',
+      name: 'AnalysisTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Premium scores your accuracy, counts how often you found the coach's move, and lists the key mistakes to revisit.`
+  String get AnalysisLockedBody {
+    return Intl.message(
+      'Premium scores your accuracy, counts how often you found the coach\'s move, and lists the key mistakes to revisit.',
+      name: 'AnalysisLockedBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Analyzing every move…`
+  String get AnalysisLoading {
+    return Intl.message(
+      'Analyzing every move…',
+      name: 'AnalysisLoading',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `There are no decisions to analyze in this game.`
+  String get AnalysisNoMoves {
+    return Intl.message(
+      'There are no decisions to analyze in this game.',
+      name: 'AnalysisNoMoves',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Key moments`
+  String get AnalysisKeyMoments {
+    return Intl.message(
+      'Key moments',
+      name: 'AnalysisKeyMoments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No costly mistakes found. Well played!`
+  String get AnalysisClean {
+    return Intl.message(
+      'No costly mistakes found. Well played!',
+      name: 'AnalysisClean',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Move {move}: {played} played, {suggested} was stronger`
+  String AnalysisMoment(Object move, Object played, Object suggested) {
+    return Intl.message(
+      'Move $move: $played played, $suggested was stronger',
+      name: 'AnalysisMoment',
+      desc: '',
+      args: [move, played, suggested],
+    );
+  }
+
+  /// `Mistake`
+  String get AnalysisMistake {
+    return Intl.message('Mistake', name: 'AnalysisMistake', desc: '', args: []);
+  }
+
+  /// `Inaccuracy`
+  String get AnalysisInaccuracy {
+    return Intl.message(
+      'Inaccuracy',
+      name: 'AnalysisInaccuracy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Best {best} · Good {good} · Inaccuracies {inaccuracies} · Mistakes {mistakes}`
+  String AnalysisCounts(
+    Object best,
+    Object good,
+    Object inaccuracies,
+    Object mistakes,
+  ) {
+    return Intl.message(
+      'Best $best · Good $good · Inaccuracies $inaccuracies · Mistakes $mistakes',
+      name: 'AnalysisCounts',
+      desc: '',
+      args: [best, good, inaccuracies, mistakes],
+    );
+  }
+
+  /// `accuracy`
+  String get AnalysisAccuracy {
+    return Intl.message(
+      'accuracy',
+      name: 'AnalysisAccuracy',
       desc: '',
       args: [],
     );
