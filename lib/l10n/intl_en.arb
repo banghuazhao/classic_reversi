@@ -38,7 +38,7 @@
   "HowToTipsTitle": "Strategy tips",
   "HowToTipsBody": "Corners can never be flipped, so work toward them carefully. Avoid giving away squares beside an open corner. Mobility matters: try to keep several legal moves available while limiting your opponent's choices.",
   "HowToControlsTitle": "Game controls",
-  "HowToControlsBody": "Undo returns to the position before your last move. Hint highlights legal squares. Restart begins the same game setup again. Settings changes sound, haptics, and theme. Home returns to the beginning screen.",
+  "HowToControlsBody": "Undo returns to the position before your last move. Hint highlights legal squares. Coach tip suggests a strong move and explains why. Restart begins the same game setup again. Settings changes sound, haptics, and theme. Home returns to the beginning screen.",
   "HowToLearnMore": "Rules, controls, strategy tips, and app instructions",
   "Classic_Reversi": "Classic Reversi",
   "Difficulty": "Difficulty",
@@ -66,20 +66,16 @@
   "BlackWins": "Black wins",
   "WhiteWins": "White wins",
   "Tie": "Tie",
-  "RemoveAds": "Remove Ads",
   "RestorePurchases": "Restore Purchases",
-  "AdsRemoved": "Ads removed",
   "PurchaseUnavailable": "Purchases are currently unavailable.",
-  "PurchaseSuccess": "Ads have been removed. Thank you!",
+  "PurchaseSuccess": "Welcome to Premium! Every feature is now unlocked.",
   "PurchaseCancelled": "Purchase cancelled.",
   "PurchasePending": "Purchase pending approval…",
   "PurchaseFailed": "Purchase failed. Please try again.",
-  "PurchaseAlreadyOwned": "You already own Remove Ads.",
+  "PurchaseAlreadyOwned": "You already own Premium.",
   "RestoreSuccess": "Purchases restored.",
   "RestoreNothing": "No purchases to restore.",
-  "PurchaseBenefits": "A one-time purchase removes banner and app-open ads and unlocks Hard-mode undo and legal-move hints without rewarded ads. Restore it on devices using the same App Store account.",
-  "RestorePurchaseHelp": "Already purchased? Restore it from your App Store account.",
-  "PurchaseSettingsSubtitle": "See purchase benefits or restore an existing purchase",
+  "RestorePurchaseHelp": "Already purchased? Restore it from your {store} account.",
   "Settings": "Settings",
   "Sound": "Sound",
   "Haptics": "Haptics",
@@ -305,10 +301,6 @@
       "date": {}
     }
   },
-  "PurchaseBenefitAds": "No banner or app-open ads.",
-  "PurchaseBenefitUndo": "Undo once per turn on Hard without watching an ad.",
-  "PurchaseBenefitHints": "Legal-move hints on every computer difficulty without watching an ad.",
-  "PurchaseBenefitOnce": "One payment. No subscription. Restore with your App Store account.",
   "MatchLibrary": "Match library",
   "MatchLibrarySubtitle": "Your last 100 completed games, ready to replay.",
   "MatchLibraryEmptyTitle": "Your story starts here",
@@ -488,5 +480,114 @@
   "PuzzleCompletionSaveFailed": "Progress could not be saved. Keep this screen open and try again.",
   "PuzzleSaveProgress": "Save progress",
   "GameSaveFailed": "Your game could not be saved. Please try again before leaving.",
-  "PuzzleProgressLoadFailed": "Puzzle progress could not be loaded. Try again."
+  "PuzzleProgressLoadFailed": "Puzzle progress could not be loaded. Try again.",
+  "Premium": "Premium",
+  "GoPremium": "Go Premium",
+  "PremiumActive": "Premium active",
+  "GetPremium": "Get Premium",
+  "GetPremiumWithPrice": "Get Premium · {price}",
+  "@GetPremiumWithPrice": {
+    "placeholders": {
+      "price": {}
+    }
+  },
+  "PremiumHeadline": "Upgrade to Premium",
+  "PremiumSubheadline": "Play ad-free and unlock advanced tools that sharpen every game.",
+  "PremiumWelcomeTitle": "You're a Premium player",
+  "PremiumWelcomeBody": "Thank you for your support. Every Premium feature is unlocked.",
+  "PremiumIncludes": "Premium includes",
+  "PremiumAdFreeTitle": "Ad-free play",
+  "PremiumAdFreeBody": "No banner, app-open, or rewarded ads.",
+  "PremiumUndoTitle": "Unlimited undo",
+  "PremiumUndoBody": "Take back as many moves as you like, on every difficulty.",
+  "PremiumTipsTitle": "Unlimited coach tips",
+  "PremiumTipsBody": "Get a strong move and the reason behind it, anytime. Free players get {count} tips a day.",
+  "@PremiumTipsBody": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "PremiumHintsTitle": "Legal-move hints everywhere",
+  "PremiumHintsBody": "See every legal square on Medium, Hard, and Expert without ads.",
+  "PremiumExpertTitle": "Expert opponent",
+  "PremiumExpertBody": "Challenge the strongest computer, with deeper search and perfect endgames.",
+  "PremiumAnalysisTitle": "Full game analysis",
+  "PremiumAnalysisBody": "Accuracy scores and the key mistakes of every game, one tap from the position.",
+  "PremiumThemesTitle": "Exclusive board themes",
+  "PremiumThemesBody": "Royal and Ember tables, reserved for Premium.",
+  "PremiumOneTime": "One payment. No subscription. Restore anytime with your {store} account.",
+  "@PremiumOneTime": {
+    "placeholders": {
+      "store": {}
+    }
+  },
+  "@RestorePurchaseHelp": {
+    "placeholders": {
+      "store": {}
+    }
+  },
+  "PremiumSettingsSubtitle": "Ad-free play, unlimited undo and tips, Expert AI, and more",
+  "PremiumSettingsActiveSubtitle": "Thank you! Every Premium feature is unlocked.",
+  "PremiumThemeLabel": "{theme} · Premium",
+  "@PremiumThemeLabel": {
+    "placeholders": {
+      "theme": {}
+    }
+  },
+  "PremiumRequired": "Requires Premium",
+  "UnlockWithPremium": "Unlock with Premium",
+  "ThemeRoyal": "Royal",
+  "ThemeEmber": "Ember",
+  "DifficultyExpert": "Expert",
+  "ExpertSetupNote": "Expert searches deeper and plays endgames perfectly. It may take a moment to think.",
+  "UndoUnlimited": "Undo · unlimited",
+  "CoachTip": "Coach tip",
+  "CoachTipsLeft": "Coach tip · {count} free today",
+  "@CoachTipsLeft": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "CoachTipWithAd": "Coach tip · watch an ad",
+  "CoachTipSuggestion": "Coach tip: try {coordinate}.",
+  "@CoachTipSuggestion": {
+    "placeholders": {
+      "coordinate": {}
+    }
+  },
+  "CoachTipLimitTitle": "Today's free tips are used",
+  "CoachTipLimitMessage": "You've used all {count} free coach tips for today. Watch a short ad for one more, or go Premium for unlimited tips.",
+  "@CoachTipLimitMessage": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "CoachTipWatchAd": "Watch ad",
+  "BoardSuggestedMove": "Suggested by the coach",
+  "AnalysisTitle": "Game analysis",
+  "AnalysisLockedBody": "Premium scores your accuracy, counts how often you found the coach's move, and lists the key mistakes to revisit.",
+  "AnalysisLoading": "Analyzing every move…",
+  "AnalysisNoMoves": "There are no decisions to analyze in this game.",
+  "AnalysisKeyMoments": "Key moments",
+  "AnalysisClean": "No costly mistakes found. Well played!",
+  "AnalysisMoment": "Move {move}: {played} played, {suggested} was stronger",
+  "@AnalysisMoment": {
+    "placeholders": {
+      "move": {},
+      "played": {},
+      "suggested": {}
+    }
+  },
+  "AnalysisMistake": "Mistake",
+  "AnalysisInaccuracy": "Inaccuracy",
+  "AnalysisCounts": "Best {best} · Good {good} · Inaccuracies {inaccuracies} · Mistakes {mistakes}",
+  "@AnalysisCounts": {
+    "placeholders": {
+      "best": {},
+      "good": {},
+      "inaccuracies": {},
+      "mistakes": {}
+    }
+  },
+  "AnalysisAccuracy": "accuracy"
 }

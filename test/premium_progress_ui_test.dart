@@ -1,6 +1,6 @@
 import 'package:classic_reversi/Tools/ads_manager.dart';
 import 'package:classic_reversi/generated/l10n.dart';
-import 'package:classic_reversi/purchase_screen.dart';
+import 'package:classic_reversi/premium_screen.dart';
 import 'package:classic_reversi/stats_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -38,29 +38,26 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets(
-      'purchase explains ad removal, Hard undo, hints and payment clearly',
+  testWidgets('premium explains every benefit and the one-time payment',
       (tester) async {
-    await tester.pumpWidget(app(const PurchaseScreen(), scale: 3.2));
+    await tester.pumpWidget(app(const PremiumScreen(), scale: 3.2));
     await tester.pumpAndSettle();
-    final ads = find.text('No banner or app-open ads.');
-    await tester.scrollUntilVisible(ads, 350);
-    expect(ads, findsOneWidget);
-    final undo =
-        find.text('Undo once per turn on Hard without watching an ad.');
-    await tester.ensureVisible(undo);
-    await tester.pumpAndSettle();
-    expect(undo, findsOneWidget);
-    final hints = find.text(
-        'Legal-move hints on every computer difficulty without watching an ad.');
-    await tester.ensureVisible(hints);
-    await tester.pumpAndSettle();
-    expect(hints, findsOneWidget);
-    final once = find.text(
-        'One payment. No subscription. Restore with your App Store account.');
-    await tester.ensureVisible(once);
-    await tester.pumpAndSettle();
-    expect(once, findsOneWidget);
+    for (final text in [
+      'Ad-free play',
+      'No banner, app-open, or rewarded ads.',
+      'Unlimited undo',
+      'Unlimited coach tips',
+      'Legal-move hints everywhere',
+      'Expert opponent',
+      'Full game analysis',
+      'Exclusive board themes',
+    ]) {
+      final finder = find.text(text);
+      await tester.scrollUntilVisible(finder, 300,
+          scrollable: find.byType(Scrollable).first);
+      await tester.pumpAndSettle();
+      expect(finder, findsOneWidget, reason: text);
+    }
     expect(tester.takeException(), isNull);
   });
 }

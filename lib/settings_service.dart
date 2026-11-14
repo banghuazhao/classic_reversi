@@ -21,7 +21,10 @@ class SettingsService {
   static const _lossesKey = 'losses';
   static const _tiesKey = 'ties';
   static const _hasWonOnceKey = 'hasWonOnce';
-  static const _adsRemovedKey = 'adsRemoved';
+  // Historical key from the Remove Ads era; existing buyers keep Premium.
+  static const _premiumKey = 'adsRemoved';
+  static const _coachTipsDateKey = 'coachTipsDate';
+  static const _coachTipsUsedKey = 'coachTipsUsed';
   static const _soundEnabledKey = 'soundEnabled';
   static const _hapticsEnabledKey = 'hapticsEnabled';
   static const _reduceMotionKey = 'reduceMotion';
@@ -34,6 +37,7 @@ class SettingsService {
   static const _winsEasyKey = 'winsEasy';
   static const _winsMediumKey = 'winsMedium';
   static const _winsHardKey = 'winsHard';
+  static const _winsExpertKey = 'winsExpert';
   static const _perfectWinsKey = 'perfectWins';
   static const _dailyCompletedDateKey = 'dailyCompletedDate';
   static const _dailyCompletedDatesKey = 'dailyCompletedDates';
@@ -141,16 +145,36 @@ class SettingsService {
     await prefs.setBool(_hasWonOnceKey, true);
   }
 
-  /// Local cache of the Remove Ads entitlement for offline launches.
+  /// Local cache of the Premium entitlement for offline launches.
   /// Store entitlements remain authoritative and are reconciled on startup.
-  static Future<bool> getAdsRemoved() async {
+  static Future<bool> getPremiumUnlocked() async {
     final prefs = await _preferences();
-    return prefs.getBool(_adsRemovedKey) ?? false;
+    return prefs.getBool(_premiumKey) ?? false;
   }
 
-  static Future<void> setAdsRemoved(bool value) async {
+  static Future<void> setPremiumUnlocked(bool value) async {
     final prefs = await _preferences();
-    await prefs.setBool(_adsRemovedKey, value);
+    await prefs.setBool(_premiumKey, value);
+  }
+
+  /// Coach tips used on the local calendar day of [now]. A new day resets
+  /// the free allowance without a separate cleanup step.
+  static Future<int> getCoachTipsUsedToday([DateTime? now]) async {
+    final prefs = await _preferences();
+    if (prefs.getString(_coachTipsDateKey) != todayKey(now)) return 0;
+    return prefs.getInt(_coachTipsUsedKey) ?? 0;
+  }
+
+  /// Records one coach tip and returns today's total.
+  static Future<int> recordCoachTipUsed([DateTime? now]) async {
+    final prefs = await _preferences();
+    final today = todayKey(now);
+    final used = prefs.getString(_coachTipsDateKey) == today
+        ? (prefs.getInt(_coachTipsUsedKey) ?? 0) + 1
+        : 1;
+    await prefs.setString(_coachTipsDateKey, today);
+    await prefs.setInt(_coachTipsUsedKey, used);
+    return used;
   }
 
   static Future<bool> getSoundEnabled() async {
@@ -268,6 +292,8 @@ class SettingsService {
         return prefs.getInt(_winsMediumKey) ?? 0;
       case Difficulty.hard:
         return prefs.getInt(_winsHardKey) ?? 0;
+      case Difficulty.expert:
+        return prefs.getInt(_winsExpertKey) ?? 0;
     }
   }
 
@@ -278,6 +304,7 @@ class SettingsService {
       Difficulty.easy => _winsEasyKey,
       Difficulty.medium => _winsMediumKey,
       Difficulty.hard => _winsHardKey,
+      Difficulty.expert => _winsExpertKey,
     };
     await prefs.setInt(key, (prefs.getInt(key) ?? 0) + 1);
   }

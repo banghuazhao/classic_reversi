@@ -6,7 +6,7 @@ Features:
 - Daily challenge, stats, and achievements
 - Themes, sound, and haptics
 - Optional hints and undo (rewarded)
-- One-time Remove Ads purchase
+- Premium, a one-time purchase: no ads, unlimited undo and coach tips, the Expert level, game analysis, and extra board themes
 - How to Play guide
 
 Enjoy timeless Reversi strategy with a clean, modern interface.

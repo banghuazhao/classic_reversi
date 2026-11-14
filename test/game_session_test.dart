@@ -264,7 +264,8 @@ void main() {
     'unsupported version': (data) => data['version'] = 99,
     'noninteger version': (data) => data['version'] = 1.0,
     'missing settings': (data) => data.remove('settings'),
-    'unknown difficulty': (data) => data['settings']['difficulty'] = 'expert',
+    'unknown difficulty': (data) =>
+        data['settings']['difficulty'] = 'grandmaster',
     'empty human color': (data) => data['settings']['humanColor'] = 'empty',
     'unsupported size': (data) => data['settings']['boardSize'] = 7,
     'inconsistent size': (data) => data['settings']['boardSize'] = 6,

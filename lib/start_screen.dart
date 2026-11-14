@@ -7,6 +7,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'Tools/purchase_service.dart';
 import 'app_chrome.dart';
 import 'daily_challenge.dart';
 import 'game_board.dart';
@@ -16,6 +17,7 @@ import 'generated/l10n.dart';
 import 'how_to_play_screen.dart';
 import 'main.dart';
 import 'match_library_screen.dart';
+import 'premium_screen.dart';
 import 'puzzles_screen.dart';
 import 'settings_screen.dart';
 import 'settings_service.dart';
@@ -47,6 +49,7 @@ class _StartScreenState extends State<StartScreen> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     ThemeController.instance.addListener(_onThemeChanged);
+    PurchaseService.instance.addListener(_onThemeChanged);
     _loadSettings();
   }
 
@@ -54,7 +57,14 @@ class _StartScreenState extends State<StartScreen> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     ThemeController.instance.removeListener(_onThemeChanged);
+    PurchaseService.instance.removeListener(_onThemeChanged);
     super.dispose();
+  }
+
+  Future<void> _openPremium() async {
+    await Navigator.of(context)
+        .push(fadeRoute((context) => const PremiumScreen()));
+    if (mounted) setState(() {});
   }
 
   void _onThemeChanged() {
@@ -200,7 +210,10 @@ class _StartScreenState extends State<StartScreen> with WidgetsBindingObserver {
 
   Future<void> _showGameSetup() async {
     if (_openingGame) return;
-    var difficulty = _difficulty;
+    // A remembered Expert choice needs Premium to be offered again.
+    var difficulty = _difficulty.requiresPremium && !isPremiumUser
+        ? Difficulty.hard
+        : _difficulty;
     var firstPlayer = _firstPlayer;
     var twoPlayerMode = _twoPlayerMode;
     final settings = await showModalBottomSheet<GameSettings>(
@@ -265,17 +278,27 @@ class _StartScreenState extends State<StartScreen> with WidgetsBindingObserver {
                     const SizedBox(height: 24),
                     AppSectionTitle(s.Difficulty),
                     _SetupChoices<Difficulty>(
-                      values: const [
-                        Difficulty.superEasy,
-                        Difficulty.easy,
-                        Difficulty.medium,
-                        Difficulty.hard,
-                      ],
+                      values: DifficultyLabel.ordered,
                       selected: difficulty,
                       labelFor: (value) => value.label(context),
-                      onSelected: (value) =>
-                          setSheetState(() => difficulty = value),
+                      isLocked: (value) =>
+                          value.requiresPremium && !isPremiumUser,
+                      onSelected: (value) async {
+                        if (value.requiresPremium && !isPremiumUser) {
+                          await Navigator.of(context).push(fadeRoute(
+                              (context) => const PremiumScreen()));
+                          if (!context.mounted || !isPremiumUser) {
+                            if (context.mounted) setSheetState(() {});
+                            return;
+                          }
+                        }
+                        setSheetState(() => difficulty = value);
+                      },
                     ),
+                    if (difficulty == Difficulty.expert) ...[
+                      const SizedBox(height: 8),
+                      Text(s.ExpertSetupNote, style: AppChrome.bodyStyle),
+                    ],
                     const SizedBox(height: 24),
                     AppSectionTitle(s.WhoGoesFirst),
                     _SetupChoices<FirstPlayer>(
@@ -335,13 +358,14 @@ class _StartScreenState extends State<StartScreen> with WidgetsBindingObserver {
     required String tooltip,
     required IconData icon,
     required VoidCallback? onPressed,
+    Color? color,
   }) {
     return IconButton.filledTonal(
       tooltip: tooltip,
       onPressed: onPressed,
       style: IconButton.styleFrom(
         backgroundColor: AppChrome.cardColor,
-        foregroundColor: AppChrome.primaryText,
+        foregroundColor: color ?? AppChrome.primaryText,
         minimumSize: const Size(48, 48),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
@@ -398,6 +422,17 @@ class _StartScreenState extends State<StartScreen> with WidgetsBindingObserver {
                                       },
                               ),
                               const Spacer(),
+                              _iconButton(
+                                tooltip: isPremiumUser
+                                    ? s.PremiumActive
+                                    : s.GoPremium,
+                                icon: isPremiumUser
+                                    ? Icons.verified_rounded
+                                    : Icons.workspace_premium_rounded,
+                                color: palette.lastMoveBorder,
+                                onPressed: _openingGame ? null : _openPremium,
+                              ),
+                              const SizedBox(width: 8),
                               _iconButton(
                                 tooltip: s.Settings,
                                 icon: CupertinoIcons.settings,
@@ -604,12 +639,16 @@ class _SetupChoices<T> extends StatelessWidget {
     required this.selected,
     required this.labelFor,
     required this.onSelected,
+    this.isLocked,
   });
 
   final List<T> values;
   final T selected;
   final String Function(T) labelFor;
   final ValueChanged<T> onSelected;
+
+  /// Premium-only choices show a lock and an accessible "Premium" label.
+  final bool Function(T)? isLocked;
 
   @override
   Widget build(BuildContext context) {
@@ -619,11 +658,13 @@ class _SetupChoices<T> extends StatelessWidget {
         runSpacing: 8,
         children: values.map((value) {
           final isSelected = value == selected;
+          final locked = isLocked?.call(value) ?? false;
           return ConstrainedBox(
             constraints: BoxConstraints(maxWidth: constraints.maxWidth),
             child: Semantics(
               selected: isSelected,
               button: true,
+              hint: locked ? S.of(context).PremiumRequired : null,
               child: Material(
                 color: isSelected ? AppChrome.primaryText : AppChrome.cardColor,
                 shape: RoundedRectangleBorder(
@@ -644,13 +685,18 @@ class _SetupChoices<T> extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            isSelected
-                                ? CupertinoIcons.checkmark_circle_fill
-                                : CupertinoIcons.circle,
+                            locked
+                                ? CupertinoIcons.lock_fill
+                                : isSelected
+                                    ? CupertinoIcons.checkmark_circle_fill
+                                    : CupertinoIcons.circle,
                             size: 20,
                             color: isSelected
                                 ? AppChrome.onPrimary
-                                : AppChrome.secondaryText,
+                                : locked
+                                    ? ThemeController
+                                        .instance.theme.lastMoveBorder
+                                    : AppChrome.secondaryText,
                           ),
                           const SizedBox(width: 8),
                           Flexible(

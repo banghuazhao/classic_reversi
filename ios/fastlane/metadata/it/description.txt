@@ -6,7 +6,7 @@ Funzionalità:
 - Sfida giornaliera, statistiche e traguardi
 - Temi, suoni e feedback aptico
 - Suggerimenti e annulla mossa opzionali (con premio)
-- Acquisto una tantum per rimuovere gli annunci
+- Premium, acquisto una tantum: niente annunci, annullamenti e consigli del coach illimitati, livello Esperto, analisi della partita e temi extra
 - Guida Come si gioca
 
 Goditi la strategia senza tempo del Reversi con un'interfaccia pulita e moderna.

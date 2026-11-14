@@ -36,8 +36,12 @@ import 'gameplay_activity.dart';
 import 'match_library.dart';
 import 'generated/l10n.dart';
 import 'move_finder.dart';
+import 'premium_screen.dart';
 import 'settings_screen.dart';
+import 'settings_service.dart';
 import 'start_screen.dart';
+import 'strategy_coach.dart';
+import 'strategy_practice_screen.dart';
 import 'styling.dart';
 import 'theme_controller.dart';
 import 'thinking_indicator.dart';
@@ -154,7 +158,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _onPurchaseEntitlementChanged() {
-    if (PurchaseService.instance.isAdsRemoved) {
+    if (PurchaseService.instance.isPremium) {
       _tearDownAppOpenAds();
     }
   }
@@ -314,8 +318,8 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   int _gameOverCelebrationId = 0;
 
   // Snapshots of the board from just before each human move, used to
-  // support taking a move back. Cleared on undo so only one undo can be
-  // used per turn until another move is made.
+  // support taking a move back. Without Premium only one undo can be used
+  // per turn until another move is made; Premium can keep stepping back.
   final List<GameModel> _historyStack = [];
   final List<GameModel> _timeline = [];
   GameModel? _currentModel;
@@ -334,6 +338,11 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   /// Legal-move hints unlocked for this game via rewarded ad.
   bool _hintsUnlocked = false;
 
+  /// Square suggested by the most recent coach tip, for this position only.
+  Position? _tipMove;
+  bool _tipBusy = false;
+  int _tipsUsedToday = 0;
+
   bool _gameOverSheetVisible = false;
   bool _rewardFlowBusy = false;
 
@@ -344,16 +353,24 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       ? PieceType.empty
       : getOpponent(widget.settings.humanColor);
 
-  bool get _adsRemovedOrDisabled =>
-      !AdsManager.adsEnabled || PurchaseService.instance.isAdsRemoved;
+  bool get _isPremium => PurchaseService.instance.isPremium;
+
+  bool get _premiumOrAdsDisabled => !AdsManager.adsEnabled || _isPremium;
 
   bool get _freeUndoAllowed =>
       widget.settings.twoPlayerMode ||
-      widget.settings.difficulty != Difficulty.hard ||
-      _adsRemovedOrDisabled;
+      !widget.settings.difficulty.isAdvanced ||
+      _premiumOrAdsDisabled;
+
+  /// Premium can step back through every move; otherwise one undo per turn.
+  bool get _undoAvailable =>
+      _historyStack.isNotEmpty && (_canUndo || _isPremium);
 
   bool get _undoAllowed =>
-      _canUndo && (_freeUndoAllowed || _rewardedUndoCharges > 0);
+      _undoAvailable && (_freeUndoAllowed || _rewardedUndoCharges > 0);
+
+  int get _freeTipsLeft =>
+      max(0, kFreeDailyCoachTips - _tipsUsedToday).toInt();
 
   bool get _showHints {
     if (widget.settings.twoPlayerMode) {
@@ -361,7 +378,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     }
     if (widget.settings.difficulty == Difficulty.easy ||
         widget.settings.difficulty == Difficulty.superEasy ||
-        _adsRemovedOrDisabled) {
+        _premiumOrAdsDisabled) {
       return true;
     }
     return _hintsUnlocked;
@@ -392,10 +409,13 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     while (isCurrent() &&
         current.player == _computerColor &&
         !current.gameIsOver) {
+      final searchClock = Stopwatch()..start();
       final move = await MoveFinder(current.board)
           .findMove(current.player, widget.settings.difficulty);
       if (!isCurrent() || move == null) return;
-      await Future<void>.delayed(const Duration(milliseconds: 420));
+      // Keep a steady rhythm: a long search already counts as thinking time.
+      final pause = 420 - searchClock.elapsedMilliseconds;
+      await Future<void>.delayed(Duration(milliseconds: max(0, pause)));
       if (!isCurrent()) return;
       setState(() => _cpuMoveAnticipating = true);
       await Future<void>.delayed(const Duration(milliseconds: 180));
@@ -436,10 +456,11 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     // this triggers that opening move; otherwise it commits the starting board.
     _submitModel(saved?.model ?? _initialModel());
 
-    // Ads-removed users get Hard undo / hints without watching ads.
-    if (_adsRemovedOrDisabled) {
+    // Premium users get advanced-level undo / hints without watching ads.
+    if (_premiumOrAdsDisabled) {
       _hintsUnlocked = true;
     }
+    unawaited(_loadTipAllowance());
 
     PurchaseService.instance.addListener(_onPurchaseEntitlementChanged);
     ThemeController.instance.addListener(_onThemeChanged);
@@ -471,10 +492,20 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     return true;
   }
 
+  Future<void> _loadTipAllowance() async {
+    try {
+      final used = await SettingsService.getCoachTipsUsedToday();
+      if (mounted) setState(() => _tipsUsedToday = used);
+    } catch (error) {
+      debugPrint('Loading coach tip allowance failed: $error');
+    }
+  }
+
   void _acceptModel(GameModel model) {
     final previous = _timeline.isEmpty ? null : _timeline.last;
     if (previous == null || !_samePosition(previous, model)) {
       _timeline.add(model);
+      _tipMove = null;
     }
     _passedPlayer = _timeline.length > 1 &&
             _timeline[_timeline.length - 2].player == model.player &&
@@ -622,12 +653,12 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     if (!mounted) {
       return;
     }
-    if (PurchaseService.instance.isAdsRemoved) {
+    if (_isPremium) {
       _tearDownAds();
-      setState(() {
-        _hintsUnlocked = true;
-      });
+      _hintsUnlocked = true;
     }
+    // Undo, tips, and controls all depend on the entitlement.
+    setState(() {});
   }
 
   void _setupAds() {
@@ -836,11 +867,12 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       _gameOverHandled = false;
       _gameOverSheetVisible = false;
       _rewardedUndoCharges = 0;
-      if (!_adsRemovedOrDisabled &&
+      _tipMove = null;
+      if (!_premiumOrAdsDisabled &&
           widget.settings.difficulty != Difficulty.easy &&
           widget.settings.difficulty != Difficulty.superEasy) {
         _hintsUnlocked = false;
-      } else if (_adsRemovedOrDisabled) {
+      } else if (_premiumOrAdsDisabled) {
         _hintsUnlocked = true;
       }
     });
@@ -882,7 +914,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   }
 
   void _undoLastMove({GameModel? currentModel}) {
-    if (!_canUndo || _historyStack.isEmpty) {
+    if (!_undoAvailable) {
       return;
     }
     // Don't undo while the CPU is thinking — the stream would still finish
@@ -902,7 +934,9 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       (model) => _samePosition(model, previousModel),
     );
     if (index >= 0) _timeline.removeRange(index + 1, _timeline.length);
+    // The free per-turn undo is spent; Premium continues from the history.
     _canUndo = false;
+    _tipMove = null;
     _lastMove = _lastPlacedPosition();
     _cpuMoveAnticipating = false;
     _turnGeneration++;
@@ -926,7 +960,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _requestRewardedUndo({GameModel? currentModel}) async {
-    if (_rewardFlowBusy || !_canUndo || _historyStack.isEmpty) {
+    if (_rewardFlowBusy || !_undoAvailable) {
       return;
     }
     if (currentModel != null && currentModel.player == _computerColor) {
@@ -935,7 +969,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     _rewardFlowBusy = true;
     final s = S.of(context);
     try {
-      if (!_adsRemovedOrDisabled) {
+      if (!_premiumOrAdsDisabled) {
         final proceed = await _confirmWatchAd(s.WatchAdForUndo);
         if (proceed != true || !mounted) {
           return;
@@ -968,7 +1002,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     _rewardFlowBusy = true;
     final s = S.of(context);
     try {
-      if (!_adsRemovedOrDisabled) {
+      if (!_premiumOrAdsDisabled) {
         final proceed = await _confirmWatchAd(s.WatchAdForHint);
         if (proceed != true || !mounted) {
           return;
@@ -993,6 +1027,117 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     } finally {
       _rewardFlowBusy = false;
     }
+  }
+
+  Future<void> _openPremium() async {
+    await Navigator.of(context).push(fadeRoute((context) =>
+        const PremiumScreen()));
+    if (mounted) setState(() {});
+  }
+
+  /// Suggests a strong move for the side to play. Premium tips are unlimited;
+  /// otherwise a few are free each day and more can be earned with an ad.
+  Future<void> _requestTip(GameModel model) async {
+    if (_tipBusy || _rewardFlowBusy || model.gameIsOver) return;
+    final s = S.of(context);
+    var countsTowardAllowance = false;
+    if (!_isPremium) {
+      int used;
+      try {
+        used = await SettingsService.getCoachTipsUsedToday();
+      } catch (error) {
+        debugPrint('Reading coach tip allowance failed: $error');
+        used = _tipsUsedToday;
+      }
+      if (!mounted) return;
+      setState(() => _tipsUsedToday = used);
+      if (used >= kFreeDailyCoachTips) {
+        final choice = await _confirmTipLimit();
+        if (!mounted || choice == null) return;
+        if (choice == _TipLimitChoice.premium) {
+          await _openPremium();
+          if (!mounted || !_isPremium) return;
+        } else {
+          _rewardFlowBusy = true;
+          try {
+            if (!RewardedAdHelper.grantsWithoutAd) _showMessage(s.AdLoading);
+            final earned =
+                await _rewardedAdHelper.show(onUserEarnedReward: () {});
+            if (!mounted) return;
+            if (!earned) {
+              _showMessage(s.AdFailed);
+              return;
+            }
+          } finally {
+            _rewardFlowBusy = false;
+          }
+        }
+      } else {
+        countsTowardAllowance = true;
+      }
+    }
+    final current = _currentModel;
+    if (!mounted || current == null || !_samePosition(current, model)) return;
+    setState(() => _tipBusy = true);
+    StrategyAdvice? advice;
+    try {
+      advice = await StrategyCoach.analyze(model);
+    } catch (error) {
+      debugPrint('Coach tip failed: $error');
+    }
+    if (!mounted) return;
+    final stillCurrent =
+        _currentModel != null && _samePosition(_currentModel!, model);
+    if (advice == null || !stillCurrent) {
+      setState(() => _tipBusy = false);
+      if (stillCurrent) _showMessage(s.CoachUnavailable);
+      return;
+    }
+    if (countsTowardAllowance) {
+      try {
+        _tipsUsedToday = await SettingsService.recordCoachTipUsed();
+      } catch (error) {
+        debugPrint('Recording coach tip failed: $error');
+        _tipsUsedToday++;
+      }
+      if (!mounted) return;
+    }
+    final tip = advice;
+    setState(() {
+      _tipBusy = false;
+      _tipMove = tip.move;
+    });
+    final reasons = strategyExplanation(s, tip).split('\n\n').take(2);
+    _showMessage(
+      [s.CoachTipSuggestion(StrategyCoach.coordinate(tip.move)), ...reasons]
+          .join('\n'),
+    );
+    // The snack bar is a live region, so screen readers hear the tip too.
+  }
+
+  Future<_TipLimitChoice?> _confirmTipLimit() {
+    final s = S.of(context);
+    return showDialog<_TipLimitChoice>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(s.CoachTipLimitTitle),
+        content: Text(s.CoachTipLimitMessage(kFreeDailyCoachTips)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(s.Cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, _TipLimitChoice.watchAd),
+            child: Text(s.CoachTipWatchAd),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, _TipLimitChoice.premium),
+            child: Text(s.GoPremium),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<bool?> _confirmWatchAd(String message) {
@@ -1044,6 +1189,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     required VoidCallback? onPressed,
     required AppTheme theme,
     bool rewarded = false,
+    String? badge,
   }) {
     return Semantics(
       label: tooltip,
@@ -1089,6 +1235,31 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                         CupertinoIcons.play_rectangle_fill,
                         size: 14,
                         color: theme.lastMoveBorder,
+                      ),
+                    )
+                  else if (badge != null)
+                    Positioned(
+                      right: 3,
+                      top: 3,
+                      child: Container(
+                        constraints:
+                            const BoxConstraints(minWidth: 16, minHeight: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 3),
+                        decoration: BoxDecoration(
+                          color: theme.lastMoveBorder,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          badge,
+                          textScaler: TextScaler.noScaling,
+                          style: const TextStyle(
+                            fontSize: 10,
+                            height: 1.2,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF111111),
+                          ),
+                        ),
                       ),
                     ),
                 ],
@@ -1250,6 +1421,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         final isLegalTap = type == PieceType.empty &&
             legalMoves.any((position) => position.x == x && position.y == y);
         final isLegalMoveHint = showLegalMoveHints && isLegalTap;
+        final isTip = canInteract &&
+            isLegalTap &&
+            _tipMove?.x == x &&
+            _tipMove?.y == y;
         if (_gameOverCelebrating && type == _gameOverWinner) {
           winningCells.add(Offset(x + 0.5, y + 0.5));
         }
@@ -1277,6 +1452,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                               : S.of(context).White,
                     ),
                 if (isLegalTap) S.of(context).BoardLegalMove,
+                if (isTip) S.of(context).BoardSuggestedMove,
                 if (isLastMove) S.of(context).BoardLastMove,
               ].join(', '),
               sortKey: OrdinalSortKey((y * model.board.size + x).toDouble()),
@@ -1318,7 +1494,14 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                         reduceMotion: reduceMotion,
                         effectScale: feedback.effectScale,
                       ),
-                      if (isLegalMoveHint)
+                      if (isTip)
+                        CoachTipMarker(
+                          key: ValueKey('coach-tip-$x-$y'),
+                          size: boxWidth * 0.78,
+                          color: theme.lastMoveBorder,
+                          reduceMotion: reduceMotion,
+                        )
+                      else if (isLegalMoveHint)
                         MaterialMoveHint(
                           size: boxWidth * 0.28,
                           color: theme.hintDot,
@@ -1412,9 +1595,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         model.player == _computerColor;
     final needsHintButton = !widget.settings.twoPlayerMode && !_showHints;
     final needsRewardedUndo = !widget.settings.twoPlayerMode &&
-        widget.settings.difficulty == Difficulty.hard &&
+        widget.settings.difficulty.isAdvanced &&
         !_freeUndoAllowed;
-    final undoEnabled = !cpuThinking && !model.gameIsOver && _canUndo;
+    final undoEnabled = !cpuThinking && !model.gameIsOver && _undoAvailable;
+    final tipsLeft = _freeTipsLeft;
     final reduceMotion = FeedbackService.instance.reduceMotion ||
         MediaQuery.disableAnimationsOf(context);
     final status = _turnStatus(model);
@@ -1433,7 +1617,11 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       runSpacing: 12,
       children: [
         _circleActionButton(
-          tooltip: needsRewardedUndo ? s.UndoWithAd : s.Undo,
+          tooltip: needsRewardedUndo
+              ? s.UndoWithAd
+              : _isPremium
+                  ? s.UndoUnlimited
+                  : s.Undo,
           icon: CupertinoIcons.arrow_uturn_left,
           theme: theme,
           rewarded: needsRewardedUndo,
@@ -1455,6 +1643,21 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
             rewarded: true,
             onPressed: !model.gameIsOver && !cpuThinking
                 ? _requestRewardedHints
+                : null,
+          ),
+        if (!model.gameIsOver)
+          _circleActionButton(
+            tooltip: _isPremium
+                ? s.CoachTip
+                : tipsLeft > 0
+                    ? s.CoachTipsLeft(tipsLeft)
+                    : s.CoachTipWithAd,
+            icon: CupertinoIcons.wand_stars,
+            theme: theme,
+            rewarded: !_isPremium && tipsLeft == 0,
+            badge: _isPremium ? null : '$tipsLeft',
+            onPressed: !cpuThinking && !_tipBusy && !_gameOverCelebrating
+                ? () => _requestTip(model)
                 : null,
           ),
         _circleActionButton(
@@ -1661,3 +1864,5 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     );
   }
 }
+
+enum _TipLimitChoice { watchAd, premium }

@@ -7,6 +7,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
+import 'expert_engine.dart';
 import 'game_board.dart';
 import 'game_board_scorer.dart';
 import 'game_settings.dart';
@@ -32,17 +33,28 @@ class ScoredMove {
 // This is that method for [MoveFinder].
 Position? _findNextMove(MoveSearchArgs args) {
   final bestMove = _performSearchPly(
-      args.board, args.player, args.player, args.numPlies - 1);
+    args.board,
+    args.player,
+    args.player,
+    args.numPlies - 1,
+    GameBoardScorer.minScore - 1,
+    GameBoardScorer.maxScore + 1,
+  );
   return bestMove?.move;
 }
 
-// This is a recursive implementation of minimax, an algorithm so old it has
-// its own Wikipedia page: https://wikipedia.org/wiki/Minimax.
+// Minimax (https://wikipedia.org/wiki/Minimax) with alpha-beta pruning.
+// Pruning only skips lines that cannot change the result, and the root keeps
+// the first move with the best exact score, so Hard chooses exactly the same
+// moves as the original full-width search while visiting far fewer boards.
+// [alpha] and [beta] bound the score from [scoringPlayer]'s point of view.
 ScoredMove? _performSearchPly(
   GameBoard board,
   PieceType scoringPlayer,
   PieceType player,
   int pliesRemaining,
+  int alpha,
+  int beta,
 ) {
   final availableMoves = board.getMovesForPlayer(player);
 
@@ -50,14 +62,13 @@ ScoredMove? _performSearchPly(
     return null;
   }
 
-  var score = (scoringPlayer == player)
-      ? GameBoardScorer.minScore
-      : GameBoardScorer.maxScore;
+  final maximizing = scoringPlayer == player;
   ScoredMove? bestMove;
 
   for (var i = 0; i < availableMoves.length; i++) {
     final newBoard =
         board.updateForMove(availableMoves[i].x, availableMoves[i].y, player);
+    int score;
     if (pliesRemaining > 0 &&
         newBoard.getMovesForPlayer(getOpponent(player)).isNotEmpty) {
       // Opponent has next turn.
@@ -66,6 +77,8 @@ ScoredMove? _performSearchPly(
             scoringPlayer,
             getOpponent(player),
             pliesRemaining - 1,
+            alpha,
+            beta,
           )?.score ??
           0;
     } else if (pliesRemaining > 0 &&
@@ -76,6 +89,8 @@ ScoredMove? _performSearchPly(
             scoringPlayer,
             player,
             pliesRemaining - 1,
+            alpha,
+            beta,
           )?.score ??
           0;
     } else {
@@ -84,11 +99,17 @@ ScoredMove? _performSearchPly(
     }
 
     if (bestMove == null ||
-        (score > bestMove.score && scoringPlayer == player) ||
-        (score < bestMove.score && scoringPlayer != player)) {
+        (score > bestMove.score && maximizing) ||
+        (score < bestMove.score && !maximizing)) {
       bestMove =
           ScoredMove(score, Position(availableMoves[i].x, availableMoves[i].y));
     }
+    if (maximizing) {
+      if (score > alpha) alpha = score;
+    } else {
+      if (score < beta) beta = score;
+    }
+    if (alpha >= beta) break;
   }
 
   return bestMove;
@@ -121,7 +142,9 @@ class MoveFinder {
   ///  - Easy plays a uniformly random legal move, so beginners can win.
   ///  - Medium greedily picks whichever move scores best right away, with no
   ///    lookahead, so it's beatable but still plays sensibly.
-  ///  - Hard uses the full minimax search, same as before difficulty existed.
+  ///  - Hard uses a five-ply minimax search with a positional heuristic.
+  ///  - Expert (Premium) runs a time-limited iterative-deepening search with
+  ///    mobility and frontier evaluation, and solves endgames exactly.
   Future<Position?> findMove(PieceType player, Difficulty difficulty) async {
     final availableMoves = initialBoard.getMovesForPlayer(player);
     if (availableMoves.isEmpty) {
@@ -175,6 +198,18 @@ class MoveFinder {
         return bestMove;
       case Difficulty.hard:
         return findNextMove(player, 5);
+      case Difficulty.expert:
+        if (initialBoard.size != GameBoard.standardSize) {
+          return findNextMove(player, 5);
+        }
+        return compute(
+          findExpertMove,
+          ExpertSearchRequest(
+            board: initialBoard,
+            player: player,
+            seed: DateTime.now().microsecondsSinceEpoch,
+          ),
+        );
     }
   }
 }

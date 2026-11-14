@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'Tools/ads_manager.dart';
+import 'Tools/purchase_service.dart';
 import 'app_chrome.dart';
 import 'app_theme.dart';
 import 'feedback_service.dart';
@@ -12,7 +13,7 @@ import 'generated/l10n.dart';
 import 'how_to_play_screen.dart';
 import 'main.dart';
 import 'more_page.dart';
-import 'purchase_screen.dart';
+import 'premium_screen.dart';
 import 'settings_service.dart';
 import 'theme_controller.dart';
 
@@ -52,7 +53,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _haptics = haptics;
       _reduceMotion = reduceMotion;
       _feedbackIntensity = feedbackIntensity;
-      _theme = theme;
+      // A saved Premium theme shows as Classic while Premium is inactive.
+      _theme = theme.requiresPremium && !isPremiumUser
+          ? BoardThemeId.classic
+          : theme;
       _privacyOptionsRequired = privacyOptions;
     });
   }
@@ -82,8 +86,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await FeedbackService.instance.setIntensity(value);
   }
 
-  void _open(WidgetBuilder builder) {
-    Navigator.of(context).push(fadeRoute(builder));
+  Future<void> _open(WidgetBuilder builder) {
+    return Navigator.of(context).push(fadeRoute(builder));
+  }
+
+  Future<void> _selectTheme(BoardThemeId id) async {
+    if (id.requiresPremium && !isPremiumUser) {
+      await _open((context) => const PremiumScreen());
+      if (!mounted || !isPremiumUser) return;
+    }
+    if (await ThemeController.instance.setTheme(id) && mounted) {
+      setState(() => _theme = id);
+    }
   }
 
   Widget _switchRow({
@@ -206,7 +220,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           spacing: 8,
           runSpacing: 8,
           children: BoardThemeId.values.map((id) {
-            final selected = id == _theme;
+            final locked = id.requiresPremium && !isPremiumUser;
+            final selected = id == _theme && !locked;
             return SizedBox(
               width: width,
               child: Semantics(
@@ -220,10 +235,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: InkWell(
-                    onTap: () async {
-                      setState(() => _theme = id);
-                      await ThemeController.instance.setTheme(id);
-                    },
+                    onTap: () => _selectTheme(id),
                     child: Padding(
                       padding: const EdgeInsets.all(12),
                       child: Column(
@@ -235,18 +247,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           const SizedBox(height: 12),
                           ExcludeSemantics(
                             child: Icon(
-                              selected
-                                  ? CupertinoIcons.checkmark_circle_fill
-                                  : CupertinoIcons.circle,
+                              locked
+                                  ? CupertinoIcons.lock_fill
+                                  : selected
+                                      ? CupertinoIcons.checkmark_circle_fill
+                                      : CupertinoIcons.circle,
                               size: 20,
                               color: selected
                                   ? AppChrome.onPrimary
-                                  : AppChrome.secondaryText,
+                                  : locked
+                                      ? ThemeController
+                                          .instance.theme.lastMoveBorder
+                                      : AppChrome.secondaryText,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            id.label(context),
+                            locked
+                                ? S.of(context).PremiumThemeLabel(
+                                    id.label(context))
+                                : id.label(context),
                             textAlign: TextAlign.center,
                             style: AppChrome.actionStyle.copyWith(
                               fontSize: 14,
@@ -273,13 +293,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final s = S.of(context);
 
     return ListenableBuilder(
-      listenable: ThemeController.instance,
+      listenable: Listenable.merge(
+          [ThemeController.instance, PurchaseService.instance]),
       builder: (context, _) {
+        final premium = isPremiumUser;
         return AppGradientScaffold(
           title: s.Settings,
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
             children: [
+              AppMenuRow(
+                key: const ValueKey('settings-premium'),
+                icon: premium
+                    ? Icons.verified_rounded
+                    : Icons.workspace_premium_rounded,
+                title: premium ? s.PremiumActive : s.GoPremium,
+                subtitle: premium
+                    ? s.PremiumSettingsActiveSubtitle
+                    : s.PremiumSettingsSubtitle,
+                onTap: () => _open((context) => const PremiumScreen()),
+              ),
+              const SizedBox(height: 8),
               AppSectionTitle(s.Settings),
               _switchRow(
                 icon: CupertinoIcons.speaker_2_fill,
@@ -309,12 +343,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _themeSelector(context),
               const SizedBox(height: 24),
               AppSectionTitle(s.More),
-              AppMenuRow(
-                icon: CupertinoIcons.cart_fill,
-                title: s.RemoveAds,
-                subtitle: s.PurchaseSettingsSubtitle,
-                onTap: () => _open((context) => const PurchaseScreen()),
-              ),
               AppMenuRow(
                 icon: CupertinoIcons.question_circle_fill,
                 title: s.How_to_play,

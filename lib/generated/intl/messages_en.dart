@@ -27,69 +27,95 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(current, target) => "Wins: ${current} of ${target}";
 
-  static String m3(coordinate, piece) => "${coordinate}, ${piece}";
+  static String m3(best, good, inaccuracies, mistakes) =>
+      "Best ${best} · Good ${good} · Inaccuracies ${inaccuracies} · Mistakes ${mistakes}";
 
-  static String m4(actual, suggested) =>
+  static String m4(move, played, suggested) =>
+      "Move ${move}: ${played} played, ${suggested} was stronger";
+
+  static String m5(coordinate, piece) => "${coordinate}, ${piece}";
+
+  static String m6(actual, suggested) =>
       "Played ${actual} · Explore ${suggested}";
 
-  static String m5(player) => "Ideas for ${player}";
+  static String m7(player) => "Ideas for ${player}";
 
-  static String m6(coordinate) =>
+  static String m8(coordinate) =>
       "You played ${coordinate}. Revisit the ideas behind it.";
 
-  static String m7(count) => "Legal replies for your opponent: ${count}.";
+  static String m9(count) => "Legal replies for your opponent: ${count}.";
 
-  static String m8(coordinate) => "Suggested move: ${coordinate}";
+  static String m10(coordinate) => "Suggested move: ${coordinate}";
 
-  static String m9(color) => "Computer · ${color}";
+  static String m11(count) =>
+      "You\'ve used all ${count} free coach tips for today. Watch a short ad for one more, or go Premium for unlimited tips.";
 
-  static String m10(status, black, white) =>
+  static String m12(coordinate) => "Coach tip: try ${coordinate}.";
+
+  static String m13(count) => "Coach tip · ${count} free today";
+
+  static String m14(color) => "Computer · ${color}";
+
+  static String m15(status, black, white) =>
       "${status}. Black ${black}, White ${white}.";
 
-  static String m11(color) => "${color} to play";
+  static String m16(price) => "Get Premium · ${price}";
 
-  static String m12(count) => "Discs flipped: ${count}";
+  static String m17(color) => "${color} to play";
 
-  static String m13(coordinate) => "You played ${coordinate}";
+  static String m18(count) => "Discs flipped: ${count}";
 
-  static String m14(color, coordinate) =>
+  static String m19(coordinate) => "You played ${coordinate}";
+
+  static String m20(store) =>
+      "One payment. No subscription. Restore anytime with your ${store} account.";
+
+  static String m21(theme) => "${theme} · Premium";
+
+  static String m22(count) =>
+      "Get a strong move and the reason behind it, anytime. Free players get ${count} tips a day.";
+
+  static String m23(color, coordinate) =>
       "Play as ${color}. Capture corner ${coordinate} in one move.";
 
-  static String m15(color) =>
+  static String m24(color) =>
       "Play as ${color}. Win this endgame against the best replies.";
 
-  static String m16(number) => "Hint ${number} of 3";
+  static String m25(number) => "Hint ${number} of 3";
 
-  static String m17(coordinate) => "Try ${coordinate}.";
+  static String m26(coordinate) => "Try ${coordinate}.";
 
-  static String m18(number) => "Puzzle ${number}";
+  static String m27(number) => "Puzzle ${number}";
 
-  static String m19(color) =>
+  static String m28(color) =>
       "Play as ${color}. Force a pass so you move again, without ending the game.";
 
-  static String m20(completed, total) => "${completed} of ${total} solved";
+  static String m29(completed, total) => "${completed} of ${total} solved";
 
-  static String m21(result, score, mode, date) =>
+  static String m30(store) =>
+      "Already purchased? Restore it from your ${store} account.";
+
+  static String m31(result, score, mode, date) =>
       "${result}. ${score}. ${mode}. ${date}.";
 
-  static String m22(black, white) =>
+  static String m32(black, white) =>
       "Corners · Black ${black} · White ${white}";
 
-  static String m23(move, total) => "Move ${move} of ${total}";
+  static String m33(move, total) => "Move ${move} of ${total}";
 
-  static String m24(black, white) => "Black ${black} · White ${white}";
+  static String m34(black, white) => "Black ${black} · White ${white}";
 
-  static String m25(result, black, white, mode) =>
+  static String m35(result, black, white, mode) =>
       "${result} · Black ${black} – White ${white} (${mode}) — Classic Reversi";
 
-  static String m26(passed, current) =>
+  static String m36(passed, current) =>
       "${passed} has no legal moves. ${current} plays again.";
 
-  static String m27(step, total) => "Lesson ${step} of ${total}";
+  static String m37(step, total) => "Lesson ${step} of ${total}";
 
-  static String m28(wins, losses) => "Wins ${wins} · Losses ${losses}";
+  static String m38(wins, losses) => "Wins ${wins} · Losses ${losses}";
 
-  static String m29(color) => "You · ${color}";
+  static String m39(color) => "You · ${color}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -113,12 +139,30 @@ class MessageLookup extends MessageLookupByLibrary {
       "Ad unavailable. Please try again later.",
     ),
     "AdLoading": MessageLookupByLibrary.simpleMessage("Loading ad…"),
-    "AdsRemoved": MessageLookupByLibrary.simpleMessage("Ads removed"),
     "AgainstComputer": MessageLookupByLibrary.simpleMessage("Computer"),
+    "AnalysisAccuracy": MessageLookupByLibrary.simpleMessage("accuracy"),
+    "AnalysisClean": MessageLookupByLibrary.simpleMessage(
+      "No costly mistakes found. Well played!",
+    ),
+    "AnalysisCounts": m3,
+    "AnalysisInaccuracy": MessageLookupByLibrary.simpleMessage("Inaccuracy"),
+    "AnalysisKeyMoments": MessageLookupByLibrary.simpleMessage("Key moments"),
+    "AnalysisLoading": MessageLookupByLibrary.simpleMessage(
+      "Analyzing every move…",
+    ),
+    "AnalysisLockedBody": MessageLookupByLibrary.simpleMessage(
+      "Premium scores your accuracy, counts how often you found the coach\'s move, and lists the key mistakes to revisit.",
+    ),
+    "AnalysisMistake": MessageLookupByLibrary.simpleMessage("Mistake"),
+    "AnalysisMoment": m4,
+    "AnalysisNoMoves": MessageLookupByLibrary.simpleMessage(
+      "There are no decisions to analyze in this game.",
+    ),
+    "AnalysisTitle": MessageLookupByLibrary.simpleMessage("Game analysis"),
     "BestStreak": MessageLookupByLibrary.simpleMessage("Best streak"),
     "Black": MessageLookupByLibrary.simpleMessage("Black"),
     "BlackWins": MessageLookupByLibrary.simpleMessage("Black wins"),
-    "BoardCell": m3,
+    "BoardCell": m5,
     "BoardEmpty": MessageLookupByLibrary.simpleMessage("Empty"),
     "BoardKeyboardHint": MessageLookupByLibrary.simpleMessage(
       "Use arrow keys to explore the board and Enter or Space to play a marked square.",
@@ -127,6 +171,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "BoardLegalMove": MessageLookupByLibrary.simpleMessage("Legal move"),
     "BoardReviewKeyboardHint": MessageLookupByLibrary.simpleMessage(
       "Use arrow keys to explore the board.",
+    ),
+    "BoardSuggestedMove": MessageLookupByLibrary.simpleMessage(
+      "Suggested by the coach",
     ),
     "Cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "Classic_15_Puzzle": MessageLookupByLibrary.simpleMessage(
@@ -152,16 +199,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "CoachAvoidCorner": MessageLookupByLibrary.simpleMessage(
       "Another legal move gives your opponent an immediate corner capture. This move avoids that threat.",
     ),
-    "CoachComparison": m4,
+    "CoachComparison": m6,
     "CoachCorner": MessageLookupByLibrary.simpleMessage(
       "This move claims a corner. A corner disc cannot be flipped.",
     ),
     "CoachEndsGame": MessageLookupByLibrary.simpleMessage(
       "Neither side can move after this play. The game ends.",
     ),
-    "CoachForPlayer": m5,
+    "CoachForPlayer": m7,
     "CoachJump": MessageLookupByLibrary.simpleMessage("Go to this position"),
-    "CoachMatched": m6,
+    "CoachMatched": m8,
     "CoachNoPosition": MessageLookupByLibrary.simpleMessage(
       "There are no playable positions to explore in this game.",
     ),
@@ -172,12 +219,23 @@ class MessageLookup extends MessageLookupByLibrary {
       "Explore this position",
     ),
     "CoachPractice": MessageLookupByLibrary.simpleMessage("Try this position"),
-    "CoachReplies": m7,
+    "CoachReplies": m9,
     "CoachScope": MessageLookupByLibrary.simpleMessage(
       "A short search suggests ideas to explore; it does not guarantee the strongest move.",
     ),
     "CoachShareResult": MessageLookupByLibrary.simpleMessage("Share result"),
-    "CoachSuggested": m8,
+    "CoachSuggested": m10,
+    "CoachTip": MessageLookupByLibrary.simpleMessage("Coach tip"),
+    "CoachTipLimitMessage": m11,
+    "CoachTipLimitTitle": MessageLookupByLibrary.simpleMessage(
+      "Today\'s free tips are used",
+    ),
+    "CoachTipSuggestion": m12,
+    "CoachTipWatchAd": MessageLookupByLibrary.simpleMessage("Watch ad"),
+    "CoachTipWithAd": MessageLookupByLibrary.simpleMessage(
+      "Coach tip · watch an ad",
+    ),
+    "CoachTipsLeft": m13,
     "CoachTitle": MessageLookupByLibrary.simpleMessage("Strategy coach"),
     "CoachTurnTitle": MessageLookupByLibrary.simpleMessage(
       "A position worth revisiting",
@@ -185,7 +243,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "CoachUnavailable": MessageLookupByLibrary.simpleMessage(
       "Coaching is unavailable right now. You can still replay every move.",
     ),
-    "ComputerColor": m9,
+    "ComputerColor": m14,
     "ComputerThinking": MessageLookupByLibrary.simpleMessage(
       "Computer is thinking…",
     ),
@@ -215,9 +273,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "Difficulty": MessageLookupByLibrary.simpleMessage("Difficulty"),
     "DifficultyEasy": MessageLookupByLibrary.simpleMessage("Easy"),
+    "DifficultyExpert": MessageLookupByLibrary.simpleMessage("Expert"),
     "DifficultyHard": MessageLookupByLibrary.simpleMessage("Hard"),
     "DifficultyMedium": MessageLookupByLibrary.simpleMessage("Medium"),
     "DifficultySuperEasy": MessageLookupByLibrary.simpleMessage("Super Easy"),
+    "ExpertSetupNote": MessageLookupByLibrary.simpleMessage(
+      "Expert searches deeper and plays endgames perfectly. It may take a moment to think.",
+    ),
     "FeedbackBalanced": MessageLookupByLibrary.simpleMessage("Balanced"),
     "FeedbackGentle": MessageLookupByLibrary.simpleMessage("Gentle"),
     "FeedbackIntensity": MessageLookupByLibrary.simpleMessage(
@@ -234,11 +296,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "Your game could not be saved. Please try again before leaving.",
     ),
     "GameSetup": MessageLookupByLibrary.simpleMessage("Set up your game"),
-    "GameStatusAnnouncement": m10,
+    "GameStatusAnnouncement": m15,
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("Games played"),
     "Garden_Catch_Bugs": MessageLookupByLibrary.simpleMessage(
       "Garden: Catch Bugs",
     ),
+    "GetPremium": MessageLookupByLibrary.simpleMessage("Get Premium"),
+    "GetPremiumWithPrice": m16,
+    "GoPremium": MessageLookupByLibrary.simpleMessage("Go Premium"),
     "GuidedFirstGame": MessageLookupByLibrary.simpleMessage(
       "Learn with a guided game",
     ),
@@ -259,7 +324,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "A little strategy. A moment for yourself.",
     ),
     "HowToControlsBody": MessageLookupByLibrary.simpleMessage(
-      "Undo returns to the position before your last move. Hint highlights legal squares. Restart begins the same game setup again. Settings changes sound, haptics, and theme. Home returns to the beginning screen.",
+      "Undo returns to the position before your last move. Hint highlights legal squares. Coach tip suggests a strong move and explains why. Restart begins the same game setup again. Settings changes sound, haptics, and theme. Home returns to the beginning screen.",
     ),
     "HowToControlsTitle": MessageLookupByLibrary.simpleMessage("Game controls"),
     "HowToLearnMore": MessageLookupByLibrary.simpleMessage(
@@ -329,23 +394,83 @@ class MessageLookup extends MessageLookupByLibrary {
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Play against a friend on this device",
     ),
-    "PlayerTurn": m11,
+    "PlayerTurn": m17,
     "PracticeBoardLabel": MessageLookupByLibrary.simpleMessage(
       "Strategy practice board",
     ),
-    "PracticeFlipped": m12,
+    "PracticeFlipped": m18,
     "PracticeInstructions": MessageLookupByLibrary.simpleMessage(
       "Play any marked square and inspect what changes.",
     ),
     "PracticeNoMoves": MessageLookupByLibrary.simpleMessage(
       "This side has no legal move in this position.",
     ),
-    "PracticePlayed": m13,
+    "PracticePlayed": m19,
     "PracticeReset": MessageLookupByLibrary.simpleMessage("Try another move"),
     "PracticeSafe": MessageLookupByLibrary.simpleMessage(
       "Practice is separate from your saved game and statistics.",
     ),
     "PracticeTitle": MessageLookupByLibrary.simpleMessage("Try this position"),
+    "Premium": MessageLookupByLibrary.simpleMessage("Premium"),
+    "PremiumActive": MessageLookupByLibrary.simpleMessage("Premium active"),
+    "PremiumAdFreeBody": MessageLookupByLibrary.simpleMessage(
+      "No banner, app-open, or rewarded ads.",
+    ),
+    "PremiumAdFreeTitle": MessageLookupByLibrary.simpleMessage("Ad-free play"),
+    "PremiumAnalysisBody": MessageLookupByLibrary.simpleMessage(
+      "Accuracy scores and the key mistakes of every game, one tap from the position.",
+    ),
+    "PremiumAnalysisTitle": MessageLookupByLibrary.simpleMessage(
+      "Full game analysis",
+    ),
+    "PremiumExpertBody": MessageLookupByLibrary.simpleMessage(
+      "Challenge the strongest computer, with deeper search and perfect endgames.",
+    ),
+    "PremiumExpertTitle": MessageLookupByLibrary.simpleMessage(
+      "Expert opponent",
+    ),
+    "PremiumHeadline": MessageLookupByLibrary.simpleMessage(
+      "Upgrade to Premium",
+    ),
+    "PremiumHintsBody": MessageLookupByLibrary.simpleMessage(
+      "See every legal square on Medium, Hard, and Expert without ads.",
+    ),
+    "PremiumHintsTitle": MessageLookupByLibrary.simpleMessage(
+      "Legal-move hints everywhere",
+    ),
+    "PremiumIncludes": MessageLookupByLibrary.simpleMessage("Premium includes"),
+    "PremiumOneTime": m20,
+    "PremiumRequired": MessageLookupByLibrary.simpleMessage("Requires Premium"),
+    "PremiumSettingsActiveSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Thank you! Every Premium feature is unlocked.",
+    ),
+    "PremiumSettingsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Ad-free play, unlimited undo and tips, Expert AI, and more",
+    ),
+    "PremiumSubheadline": MessageLookupByLibrary.simpleMessage(
+      "Play ad-free and unlock advanced tools that sharpen every game.",
+    ),
+    "PremiumThemeLabel": m21,
+    "PremiumThemesBody": MessageLookupByLibrary.simpleMessage(
+      "Royal and Ember tables, reserved for Premium.",
+    ),
+    "PremiumThemesTitle": MessageLookupByLibrary.simpleMessage(
+      "Exclusive board themes",
+    ),
+    "PremiumTipsBody": m22,
+    "PremiumTipsTitle": MessageLookupByLibrary.simpleMessage(
+      "Unlimited coach tips",
+    ),
+    "PremiumUndoBody": MessageLookupByLibrary.simpleMessage(
+      "Take back as many moves as you like, on every difficulty.",
+    ),
+    "PremiumUndoTitle": MessageLookupByLibrary.simpleMessage("Unlimited undo"),
+    "PremiumWelcomeBody": MessageLookupByLibrary.simpleMessage(
+      "Thank you for your support. Every Premium feature is unlocked.",
+    ),
+    "PremiumWelcomeTitle": MessageLookupByLibrary.simpleMessage(
+      "You\'re a Premium player",
+    ),
     "PrivacyOptions": MessageLookupByLibrary.simpleMessage("Privacy options"),
     "PrivacyOptionsSubtitle": MessageLookupByLibrary.simpleMessage(
       "Update your ad privacy choices",
@@ -355,22 +480,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "How we handle data and ads",
     ),
     "PurchaseAlreadyOwned": MessageLookupByLibrary.simpleMessage(
-      "You already own Remove Ads.",
-    ),
-    "PurchaseBenefitAds": MessageLookupByLibrary.simpleMessage(
-      "No banner or app-open ads.",
-    ),
-    "PurchaseBenefitHints": MessageLookupByLibrary.simpleMessage(
-      "Legal-move hints on every computer difficulty without watching an ad.",
-    ),
-    "PurchaseBenefitOnce": MessageLookupByLibrary.simpleMessage(
-      "One payment. No subscription. Restore with your App Store account.",
-    ),
-    "PurchaseBenefitUndo": MessageLookupByLibrary.simpleMessage(
-      "Undo once per turn on Hard without watching an ad.",
-    ),
-    "PurchaseBenefits": MessageLookupByLibrary.simpleMessage(
-      "A one-time purchase removes banner and app-open ads and unlocks Hard-mode undo and legal-move hints without rewarded ads. Restore it on devices using the same App Store account.",
+      "You already own Premium.",
     ),
     "PurchaseCancelled": MessageLookupByLibrary.simpleMessage(
       "Purchase cancelled.",
@@ -381,11 +491,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "PurchasePending": MessageLookupByLibrary.simpleMessage(
       "Purchase pending approval…",
     ),
-    "PurchaseSettingsSubtitle": MessageLookupByLibrary.simpleMessage(
-      "See purchase benefits or restore an existing purchase",
-    ),
     "PurchaseSuccess": MessageLookupByLibrary.simpleMessage(
-      "Ads have been removed. Thank you!",
+      "Welcome to Premium! Every feature is now unlocked.",
     ),
     "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage(
       "Purchases are currently unavailable.",
@@ -412,7 +519,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleCornerHintTwo": MessageLookupByLibrary.simpleMessage(
       "Trace inward from the target corner until your own disc brackets the opponent.",
     ),
-    "PuzzleCornerObjective": m14,
+    "PuzzleCornerObjective": m23,
     "PuzzleCornerSkill": MessageLookupByLibrary.simpleMessage("Claim a corner"),
     "PuzzleCornerSuccess": MessageLookupByLibrary.simpleMessage(
       "Corner secured. A corner disc stays yours for the rest of the game.",
@@ -426,7 +533,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleEndgameHintTwo": MessageLookupByLibrary.simpleMessage(
       "Compare the opponent’s replies. A smaller capture may keep the last move.",
     ),
-    "PuzzleEndgameObjective": m15,
+    "PuzzleEndgameObjective": m24,
     "PuzzleEndgameSkill": MessageLookupByLibrary.simpleMessage(
       "Finish with a win",
     ),
@@ -436,13 +543,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleEndgameTryAgain": MessageLookupByLibrary.simpleMessage(
       "This line cannot force a win against best play. Restart and compare another move.",
     ),
-    "PuzzleHint": m16,
-    "PuzzleHintCoordinate": m17,
+    "PuzzleHint": m25,
+    "PuzzleHintCoordinate": m26,
     "PuzzleNext": MessageLookupByLibrary.simpleMessage("Next puzzle"),
     "PuzzleNoResults": MessageLookupByLibrary.simpleMessage(
       "No matching puzzles. Try a skill or puzzle number.",
     ),
-    "PuzzleNumber": m18,
+    "PuzzleNumber": m27,
     "PuzzleOpponentThinking": MessageLookupByLibrary.simpleMessage(
       "Considering the best reply…",
     ),
@@ -455,14 +562,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzlePassHintTwo": MessageLookupByLibrary.simpleMessage(
       "Compare the opponent’s available moves after each candidate.",
     ),
-    "PuzzlePassObjective": m19,
+    "PuzzlePassObjective": m28,
     "PuzzlePassSkill": MessageLookupByLibrary.simpleMessage(
       "Earn another turn",
     ),
     "PuzzlePassSuccess": MessageLookupByLibrary.simpleMessage(
       "You earned another turn. Your opponent has no legal move, and the game continues.",
     ),
-    "PuzzleProgress": m20,
+    "PuzzleProgress": m29,
     "PuzzleProgressLoadFailed": MessageLookupByLibrary.simpleMessage(
       "Puzzle progress could not be loaded. Try again.",
     ),
@@ -484,7 +591,6 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "Relaxing_Up": MessageLookupByLibrary.simpleMessage("Relaxing Up"),
     "Rematch": MessageLookupByLibrary.simpleMessage("Rematch"),
-    "RemoveAds": MessageLookupByLibrary.simpleMessage("Remove Ads"),
     "ReplaceSavedGameMessage": MessageLookupByLibrary.simpleMessage(
       "Your unfinished game will be replaced. You can continue it from Home instead.",
     ),
@@ -501,9 +607,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "RestoreNothing": MessageLookupByLibrary.simpleMessage(
       "No purchases to restore.",
     ),
-    "RestorePurchaseHelp": MessageLookupByLibrary.simpleMessage(
-      "Already purchased? Restore it from your App Store account.",
-    ),
+    "RestorePurchaseHelp": m30,
     "RestorePurchases": MessageLookupByLibrary.simpleMessage(
       "Restore Purchases",
     ),
@@ -516,7 +620,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ResultCardPreparing": MessageLookupByLibrary.simpleMessage(
       "Creating your result card…",
     ),
-    "ResultCardPreviewLabel": m21,
+    "ResultCardPreviewLabel": m31,
     "ResultCardShareFailed": MessageLookupByLibrary.simpleMessage(
       "Sharing is unavailable right now. Please try again.",
     ),
@@ -526,12 +630,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "ReviewBoardLabel": MessageLookupByLibrary.simpleMessage(
       "Game review board",
     ),
-    "ReviewCorners": m22,
+    "ReviewCorners": m32,
     "ReviewFinal": MessageLookupByLibrary.simpleMessage("Final position"),
     "ReviewFirst": MessageLookupByLibrary.simpleMessage("Go to start"),
     "ReviewGame": MessageLookupByLibrary.simpleMessage("Review game"),
     "ReviewLast": MessageLookupByLibrary.simpleMessage("Go to end"),
-    "ReviewMove": m23,
+    "ReviewMove": m33,
     "ReviewNext": MessageLookupByLibrary.simpleMessage("Next move"),
     "ReviewPrevious": MessageLookupByLibrary.simpleMessage("Previous move"),
     "ReviewStart": MessageLookupByLibrary.simpleMessage("Starting position"),
@@ -539,13 +643,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "SavedGameSubtitle": MessageLookupByLibrary.simpleMessage(
       "Your board is ready when you are.",
     ),
-    "SavedMatchScore": m24,
+    "SavedMatchScore": m34,
     "Saving_Ambulance": MessageLookupByLibrary.simpleMessage(
       "Saving Ambulance",
     ),
     "Settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "Share": MessageLookupByLibrary.simpleMessage("Share"),
-    "ShareResult": m25,
+    "ShareResult": m35,
     "Simple_Calculator": MessageLookupByLibrary.simpleMessage(
       "Simple Calculator",
     ),
@@ -559,11 +663,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "Theme": MessageLookupByLibrary.simpleMessage("Theme"),
     "ThemeClassic": MessageLookupByLibrary.simpleMessage("Classic"),
     "ThemeContrast": MessageLookupByLibrary.simpleMessage("Contrast"),
+    "ThemeEmber": MessageLookupByLibrary.simpleMessage("Ember"),
     "ThemeNight": MessageLookupByLibrary.simpleMessage("Night"),
+    "ThemeRoyal": MessageLookupByLibrary.simpleMessage("Royal"),
     "Tie": MessageLookupByLibrary.simpleMessage("Tie"),
     "Ties": MessageLookupByLibrary.simpleMessage("Ties"),
     "TryAgain": MessageLookupByLibrary.simpleMessage("Try again"),
-    "TurnPassed": m26,
+    "TurnPassed": m36,
     "TutorialBoardLabel": MessageLookupByLibrary.simpleMessage(
       "Practice board",
     ),
@@ -595,7 +701,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "TutorialPlayEasy": MessageLookupByLibrary.simpleMessage(
       "Play an Easy game",
     ),
-    "TutorialProgress": m27,
+    "TutorialProgress": m37,
     "TutorialReplyBody": MessageLookupByLibrary.simpleMessage(
       "White has played. Tap any marked square to make another capture.",
     ),
@@ -608,7 +714,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "2 Players (pass & play)",
     ),
     "Undo": MessageLookupByLibrary.simpleMessage("Undo"),
+    "UndoUnlimited": MessageLookupByLibrary.simpleMessage("Undo · unlimited"),
     "UndoWithAd": MessageLookupByLibrary.simpleMessage("Undo · watch an ad"),
+    "UnlockWithPremium": MessageLookupByLibrary.simpleMessage(
+      "Unlock with Premium",
+    ),
     "Watch": MessageLookupByLibrary.simpleMessage("Watch"),
     "WatchAd": MessageLookupByLibrary.simpleMessage("Watch Ad"),
     "WatchAdForHint": MessageLookupByLibrary.simpleMessage(
@@ -626,12 +736,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "WinsByDifficulty": MessageLookupByLibrary.simpleMessage(
       "Wins by difficulty",
     ),
-    "WinsLosses": m28,
+    "WinsLosses": m38,
     "World_Weather_Live": MessageLookupByLibrary.simpleMessage(
       "World Weather Live",
     ),
     "Yes_Habit": MessageLookupByLibrary.simpleMessage("Yes Habit"),
-    "YouColor": m29,
+    "YouColor": m39,
     "YouLose": MessageLookupByLibrary.simpleMessage("You lose"),
     "YouWin": MessageLookupByLibrary.simpleMessage("You win!"),
     "YourTurn": MessageLookupByLibrary.simpleMessage("Your turn"),

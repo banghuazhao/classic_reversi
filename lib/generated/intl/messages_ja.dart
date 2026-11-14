@@ -26,63 +26,86 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(current, target) => "勝利数：${current}／${target}";
 
-  static String m3(coordinate, piece) => "${coordinate}、${piece}";
+  static String m3(best, good, inaccuracies, mistakes) =>
+      "最善 ${best} · 好手 ${good} · 疑問手 ${inaccuracies} · ミス ${mistakes}";
 
-  static String m4(actual, suggested) => "実際の手 ${actual} · 試す手 ${suggested}";
+  static String m4(move, played, suggested) =>
+      "${move}手目：${played}に打ちましたが、${suggested}の方が有力でした";
 
-  static String m5(player) => "${player}の手を考える";
+  static String m5(coordinate, piece) => "${coordinate}、${piece}";
 
-  static String m6(coordinate) => "あなたは${coordinate}に打ちました。この手の狙いを振り返りましょう。";
+  static String m6(actual, suggested) => "実際の手 ${actual} · 試す手 ${suggested}";
 
-  static String m7(count) => "相手が打てる手の数：${count}。";
+  static String m7(player) => "${player}の手を考える";
 
-  static String m8(coordinate) => "おすすめの手：${coordinate}";
+  static String m8(coordinate) => "あなたは${coordinate}に打ちました。この手の狙いを振り返りましょう。";
 
-  static String m9(color) => "コンピューター · ${color}";
+  static String m9(count) => "相手が打てる手の数：${count}。";
 
-  static String m10(status, black, white) => "${status}。黒 ${black}、白 ${white}。";
+  static String m10(coordinate) => "おすすめの手：${coordinate}";
 
-  static String m11(color) => "${color}の番です";
+  static String m11(count) =>
+      "本日の無料コーチヒント${count}回をすべて使いました。短い広告を見るともう1回使えます。プレミアムなら無制限です。";
 
-  static String m12(count) => "返した石：${count}";
+  static String m12(coordinate) => "コーチのヒント：${coordinate}に打ってみましょう。";
 
-  static String m13(coordinate) => "${coordinate}に打ちました";
+  static String m13(count) => "コーチのヒント · 本日あと${count}回無料";
 
-  static String m14(color, coordinate) =>
+  static String m14(color) => "コンピューター · ${color}";
+
+  static String m15(status, black, white) => "${status}。黒 ${black}、白 ${white}。";
+
+  static String m16(price) => "プレミアムを入手 · ${price}";
+
+  static String m17(color) => "${color}の番です";
+
+  static String m18(count) => "返した石：${count}";
+
+  static String m19(coordinate) => "${coordinate}に打ちました";
+
+  static String m20(store) => "1回払い・サブスクリプションなし。${store}アカウントでいつでも復元できます。";
+
+  static String m21(theme) => "${theme} · プレミアム";
+
+  static String m22(count) => "いつでも有力な手とその理由を確認できます。無料版は1日${count}回までです。";
+
+  static String m23(color, coordinate) =>
       "${color}で打ちます。一手で${coordinate}の角を取りましょう。";
 
-  static String m15(color) => "${color}で打ちます。相手が最善の手を打っても、この終盤で勝ち切りましょう。";
+  static String m24(color) => "${color}で打ちます。相手が最善の手を打っても、この終盤で勝ち切りましょう。";
 
-  static String m16(number) => "ヒント ${number}／3";
+  static String m25(number) => "ヒント ${number}／3";
 
-  static String m17(coordinate) => "${coordinate}を試しましょう。";
+  static String m26(coordinate) => "${coordinate}を試しましょう。";
 
-  static String m18(number) => "問題 ${number}";
+  static String m27(number) => "問題 ${number}";
 
-  static String m19(color) => "${color}で打ちます。対局を終わらせずに相手をパスさせ、もう一度自分の番にしましょう。";
+  static String m28(color) => "${color}で打ちます。対局を終わらせずに相手をパスさせ、もう一度自分の番にしましょう。";
 
-  static String m20(completed, total) => "${completed}／${total}問クリア";
+  static String m29(completed, total) => "${completed}／${total}問クリア";
 
-  static String m21(result, score, mode, date) =>
+  static String m30(store) => "購入済みの場合は、${store}アカウントから復元できます。";
+
+  static String m31(result, score, mode, date) =>
       "${result}。${score}。${mode}。${date}。";
 
-  static String m22(black, white) => "角 · 黒 ${black} · 白 ${white}";
+  static String m32(black, white) => "角 · 黒 ${black} · 白 ${white}";
 
-  static String m23(move, total) => "${move}手目／全${total}手";
+  static String m33(move, total) => "${move}手目／全${total}手";
 
-  static String m24(black, white) => "黒 ${black} · 白 ${white}";
+  static String m34(black, white) => "黒 ${black} · 白 ${white}";
 
-  static String m25(result, black, white, mode) =>
+  static String m35(result, black, white, mode) =>
       "${result} · 黒 ${black} – 白 ${white}（${mode}）— クラシックリバーシ";
 
-  static String m26(passed, current) =>
+  static String m36(passed, current) =>
       "${passed}は打てる場所がありません。もう一度${current}の番です。";
 
-  static String m27(step, total) => "レッスン ${step}／${total}";
+  static String m37(step, total) => "レッスン ${step}／${total}";
 
-  static String m28(wins, losses) => "勝ち ${wins} · 負け ${losses}";
+  static String m38(wins, losses) => "勝ち ${wins} · 負け ${losses}";
 
-  static String m29(color) => "あなた · ${color}";
+  static String m39(color) => "あなた · ${color}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -104,12 +127,28 @@ class MessageLookup extends MessageLookupByLibrary {
       "広告を表示できません。後でもう一度お試しください。",
     ),
     "AdLoading": MessageLookupByLibrary.simpleMessage("広告を読み込み中…"),
-    "AdsRemoved": MessageLookupByLibrary.simpleMessage("広告は削除されました"),
     "AgainstComputer": MessageLookupByLibrary.simpleMessage("コンピューター"),
+    "AnalysisAccuracy": MessageLookupByLibrary.simpleMessage("正確度"),
+    "AnalysisClean": MessageLookupByLibrary.simpleMessage(
+      "大きなミスはありませんでした。お見事！",
+    ),
+    "AnalysisCounts": m3,
+    "AnalysisInaccuracy": MessageLookupByLibrary.simpleMessage("疑問手"),
+    "AnalysisKeyMoments": MessageLookupByLibrary.simpleMessage("重要な局面"),
+    "AnalysisLoading": MessageLookupByLibrary.simpleMessage("すべての手を分析中…"),
+    "AnalysisLockedBody": MessageLookupByLibrary.simpleMessage(
+      "プレミアムでは正確度を採点し、コーチと同じ手を選べた回数や見直すべき重要なミスを表示します。",
+    ),
+    "AnalysisMistake": MessageLookupByLibrary.simpleMessage("ミス"),
+    "AnalysisMoment": m4,
+    "AnalysisNoMoves": MessageLookupByLibrary.simpleMessage(
+      "この対局には分析できる手がありません。",
+    ),
+    "AnalysisTitle": MessageLookupByLibrary.simpleMessage("対局分析"),
     "BestStreak": MessageLookupByLibrary.simpleMessage("最高連勝"),
     "Black": MessageLookupByLibrary.simpleMessage("黒"),
     "BlackWins": MessageLookupByLibrary.simpleMessage("黒の勝ち"),
-    "BoardCell": m3,
+    "BoardCell": m5,
     "BoardEmpty": MessageLookupByLibrary.simpleMessage("空きマス"),
     "BoardKeyboardHint": MessageLookupByLibrary.simpleMessage(
       "矢印キーで盤面を移動し、Enterキーまたはスペースキーで印のあるマスに打ちます。",
@@ -119,6 +158,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "BoardReviewKeyboardHint": MessageLookupByLibrary.simpleMessage(
       "矢印キーで盤面を移動できます。",
     ),
+    "BoardSuggestedMove": MessageLookupByLibrary.simpleMessage("コーチのおすすめ"),
     "Cancel": MessageLookupByLibrary.simpleMessage("キャンセル"),
     "Classic_15_Puzzle": MessageLookupByLibrary.simpleMessage(
       "Classic 15 Puzzle",
@@ -140,16 +180,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "CoachAvoidCorner": MessageLookupByLibrary.simpleMessage(
       "ほかの合法手では相手にすぐ角を取られます。この手なら、その危険を避けられます。",
     ),
-    "CoachComparison": m4,
+    "CoachComparison": m6,
     "CoachCorner": MessageLookupByLibrary.simpleMessage(
       "この手で角を取れます。角の石は返されません。",
     ),
     "CoachEndsGame": MessageLookupByLibrary.simpleMessage(
       "この手の後は両者とも打てる場所がなくなり、対局が終了します。",
     ),
-    "CoachForPlayer": m5,
+    "CoachForPlayer": m7,
     "CoachJump": MessageLookupByLibrary.simpleMessage("この局面へ移動"),
-    "CoachMatched": m6,
+    "CoachMatched": m8,
     "CoachNoPosition": MessageLookupByLibrary.simpleMessage(
       "この対局には、手を試せる局面がありません。",
     ),
@@ -158,18 +198,27 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "CoachPositionTitle": MessageLookupByLibrary.simpleMessage("この局面を考える"),
     "CoachPractice": MessageLookupByLibrary.simpleMessage("この局面で試す"),
-    "CoachReplies": m7,
+    "CoachReplies": m9,
     "CoachScope": MessageLookupByLibrary.simpleMessage(
       "短い読みで候補を提案しています。最善手を保証するものではありません。",
     ),
     "CoachShareResult": MessageLookupByLibrary.simpleMessage("結果をシェア"),
-    "CoachSuggested": m8,
+    "CoachSuggested": m10,
+    "CoachTip": MessageLookupByLibrary.simpleMessage("コーチのヒント"),
+    "CoachTipLimitMessage": m11,
+    "CoachTipLimitTitle": MessageLookupByLibrary.simpleMessage(
+      "本日の無料ヒントを使い切りました",
+    ),
+    "CoachTipSuggestion": m12,
+    "CoachTipWatchAd": MessageLookupByLibrary.simpleMessage("広告を見る"),
+    "CoachTipWithAd": MessageLookupByLibrary.simpleMessage("コーチのヒント · 広告を見る"),
+    "CoachTipsLeft": m13,
     "CoachTitle": MessageLookupByLibrary.simpleMessage("戦略コーチ"),
     "CoachTurnTitle": MessageLookupByLibrary.simpleMessage("振り返りたい局面"),
     "CoachUnavailable": MessageLookupByLibrary.simpleMessage(
       "現在コーチ機能を利用できません。各手の振り返りは引き続き行えます。",
     ),
-    "ComputerColor": m9,
+    "ComputerColor": m14,
     "ComputerThinking": MessageLookupByLibrary.simpleMessage("コンピューターが考えています…"),
     "ContinueGame": MessageLookupByLibrary.simpleMessage("対局を続ける"),
     "Crazy_Pyramid": MessageLookupByLibrary.simpleMessage("Crazy Pyramid"),
@@ -191,9 +240,13 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "Difficulty": MessageLookupByLibrary.simpleMessage("難易度"),
     "DifficultyEasy": MessageLookupByLibrary.simpleMessage("かんたん"),
+    "DifficultyExpert": MessageLookupByLibrary.simpleMessage("エキスパート"),
     "DifficultyHard": MessageLookupByLibrary.simpleMessage("むずかしい"),
     "DifficultyMedium": MessageLookupByLibrary.simpleMessage("ふつう"),
     "DifficultySuperEasy": MessageLookupByLibrary.simpleMessage("とてもかんたん"),
+    "ExpertSetupNote": MessageLookupByLibrary.simpleMessage(
+      "エキスパートはより深く読み、終盤を完璧に打ちます。考えるのに少し時間がかかることがあります。",
+    ),
     "FeedbackBalanced": MessageLookupByLibrary.simpleMessage("標準"),
     "FeedbackGentle": MessageLookupByLibrary.simpleMessage("控えめ"),
     "FeedbackIntensity": MessageLookupByLibrary.simpleMessage("フィードバックの強さ"),
@@ -207,11 +260,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "ゲームを保存できませんでした。終了する前にもう一度お試しください。",
     ),
     "GameSetup": MessageLookupByLibrary.simpleMessage("対局の設定"),
-    "GameStatusAnnouncement": m10,
+    "GameStatusAnnouncement": m15,
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("対局数"),
     "Garden_Catch_Bugs": MessageLookupByLibrary.simpleMessage(
       "Garden: Catch Bugs",
     ),
+    "GetPremium": MessageLookupByLibrary.simpleMessage("プレミアムを入手"),
+    "GetPremiumWithPrice": m16,
+    "GoPremium": MessageLookupByLibrary.simpleMessage("プレミアムにする"),
     "GuidedFirstGame": MessageLookupByLibrary.simpleMessage("ガイド付きの対局で練習"),
     "GuidedFirstGameSubtitle": MessageLookupByLibrary.simpleMessage(
       "石の返し方や角の大切さを学び、自分のペースで慣れていきましょう。",
@@ -258,21 +314,69 @@ class MessageLookup extends MessageLookupByLibrary {
     "PerfectWins": MessageLookupByLibrary.simpleMessage("パーフェクト勝ち"),
     "Play": MessageLookupByLibrary.simpleMessage("対局する"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage("この端末で友達と対戦する"),
-    "PlayerTurn": m11,
+    "PlayerTurn": m17,
     "PracticeBoardLabel": MessageLookupByLibrary.simpleMessage("戦略を練習する盤面"),
-    "PracticeFlipped": m12,
+    "PracticeFlipped": m18,
     "PracticeInstructions": MessageLookupByLibrary.simpleMessage(
       "印のあるマスに打って、何が変わるか見てみましょう。",
     ),
     "PracticeNoMoves": MessageLookupByLibrary.simpleMessage(
       "この局面では、この色で打てる場所がありません。",
     ),
-    "PracticePlayed": m13,
+    "PracticePlayed": m19,
     "PracticeReset": MessageLookupByLibrary.simpleMessage("ほかの手を試す"),
     "PracticeSafe": MessageLookupByLibrary.simpleMessage(
       "練習は保存した対局や統計に影響しません。",
     ),
     "PracticeTitle": MessageLookupByLibrary.simpleMessage("この局面で試す"),
+    "Premium": MessageLookupByLibrary.simpleMessage("プレミアム"),
+    "PremiumActive": MessageLookupByLibrary.simpleMessage("プレミアム有効"),
+    "PremiumAdFreeBody": MessageLookupByLibrary.simpleMessage(
+      "バナー広告、起動時広告、リワード広告が表示されません。",
+    ),
+    "PremiumAdFreeTitle": MessageLookupByLibrary.simpleMessage("広告なし"),
+    "PremiumAnalysisBody": MessageLookupByLibrary.simpleMessage(
+      "毎局の正確度と重要なミスを表示。タップでその局面へ移動できます。",
+    ),
+    "PremiumAnalysisTitle": MessageLookupByLibrary.simpleMessage("対局の完全分析"),
+    "PremiumExpertBody": MessageLookupByLibrary.simpleMessage(
+      "より深く読み、終盤を完全に読み切る最強のコンピューターに挑戦。",
+    ),
+    "PremiumExpertTitle": MessageLookupByLibrary.simpleMessage("エキスパートの対戦相手"),
+    "PremiumHeadline": MessageLookupByLibrary.simpleMessage("プレミアムにアップグレード"),
+    "PremiumHintsBody": MessageLookupByLibrary.simpleMessage(
+      "「ふつう」「むずかしい」「エキスパート」でも広告なしで打てるマスを表示します。",
+    ),
+    "PremiumHintsTitle": MessageLookupByLibrary.simpleMessage(
+      "すべての難易度で打てるマスを表示",
+    ),
+    "PremiumIncludes": MessageLookupByLibrary.simpleMessage("プレミアムの内容"),
+    "PremiumOneTime": m20,
+    "PremiumRequired": MessageLookupByLibrary.simpleMessage("プレミアムが必要です"),
+    "PremiumSettingsActiveSubtitle": MessageLookupByLibrary.simpleMessage(
+      "ありがとうございます！プレミアムのすべての機能が使えます。",
+    ),
+    "PremiumSettingsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "広告なし、待ったとヒントが無制限、エキスパートAIなど",
+    ),
+    "PremiumSubheadline": MessageLookupByLibrary.simpleMessage(
+      "広告なしでプレイし、毎局の上達に役立つ上級ツールを解放しましょう。",
+    ),
+    "PremiumThemeLabel": m21,
+    "PremiumThemesBody": MessageLookupByLibrary.simpleMessage(
+      "ロイヤルとエンバーのテーブルはプレミアム限定です。",
+    ),
+    "PremiumThemesTitle": MessageLookupByLibrary.simpleMessage("限定ボードテーマ"),
+    "PremiumTipsBody": m22,
+    "PremiumTipsTitle": MessageLookupByLibrary.simpleMessage("コーチのヒント無制限"),
+    "PremiumUndoBody": MessageLookupByLibrary.simpleMessage(
+      "どの難易度でも、好きなだけ手を戻せます。",
+    ),
+    "PremiumUndoTitle": MessageLookupByLibrary.simpleMessage("待った無制限"),
+    "PremiumWelcomeBody": MessageLookupByLibrary.simpleMessage(
+      "ご支援ありがとうございます。プレミアムのすべての機能が使えます。",
+    ),
+    "PremiumWelcomeTitle": MessageLookupByLibrary.simpleMessage("プレミアムプレイヤーです"),
     "PrivacyOptions": MessageLookupByLibrary.simpleMessage("プライバシー設定"),
     "PrivacyOptionsSubtitle": MessageLookupByLibrary.simpleMessage(
       "広告のプライバシー選択を更新",
@@ -282,22 +386,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "データと広告の取り扱いについて",
     ),
     "PurchaseAlreadyOwned": MessageLookupByLibrary.simpleMessage(
-      "広告削除はすでに購入済みです。",
-    ),
-    "PurchaseBenefitAds": MessageLookupByLibrary.simpleMessage(
-      "バナー広告とアプリ起動時の広告を削除。",
-    ),
-    "PurchaseBenefitHints": MessageLookupByLibrary.simpleMessage(
-      "コンピューター対戦のすべての難易度で、広告を見ずに打てるマスを表示できます。",
-    ),
-    "PurchaseBenefitOnce": MessageLookupByLibrary.simpleMessage(
-      "買い切りで、定期購入はありません。App Storeアカウントから復元できます。",
-    ),
-    "PurchaseBenefitUndo": MessageLookupByLibrary.simpleMessage(
-      "広告を見ずに「むずかしい」で毎ターン1回待ったができます。",
-    ),
-    "PurchaseBenefits": MessageLookupByLibrary.simpleMessage(
-      "一度の購入でバナー広告とアプリ起動時の広告を削除し、「むずかしい」での待ったと、打てるマスのヒントを広告なしで利用できます。同じApp Storeアカウントを使う端末で復元できます。",
+      "プレミアムはすでに購入済みです。",
     ),
     "PurchaseCancelled": MessageLookupByLibrary.simpleMessage("購入をキャンセルしました。"),
     "PurchaseFailed": MessageLookupByLibrary.simpleMessage(
@@ -305,7 +394,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "PurchasePending": MessageLookupByLibrary.simpleMessage("購入の承認待ちです…"),
     "PurchaseSuccess": MessageLookupByLibrary.simpleMessage(
-      "広告を削除しました。ありがとうございます！",
+      "プレミアムへようこそ！すべての機能が使えるようになりました。",
     ),
     "PurchaseUnavailable": MessageLookupByLibrary.simpleMessage("現在購入できません。"),
     "PuzzleAllComplete": MessageLookupByLibrary.simpleMessage(
@@ -326,7 +415,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleCornerHintTwo": MessageLookupByLibrary.simpleMessage(
       "狙う角から内側へたどり、相手の石を自分の石で挟める並びを探しましょう。",
     ),
-    "PuzzleCornerObjective": m14,
+    "PuzzleCornerObjective": m23,
     "PuzzleCornerSkill": MessageLookupByLibrary.simpleMessage("角を取る"),
     "PuzzleCornerSuccess": MessageLookupByLibrary.simpleMessage(
       "角を取れました。角の石は、対局が終わるまで自分のものです。",
@@ -340,7 +429,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleEndgameHintTwo": MessageLookupByLibrary.simpleMessage(
       "相手の応手を比べましょう。少なく返す手なら、最後の一手を残せるかもしれません。",
     ),
-    "PuzzleEndgameObjective": m15,
+    "PuzzleEndgameObjective": m24,
     "PuzzleEndgameSkill": MessageLookupByLibrary.simpleMessage("勝って終える"),
     "PuzzleEndgameSuccess": MessageLookupByLibrary.simpleMessage(
       "終盤を勝ち切れました。相手の最善の応手にも対応できました。",
@@ -348,13 +437,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleEndgameTryAgain": MessageLookupByLibrary.simpleMessage(
       "この手順では、相手が最善を尽くすと勝ち切れません。最初からやり直し、ほかの手を比べましょう。",
     ),
-    "PuzzleHint": m16,
-    "PuzzleHintCoordinate": m17,
+    "PuzzleHint": m25,
+    "PuzzleHintCoordinate": m26,
     "PuzzleNext": MessageLookupByLibrary.simpleMessage("次の問題"),
     "PuzzleNoResults": MessageLookupByLibrary.simpleMessage(
       "一致する問題がありません。練習したい技や問題番号で検索してください。",
     ),
-    "PuzzleNumber": m18,
+    "PuzzleNumber": m27,
     "PuzzleOpponentThinking": MessageLookupByLibrary.simpleMessage(
       "最善の応手を検討中…",
     ),
@@ -367,12 +456,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzlePassHintTwo": MessageLookupByLibrary.simpleMessage(
       "それぞれの候補の後で、相手が打てる手を比べましょう。",
     ),
-    "PuzzlePassObjective": m19,
+    "PuzzlePassObjective": m28,
     "PuzzlePassSkill": MessageLookupByLibrary.simpleMessage("もう一度自分の番にする"),
     "PuzzlePassSuccess": MessageLookupByLibrary.simpleMessage(
       "もう一度あなたの番です。相手はパスし、対局は続きます。",
     ),
-    "PuzzleProgress": m20,
+    "PuzzleProgress": m29,
     "PuzzleProgressLoadFailed": MessageLookupByLibrary.simpleMessage(
       "パズルの進捗を読み込めませんでした。もう一度お試しください。",
     ),
@@ -393,7 +482,6 @@ class MessageLookup extends MessageLookupByLibrary {
       "駒の動きとお祝い演出を最小限にします",
     ),
     "Rematch": MessageLookupByLibrary.simpleMessage("再戦"),
-    "RemoveAds": MessageLookupByLibrary.simpleMessage("広告を削除"),
     "ReplaceSavedGameMessage": MessageLookupByLibrary.simpleMessage(
       "途中の対局は新しい対局に置き換わります。ホームから続きを遊ぶこともできます。",
     ),
@@ -408,33 +496,34 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "RestartGame": MessageLookupByLibrary.simpleMessage("対局をやり直す"),
     "RestoreNothing": MessageLookupByLibrary.simpleMessage("復元できる購入はありません。"),
+    "RestorePurchaseHelp": m30,
     "RestorePurchases": MessageLookupByLibrary.simpleMessage("購入を復元"),
     "RestoreSuccess": MessageLookupByLibrary.simpleMessage("購入を復元しました。"),
     "ResultCardError": MessageLookupByLibrary.simpleMessage(
       "結果カードを作成できませんでした。",
     ),
     "ResultCardPreparing": MessageLookupByLibrary.simpleMessage("結果カードを作成中…"),
-    "ResultCardPreviewLabel": m21,
+    "ResultCardPreviewLabel": m31,
     "ResultCardShareFailed": MessageLookupByLibrary.simpleMessage(
       "現在シェアできません。もう一度お試しください。",
     ),
     "ResultCardTitle": MessageLookupByLibrary.simpleMessage("結果をシェア"),
     "ReviewBoardLabel": MessageLookupByLibrary.simpleMessage("対局を振り返る盤面"),
-    "ReviewCorners": m22,
+    "ReviewCorners": m32,
     "ReviewFinal": MessageLookupByLibrary.simpleMessage("終了時の局面"),
     "ReviewFirst": MessageLookupByLibrary.simpleMessage("最初へ"),
     "ReviewGame": MessageLookupByLibrary.simpleMessage("対局を振り返る"),
     "ReviewLast": MessageLookupByLibrary.simpleMessage("最後へ"),
-    "ReviewMove": m23,
+    "ReviewMove": m33,
     "ReviewNext": MessageLookupByLibrary.simpleMessage("次の手"),
     "ReviewPrevious": MessageLookupByLibrary.simpleMessage("前の手"),
     "ReviewStart": MessageLookupByLibrary.simpleMessage("開始時の局面"),
     "Rules": MessageLookupByLibrary.simpleMessage("ルール"),
     "SavedGameSubtitle": MessageLookupByLibrary.simpleMessage("いつでも続きから遊べます。"),
-    "SavedMatchScore": m24,
+    "SavedMatchScore": m34,
     "Settings": MessageLookupByLibrary.simpleMessage("設定"),
     "Share": MessageLookupByLibrary.simpleMessage("共有"),
-    "ShareResult": m25,
+    "ShareResult": m35,
     "Sound": MessageLookupByLibrary.simpleMessage("サウンド"),
     "Space_Jumper": MessageLookupByLibrary.simpleMessage("Space Jumper"),
     "StartGame": MessageLookupByLibrary.simpleMessage("ゲーム開始"),
@@ -443,11 +532,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "Theme": MessageLookupByLibrary.simpleMessage("テーマ"),
     "ThemeClassic": MessageLookupByLibrary.simpleMessage("クラシック"),
     "ThemeContrast": MessageLookupByLibrary.simpleMessage("ハイコントラスト"),
+    "ThemeEmber": MessageLookupByLibrary.simpleMessage("エンバー"),
     "ThemeNight": MessageLookupByLibrary.simpleMessage("ナイト"),
+    "ThemeRoyal": MessageLookupByLibrary.simpleMessage("ロイヤル"),
     "Tie": MessageLookupByLibrary.simpleMessage("引き分け"),
     "Ties": MessageLookupByLibrary.simpleMessage("引き分け"),
     "TryAgain": MessageLookupByLibrary.simpleMessage("もう一度試す"),
-    "TurnPassed": m26,
+    "TurnPassed": m36,
     "TutorialBoardLabel": MessageLookupByLibrary.simpleMessage("練習用の盤面"),
     "TutorialCaptureBody": MessageLookupByLibrary.simpleMessage(
       "あなたは黒です。印のあるマスをタップして、白い石を2つの黒い石で挟みましょう。",
@@ -467,7 +558,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "TutorialCornersTitle": MessageLookupByLibrary.simpleMessage("角を取る"),
     "TutorialNext": MessageLookupByLibrary.simpleMessage("続ける"),
     "TutorialPlayEasy": MessageLookupByLibrary.simpleMessage("かんたんで対局する"),
-    "TutorialProgress": m27,
+    "TutorialProgress": m37,
     "TutorialReplyBody": MessageLookupByLibrary.simpleMessage(
       "白が打ちました。印のあるマスをタップして、もう一度石を返しましょう。",
     ),
@@ -478,7 +569,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "TutorialTitle": MessageLookupByLibrary.simpleMessage("遊びながら学ぶ"),
     "TwoPlayersMode": MessageLookupByLibrary.simpleMessage("2人対戦（同じ端末で交互に）"),
     "Undo": MessageLookupByLibrary.simpleMessage("待った"),
+    "UndoUnlimited": MessageLookupByLibrary.simpleMessage("待った · 無制限"),
     "UndoWithAd": MessageLookupByLibrary.simpleMessage("待った · 広告を見る"),
+    "UnlockWithPremium": MessageLookupByLibrary.simpleMessage("プレミアムで解放"),
     "Watch": MessageLookupByLibrary.simpleMessage("見る"),
     "WatchAd": MessageLookupByLibrary.simpleMessage("広告を見る"),
     "WatchAdForHint": MessageLookupByLibrary.simpleMessage("短い広告を見て合法手を表示します。"),
@@ -488,8 +581,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "WhoGoesFirst": MessageLookupByLibrary.simpleMessage("先手はどちら？"),
     "WinRate": MessageLookupByLibrary.simpleMessage("勝率"),
     "WinsByDifficulty": MessageLookupByLibrary.simpleMessage("難易度別勝利"),
-    "WinsLosses": m28,
-    "YouColor": m29,
+    "WinsLosses": m38,
+    "YouColor": m39,
     "YouLose": MessageLookupByLibrary.simpleMessage("負け"),
     "YouWin": MessageLookupByLibrary.simpleMessage("勝ち！"),
     "YourTurn": MessageLookupByLibrary.simpleMessage("あなたの番です"),
