@@ -15,6 +15,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## Android
 
+### android build_release
+
+```sh
+[bundle exec] fastlane android build_release
+```
+
+Build a signed Android App Bundle without uploading it
+
 ### android deploy
 
 ```sh
