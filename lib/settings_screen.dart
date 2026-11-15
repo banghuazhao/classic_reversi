@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -349,11 +350,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 subtitle: s.HowToLearnMore,
                 onTap: () => _open((context) => const HowToPlayScreen()),
               ),
-              AppMenuRow(
-                icon: CupertinoIcons.square_grid_2x2_fill,
-                title: s.MoreApps,
-                onTap: () => _open((context) => const MorePage()),
-              ),
+              // The listed apps are iPhone and Android titles.
+              if (defaultTargetPlatform != TargetPlatform.macOS)
+                AppMenuRow(
+                  icon: CupertinoIcons.square_grid_2x2_fill,
+                  title: s.MoreApps,
+                  onTap: () => _open((context) => const MorePage()),
+                ),
               AppMenuRow(
                 icon: CupertinoIcons.doc_text_fill,
                 title: s.PrivacyPolicy,

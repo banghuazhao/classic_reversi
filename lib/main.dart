@@ -54,11 +54,15 @@ void main() {
   runApp(const MyApp());
 
   if (!kIsWeb) {
-    Future.delayed(const Duration(seconds: 1), () {
-      AppTrackingTransparency.requestTrackingAuthorization();
-    }).catchError((Object error) {
-      debugPrint('ATT request failed: $error');
-    });
+    // Tracking permission only matters for ads, which only run on iOS here.
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      Future.delayed(const Duration(seconds: 1), () {
+        return AppTrackingTransparency.requestTrackingAuthorization();
+      }).catchError((Object error) {
+        debugPrint('ATT request failed: $error');
+        return TrackingStatus.notSupported;
+      });
+    }
 
     () async {
       // Load visual/preferences independently of store network work so a
@@ -355,7 +359,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
 
   bool get _isPremium => PurchaseService.instance.isPremium;
 
-  bool get _premiumOrAdsDisabled => !AdsManager.adsEnabled || _isPremium;
+  bool get _premiumOrAdsDisabled => RewardedAdHelper.grantsWithoutAd;
+
+  /// No rewarded ads on this platform (macOS): ad-gated extras open Premium.
+  bool get _rewardsNeedPremium => RewardedAdHelper.needsPremium;
 
   bool get _freeUndoAllowed =>
       widget.settings.twoPlayerMode ||
@@ -369,8 +376,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   bool get _undoAllowed =>
       _undoAvailable && (_freeUndoAllowed || _rewardedUndoCharges > 0);
 
-  int get _freeTipsLeft =>
-      max(0, kFreeDailyCoachTips - _tipsUsedToday).toInt();
+  int get _freeTipsLeft => max(0, kFreeDailyCoachTips - _tipsUsedToday).toInt();
 
   bool get _showHints {
     if (widget.settings.twoPlayerMode) {
@@ -966,6 +972,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     if (currentModel != null && currentModel.player == _computerColor) {
       return;
     }
+    if (_rewardsNeedPremium) {
+      await _openPremium();
+      return;
+    }
     _rewardFlowBusy = true;
     final s = S.of(context);
     try {
@@ -999,6 +1009,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     if (_hintsUnlocked || _rewardFlowBusy) {
       return;
     }
+    if (_rewardsNeedPremium) {
+      await _openPremium();
+      return;
+    }
     _rewardFlowBusy = true;
     final s = S.of(context);
     try {
@@ -1030,8 +1044,8 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _openPremium() async {
-    await Navigator.of(context).push(fadeRoute((context) =>
-        const PremiumScreen()));
+    await Navigator.of(context)
+        .push(fadeRoute((context) => const PremiumScreen()));
     if (mounted) setState(() {});
   }
 
@@ -1121,16 +1135,19 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(s.CoachTipLimitTitle),
-        content: Text(s.CoachTipLimitMessage(kFreeDailyCoachTips)),
+        content: Text(RewardedAdHelper.rewardsAvailable
+            ? s.CoachTipLimitMessage(kFreeDailyCoachTips)
+            : s.CoachTipLimitPremiumMessage(kFreeDailyCoachTips)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(s.Cancel),
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, _TipLimitChoice.watchAd),
-            child: Text(s.CoachTipWatchAd),
-          ),
+          if (RewardedAdHelper.rewardsAvailable)
+            TextButton(
+              onPressed: () => Navigator.pop(context, _TipLimitChoice.watchAd),
+              child: Text(s.CoachTipWatchAd),
+            ),
           TextButton(
             onPressed: () => Navigator.pop(context, _TipLimitChoice.premium),
             child: Text(s.GoPremium),
@@ -1189,6 +1206,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     required VoidCallback? onPressed,
     required AppTheme theme,
     bool rewarded = false,
+    bool locked = false,
     String? badge,
   }) {
     return Semantics(
@@ -1227,12 +1245,14 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                         ? const Color(0x70ffffff)
                         : Colors.white,
                   ),
-                  if (rewarded)
+                  if (rewarded || locked)
                     Positioned(
                       right: 2,
                       top: 2,
                       child: Icon(
-                        CupertinoIcons.play_rectangle_fill,
+                        locked
+                            ? CupertinoIcons.lock_fill
+                            : CupertinoIcons.play_rectangle_fill,
                         size: 14,
                         color: theme.lastMoveBorder,
                       ),
@@ -1421,10 +1441,8 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         final isLegalTap = type == PieceType.empty &&
             legalMoves.any((position) => position.x == x && position.y == y);
         final isLegalMoveHint = showLegalMoveHints && isLegalTap;
-        final isTip = canInteract &&
-            isLegalTap &&
-            _tipMove?.x == x &&
-            _tipMove?.y == y;
+        final isTip =
+            canInteract && isLegalTap && _tipMove?.x == x && _tipMove?.y == y;
         if (_gameOverCelebrating && type == _gameOverWinner) {
           winningCells.add(Offset(x + 0.5, y + 0.5));
         }
@@ -1599,6 +1617,8 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         !_freeUndoAllowed;
     final undoEnabled = !cpuThinking && !model.gameIsOver && _undoAvailable;
     final tipsLeft = _freeTipsLeft;
+    final premiumOnly = _rewardsNeedPremium;
+    final tipsExhausted = !_isPremium && tipsLeft == 0;
     final reduceMotion = FeedbackService.instance.reduceMotion ||
         MediaQuery.disableAnimationsOf(context);
     final status = _turnStatus(model);
@@ -1618,13 +1638,14 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       children: [
         _circleActionButton(
           tooltip: needsRewardedUndo
-              ? s.UndoWithAd
+              ? (premiumOnly ? s.UndoWithPremium : s.UndoWithAd)
               : _isPremium
                   ? s.UndoUnlimited
                   : s.Undo,
           icon: CupertinoIcons.arrow_uturn_left,
           theme: theme,
-          rewarded: needsRewardedUndo,
+          rewarded: needsRewardedUndo && !premiumOnly,
+          locked: needsRewardedUndo && premiumOnly,
           onPressed: undoEnabled
               ? () {
                   if (_undoAllowed) {
@@ -1637,10 +1658,11 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         ),
         if (needsHintButton)
           _circleActionButton(
-            tooltip: s.HintWithAd,
+            tooltip: premiumOnly ? s.HintWithPremium : s.HintWithAd,
             icon: CupertinoIcons.lightbulb,
             theme: theme,
-            rewarded: true,
+            rewarded: !premiumOnly,
+            locked: premiumOnly,
             onPressed: !model.gameIsOver && !cpuThinking
                 ? _requestRewardedHints
                 : null,
@@ -1651,10 +1673,11 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                 ? s.CoachTip
                 : tipsLeft > 0
                     ? s.CoachTipsLeft(tipsLeft)
-                    : s.CoachTipWithAd,
+                    : (premiumOnly ? s.CoachTipWithPremium : s.CoachTipWithAd),
             icon: CupertinoIcons.wand_stars,
             theme: theme,
-            rewarded: !_isPremium && tipsLeft == 0,
+            rewarded: tipsExhausted && !premiumOnly,
+            locked: tipsExhausted && premiumOnly,
             badge: _isPremium ? null : '$tipsLeft',
             onPressed: !cpuThinking && !_tipBusy && !_gameOverCelebrating
                 ? () => _requestTip(model)
@@ -1771,8 +1794,13 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
               child: SafeArea(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    final width = min(constraints.maxWidth, 980.0);
-                    final wide = width >= 700 && width > constraints.maxHeight;
+                    final narrowWidth = min(constraints.maxWidth, 980.0);
+                    final wide = narrowWidth >= 700 &&
+                        narrowWidth > constraints.maxHeight;
+                    // Large landscape windows (iPad, Mac) give the board more
+                    // room instead of leaving the sides empty.
+                    final width =
+                        wide ? min(constraints.maxWidth, 1280.0) : narrowWidth;
                     final extent = wide
                         ? min(
                             (width - 64) * 0.58,
@@ -1816,40 +1844,51 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                         width: width,
                         child: SingleChildScrollView(
                           padding: const EdgeInsets.all(16),
-                          child: Column(
-                            children: [
-                              if (wide)
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      flex: 6,
-                                      child: Center(child: board),
-                                    ),
-                                    const SizedBox(width: 24),
-                                    Expanded(flex: 4, child: information),
-                                  ],
-                                )
-                              else ...[
-                                information,
-                                const SizedBox(height: 20),
-                                Center(child: board),
+                          child: ConstrainedBox(
+                            // Center the wide layout vertically when it fits.
+                            constraints: BoxConstraints(
+                              minHeight: wide
+                                  ? max(0.0, constraints.maxHeight - 32)
+                                  : 0,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (wide)
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        flex: 6,
+                                        child: Center(child: board),
+                                      ),
+                                      const SizedBox(width: 24),
+                                      Expanded(flex: 4, child: information),
+                                    ],
+                                  )
+                                else ...[
+                                  information,
+                                  const SizedBox(height: 20),
+                                  Center(child: board),
+                                ],
+                                if (!kIsWeb && AdsManager.adsEnabled)
+                                  SizedBox(
+                                    height: 68,
+                                    child: _isAdLoaded
+                                        ? Center(
+                                            child: SizedBox(
+                                              width: _ad!.size.width.toDouble(),
+                                              height:
+                                                  _ad!.size.height.toDouble(),
+                                              child: AdWidget(ad: _ad!),
+                                            ),
+                                          )
+                                        : null,
+                                  ),
+                                const SizedBox(height: 8),
                               ],
-                              if (!kIsWeb && AdsManager.adsEnabled)
-                                SizedBox(
-                                  height: 68,
-                                  child: _isAdLoaded
-                                      ? Center(
-                                          child: SizedBox(
-                                            width: _ad!.size.width.toDouble(),
-                                            height: _ad!.size.height.toDouble(),
-                                            child: AdWidget(ad: _ad!),
-                                          ),
-                                        )
-                                      : null,
-                                ),
-                              const SizedBox(height: 8),
-                            ],
+                            ),
                           ),
                         ),
                       ),

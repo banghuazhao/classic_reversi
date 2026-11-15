@@ -50,71 +50,74 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m11(count) =>
       "Bạn đã dùng hết ${count} gợi ý miễn phí hôm nay. Xem một quảng cáo ngắn để nhận thêm một gợi ý, hoặc nâng cấp Premium để dùng không giới hạn.";
 
-  static String m12(coordinate) => "Gợi ý: thử đi ${coordinate}.";
+  static String m12(count) =>
+      "Bạn đã dùng hết ${count} gợi ý miễn phí hôm nay. Nâng cấp Premium để có gợi ý không giới hạn, hoặc quay lại vào ngày mai.";
 
-  static String m13(count) => "Gợi ý · còn ${count} lượt miễn phí hôm nay";
+  static String m13(coordinate) => "Gợi ý: thử đi ${coordinate}.";
 
-  static String m14(color) => "Máy tính · ${color}";
+  static String m14(count) => "Gợi ý · còn ${count} lượt miễn phí hôm nay";
 
-  static String m15(status, black, white) =>
+  static String m15(color) => "Máy tính · ${color}";
+
+  static String m16(status, black, white) =>
       "${status}. Đen ${black}, trắng ${white}.";
 
-  static String m16(price) => "Mua Premium · ${price}";
+  static String m17(price) => "Mua Premium · ${price}";
 
-  static String m17(color) => "Lượt quân ${color}";
+  static String m18(color) => "Lượt quân ${color}";
 
-  static String m18(count) => "Số quân đã lật: ${count}";
+  static String m19(count) => "Số quân đã lật: ${count}";
 
-  static String m19(coordinate) => "Bạn đã đi ${coordinate}";
+  static String m20(coordinate) => "Bạn đã đi ${coordinate}";
 
-  static String m20(store) =>
+  static String m21(store) =>
       "Thanh toán một lần. Không đăng ký định kỳ. Khôi phục bất cứ lúc nào bằng tài khoản ${store} của bạn.";
 
-  static String m21(theme) => "${theme} · Premium";
+  static String m22(theme) => "${theme} · Premium";
 
-  static String m22(count) =>
+  static String m23(count) =>
       "Nhận nước đi mạnh kèm lý do bất cứ lúc nào. Người chơi miễn phí có ${count} gợi ý mỗi ngày.";
 
-  static String m23(color, coordinate) =>
+  static String m24(color, coordinate) =>
       "Cầm quân ${color}. Chiếm ô góc ${coordinate} trong một nước đi.";
 
-  static String m24(color) =>
+  static String m25(color) =>
       "Cầm quân ${color}. Thắng thế cờ tàn cuộc này trước những nước đáp trả tốt nhất.";
 
-  static String m25(number) => "Gợi ý ${number} trên 3";
+  static String m26(number) => "Gợi ý ${number} trên 3";
 
-  static String m26(coordinate) => "Thử ${coordinate}.";
+  static String m27(coordinate) => "Thử ${coordinate}.";
 
-  static String m27(number) => "Bài tập ${number}";
+  static String m28(number) => "Bài tập ${number}";
 
-  static String m28(color) =>
+  static String m29(color) =>
       "Cầm quân ${color}. Buộc đối thủ bỏ lượt để bạn được đi tiếp mà không kết thúc ván chơi.";
 
-  static String m29(completed, total) => "Đã giải ${completed} trên ${total}";
+  static String m30(completed, total) => "Đã giải ${completed} trên ${total}";
 
-  static String m30(store) =>
+  static String m31(store) =>
       "Đã mua? Khôi phục từ tài khoản ${store} của bạn.";
 
-  static String m31(result, score, mode, date) =>
+  static String m32(result, score, mode, date) =>
       "${result}. ${score}. ${mode}. ${date}.";
 
-  static String m32(black, white) => "Ô góc · Đen ${black} · Trắng ${white}";
+  static String m33(black, white) => "Ô góc · Đen ${black} · Trắng ${white}";
 
-  static String m33(move, total) => "Nước đi ${move} trên ${total}";
+  static String m34(move, total) => "Nước đi ${move} trên ${total}";
 
-  static String m34(black, white) => "Đen ${black} · Trắng ${white}";
+  static String m35(black, white) => "Đen ${black} · Trắng ${white}";
 
-  static String m35(result, black, white, mode) =>
+  static String m36(result, black, white, mode) =>
       "${result} · Đen ${black} – Trắng ${white} (${mode}) — Classic Reversi";
 
-  static String m36(passed, current) =>
+  static String m37(passed, current) =>
       "Quân ${passed} không có nước đi hợp lệ. Quân ${current} được đi tiếp.";
 
-  static String m37(step, total) => "Bài học ${step} trên ${total}";
+  static String m38(step, total) => "Bài học ${step} trên ${total}";
 
-  static String m38(wins, losses) => "Thắng ${wins} · Thua ${losses}";
+  static String m39(wins, losses) => "Thắng ${wins} · Thua ${losses}";
 
-  static String m39(color) => "Bạn · ${color}";
+  static String m40(color) => "Bạn · ${color}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -221,15 +224,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Gợi ý của huấn luyện viên",
     ),
     "CoachTipLimitMessage": m11,
+    "CoachTipLimitPremiumMessage": m12,
     "CoachTipLimitTitle": MessageLookupByLibrary.simpleMessage(
       "Đã dùng hết gợi ý miễn phí hôm nay",
     ),
-    "CoachTipSuggestion": m12,
+    "CoachTipSuggestion": m13,
     "CoachTipWatchAd": MessageLookupByLibrary.simpleMessage("Xem quảng cáo"),
     "CoachTipWithAd": MessageLookupByLibrary.simpleMessage(
       "Gợi ý · xem quảng cáo",
     ),
-    "CoachTipsLeft": m13,
+    "CoachTipWithPremium": MessageLookupByLibrary.simpleMessage(
+      "Gợi ý · Premium",
+    ),
+    "CoachTipsLeft": m14,
     "CoachTitle": MessageLookupByLibrary.simpleMessage(
       "Huấn luyện chiến thuật",
     ),
@@ -239,7 +246,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "CoachUnavailable": MessageLookupByLibrary.simpleMessage(
       "Hiện chưa thể dùng tính năng huấn luyện. Bạn vẫn có thể xem lại từng nước đi.",
     ),
-    "ComputerColor": m14,
+    "ComputerColor": m15,
     "ComputerThinking": MessageLookupByLibrary.simpleMessage(
       "Máy tính đang suy nghĩ…",
     ),
@@ -285,10 +292,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Không thể lưu ván đấu. Vui lòng thử lại trước khi thoát.",
     ),
     "GameSetup": MessageLookupByLibrary.simpleMessage("Thiết lập ván chơi"),
-    "GameStatusAnnouncement": m15,
+    "GameStatusAnnouncement": m16,
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("Số ván đã chơi"),
     "GetPremium": MessageLookupByLibrary.simpleMessage("Mua Premium"),
-    "GetPremiumWithPrice": m16,
+    "GetPremiumWithPrice": m17,
     "GoPremium": MessageLookupByLibrary.simpleMessage("Nâng cấp Premium"),
     "GuidedFirstGame": MessageLookupByLibrary.simpleMessage(
       "Học qua ván chơi có hướng dẫn",
@@ -301,6 +308,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "Hint": MessageLookupByLibrary.simpleMessage("Gợi ý"),
     "HintWithAd": MessageLookupByLibrary.simpleMessage(
       "Nước đi hợp lệ · xem quảng cáo",
+    ),
+    "HintWithPremium": MessageLookupByLibrary.simpleMessage(
+      "Nước đi hợp lệ · Premium",
     ),
     "HintsEnabled": MessageLookupByLibrary.simpleMessage(
       "Đã bật gợi ý cho ván này.",
@@ -348,18 +358,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Chơi cùng bạn bè trên thiết bị này",
     ),
-    "PlayerTurn": m17,
+    "PlayerTurn": m18,
     "PracticeBoardLabel": MessageLookupByLibrary.simpleMessage(
       "Bàn cờ luyện chiến thuật",
     ),
-    "PracticeFlipped": m18,
+    "PracticeFlipped": m19,
     "PracticeInstructions": MessageLookupByLibrary.simpleMessage(
       "Đặt quân vào bất kỳ ô được đánh dấu nào và xem điều gì thay đổi.",
     ),
     "PracticeNoMoves": MessageLookupByLibrary.simpleMessage(
       "Bên này không có nước đi hợp lệ trong thế cờ hiện tại.",
     ),
-    "PracticePlayed": m19,
+    "PracticePlayed": m20,
     "PracticeReset": MessageLookupByLibrary.simpleMessage("Thử nước đi khác"),
     "PracticeSafe": MessageLookupByLibrary.simpleMessage(
       "Phần luyện tập không ảnh hưởng đến ván đã lưu hay số liệu thống kê.",
@@ -393,11 +403,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "PremiumHintsBody": MessageLookupByLibrary.simpleMessage(
       "Xem mọi ô hợp lệ ở mức Trung bình, Khó và Chuyên gia mà không cần xem quảng cáo.",
     ),
+    "PremiumHintsBodyNoAds": MessageLookupByLibrary.simpleMessage(
+      "Xem mọi ô hợp lệ ở mức Trung bình, Khó và Chuyên gia.",
+    ),
     "PremiumHintsTitle": MessageLookupByLibrary.simpleMessage(
       "Gợi ý nước đi ở mọi cấp độ",
     ),
     "PremiumIncludes": MessageLookupByLibrary.simpleMessage("Premium bao gồm"),
-    "PremiumOneTime": m20,
+    "PremiumOneTime": m21,
     "PremiumRequired": MessageLookupByLibrary.simpleMessage("Cần Premium"),
     "PremiumSettingsActiveSubtitle": MessageLookupByLibrary.simpleMessage(
       "Cảm ơn bạn! Mọi tính năng Premium đã được mở khóa.",
@@ -408,14 +421,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "PremiumSubheadline": MessageLookupByLibrary.simpleMessage(
       "Chơi không quảng cáo và mở khóa công cụ nâng cao giúp bạn chơi hay hơn mỗi ván.",
     ),
-    "PremiumThemeLabel": m21,
+    "PremiumSubheadlineNoAds": MessageLookupByLibrary.simpleMessage(
+      "Mở khóa công cụ nâng cao giúp bạn chơi hay hơn mỗi ván.",
+    ),
+    "PremiumThemeLabel": m22,
     "PremiumThemesBody": MessageLookupByLibrary.simpleMessage(
       "Bàn Hoàng gia và Than hồng, dành riêng cho Premium.",
     ),
     "PremiumThemesTitle": MessageLookupByLibrary.simpleMessage(
       "Giao diện bàn cờ độc quyền",
     ),
-    "PremiumTipsBody": m22,
+    "PremiumTipsBody": m23,
     "PremiumTipsTitle": MessageLookupByLibrary.simpleMessage(
       "Gợi ý không giới hạn",
     ),
@@ -483,7 +499,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleCornerHintTwo": MessageLookupByLibrary.simpleMessage(
       "Lần từ ô góc mục tiêu vào trong cho đến khi quân của bạn có thể kẹp quân đối thủ.",
     ),
-    "PuzzleCornerObjective": m23,
+    "PuzzleCornerObjective": m24,
     "PuzzleCornerSkill": MessageLookupByLibrary.simpleMessage("Chiếm ô góc"),
     "PuzzleCornerSuccess": MessageLookupByLibrary.simpleMessage(
       "Đã chiếm được góc. Quân ở ô góc sẽ là của bạn đến hết ván.",
@@ -497,7 +513,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleEndgameHintTwo": MessageLookupByLibrary.simpleMessage(
       "So sánh các nước đáp trả của đối thủ. Lật ít quân hơn có thể giúp bạn giữ nước đi cuối.",
     ),
-    "PuzzleEndgameObjective": m24,
+    "PuzzleEndgameObjective": m25,
     "PuzzleEndgameSkill": MessageLookupByLibrary.simpleMessage(
       "Kết thúc bằng chiến thắng",
     ),
@@ -507,13 +523,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleEndgameTryAgain": MessageLookupByLibrary.simpleMessage(
       "Cách đi này không thể đảm bảo chiến thắng nếu đối thủ chơi tối ưu. Hãy bắt đầu lại và so sánh nước khác.",
     ),
-    "PuzzleHint": m25,
-    "PuzzleHintCoordinate": m26,
+    "PuzzleHint": m26,
+    "PuzzleHintCoordinate": m27,
     "PuzzleNext": MessageLookupByLibrary.simpleMessage("Bài tập tiếp theo"),
     "PuzzleNoResults": MessageLookupByLibrary.simpleMessage(
       "Không có bài tập phù hợp. Hãy thử tìm theo kỹ năng hoặc số bài.",
     ),
-    "PuzzleNumber": m27,
+    "PuzzleNumber": m28,
     "PuzzleOpponentThinking": MessageLookupByLibrary.simpleMessage(
       "Đang cân nhắc nước đáp trả tốt nhất…",
     ),
@@ -526,14 +542,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzlePassHintTwo": MessageLookupByLibrary.simpleMessage(
       "So sánh các nước đi còn lại của đối thủ sau mỗi nước bạn định đi.",
     ),
-    "PuzzlePassObjective": m28,
+    "PuzzlePassObjective": m29,
     "PuzzlePassSkill": MessageLookupByLibrary.simpleMessage(
       "Giành thêm một lượt",
     ),
     "PuzzlePassSuccess": MessageLookupByLibrary.simpleMessage(
       "Bạn đã giành thêm một lượt. Đối thủ không có nước đi hợp lệ và ván chơi tiếp tục.",
     ),
-    "PuzzleProgress": m29,
+    "PuzzleProgress": m30,
     "PuzzleProgressLoadFailed": MessageLookupByLibrary.simpleMessage(
       "Không thể tải tiến độ giải đố. Vui lòng thử lại.",
     ),
@@ -570,7 +586,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "RestoreNothing": MessageLookupByLibrary.simpleMessage(
       "Không có giao dịch nào để khôi phục.",
     ),
-    "RestorePurchaseHelp": m30,
+    "RestorePurchaseHelp": m31,
     "RestorePurchases": MessageLookupByLibrary.simpleMessage(
       "Khôi phục giao dịch",
     ),
@@ -583,7 +599,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ResultCardPreparing": MessageLookupByLibrary.simpleMessage(
       "Đang tạo thẻ kết quả…",
     ),
-    "ResultCardPreviewLabel": m31,
+    "ResultCardPreviewLabel": m32,
     "ResultCardShareFailed": MessageLookupByLibrary.simpleMessage(
       "Hiện chưa thể chia sẻ. Vui lòng thử lại.",
     ),
@@ -591,12 +607,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "ReviewBoardLabel": MessageLookupByLibrary.simpleMessage(
       "Bàn cờ xem lại ván chơi",
     ),
-    "ReviewCorners": m32,
+    "ReviewCorners": m33,
     "ReviewFinal": MessageLookupByLibrary.simpleMessage("Thế cờ cuối cùng"),
     "ReviewFirst": MessageLookupByLibrary.simpleMessage("Về đầu"),
     "ReviewGame": MessageLookupByLibrary.simpleMessage("Xem lại ván chơi"),
     "ReviewLast": MessageLookupByLibrary.simpleMessage("Đến cuối"),
-    "ReviewMove": m33,
+    "ReviewMove": m34,
     "ReviewNext": MessageLookupByLibrary.simpleMessage("Nước đi tiếp theo"),
     "ReviewPrevious": MessageLookupByLibrary.simpleMessage("Nước đi trước"),
     "ReviewStart": MessageLookupByLibrary.simpleMessage("Thế cờ ban đầu"),
@@ -604,10 +620,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "SavedGameSubtitle": MessageLookupByLibrary.simpleMessage(
       "Bàn cờ luôn sẵn sàng khi bạn muốn chơi tiếp.",
     ),
-    "SavedMatchScore": m34,
+    "SavedMatchScore": m35,
     "Settings": MessageLookupByLibrary.simpleMessage("Cài đặt"),
     "Share": MessageLookupByLibrary.simpleMessage("Chia sẻ"),
-    "ShareResult": m35,
+    "ShareResult": m36,
     "Sound": MessageLookupByLibrary.simpleMessage("Âm thanh"),
     "StartGame": MessageLookupByLibrary.simpleMessage("Bắt đầu"),
     "StartNewGame": MessageLookupByLibrary.simpleMessage("Bắt đầu ván mới"),
@@ -621,7 +637,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "Tie": MessageLookupByLibrary.simpleMessage("Hòa"),
     "Ties": MessageLookupByLibrary.simpleMessage("Hòa"),
     "TryAgain": MessageLookupByLibrary.simpleMessage("Thử lại"),
-    "TurnPassed": m36,
+    "TurnPassed": m37,
     "TutorialBoardLabel": MessageLookupByLibrary.simpleMessage(
       "Bàn cờ luyện tập",
     ),
@@ -651,7 +667,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "TutorialPlayEasy": MessageLookupByLibrary.simpleMessage(
       "Chơi một ván mức Dễ",
     ),
-    "TutorialProgress": m37,
+    "TutorialProgress": m38,
     "TutorialReplyBody": MessageLookupByLibrary.simpleMessage(
       "Quân trắng đã đi. Chạm vào bất kỳ ô được đánh dấu nào để lật quân tiếp.",
     ),
@@ -672,6 +688,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "UndoWithAd": MessageLookupByLibrary.simpleMessage(
       "Hoàn tác · xem quảng cáo",
     ),
+    "UndoWithPremium": MessageLookupByLibrary.simpleMessage(
+      "Hoàn tác · Premium",
+    ),
     "UnlockWithPremium": MessageLookupByLibrary.simpleMessage(
       "Mở khóa với Premium",
     ),
@@ -690,8 +709,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "WinsByDifficulty": MessageLookupByLibrary.simpleMessage(
       "Thắng theo độ khó",
     ),
-    "WinsLosses": m38,
-    "YouColor": m39,
+    "WinsLosses": m39,
+    "YouColor": m40,
     "YouLose": MessageLookupByLibrary.simpleMessage("Bạn thua"),
     "YouWin": MessageLookupByLibrary.simpleMessage("Bạn thắng!"),
     "YourTurn": MessageLookupByLibrary.simpleMessage("Đến lượt bạn"),

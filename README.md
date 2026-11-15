@@ -5,7 +5,7 @@
 <h1 align="center">Classic Reversi (Othello)</h1>
 
 <p align="center">
-  A clean, classic Reversi/Othello game built with Flutter for iOS and Android.
+  A clean, classic Reversi/Othello game built with Flutter for iOS, Android, and macOS.
 </p>
 
 <p align="center">
@@ -31,7 +31,8 @@
 - **Shareable result cards** — preview and share a PNG of the final board, score, mode, and date.
 - **Premium** — a one-time purchase on the App Store and Google Play: no ads, unlimited undo and coach tips, hints, Expert, game analysis, and two extra board themes.
 - **Accessible play** — descriptive board cells, keyboard navigation, turn announcements, larger text, reduced motion, and five board themes.
-- Responsive layouts for phones and tablets in portrait and landscape, with clear turn/pass messages and restart protection.
+- Responsive layouts for phones, tablets, and resizable Mac windows, with clear turn/pass messages and restart protection.
+- **Mac App Store** — the macOS app has no ads; extras that are ad-gated on mobile (hints, harder-level undo, extra coach tips) come with Premium, shared with iOS through universal purchase.
 
 ## Tech stack
 
@@ -55,6 +56,12 @@ Run the test suite with:
 
 ```bash
 flutter test
+```
+
+Render the Mac App Store screenshots (2880×1800) from the real macOS app into `build/mac_store_screenshots`:
+
+```bash
+flutter drive -d macos --driver=test_driver/integration_test.dart --target=integration_test/mac_store_screenshots_test.dart
 ```
 
 ## Project structure

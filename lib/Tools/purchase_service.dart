@@ -101,6 +101,7 @@ class PurchaseService extends PurchaseServiceBase {
   bool get isSupportedPlatform =>
       !kIsWeb &&
       (defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.macOS ||
           defaultTargetPlatform == TargetPlatform.android);
 
   @override

@@ -547,25 +547,40 @@ class _GameReviewScreenState extends State<GameReviewScreen> {
       maxContentWidth: 1000,
       child: LayoutBuilder(
         builder: (context, constraints) {
+          if (constraints.maxWidth >= 700) {
+            // Side by side, the panel scrolls on its own so the board stays
+            // in view while reading the coach and jumping to key moments.
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 6,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 0, 28),
+                    child: board,
+                  ),
+                ),
+                const SizedBox(width: 24),
+                Expanded(
+                  flex: 5,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(0, 8, 20, 28),
+                    child: sidePanel,
+                  ),
+                ),
+              ],
+            );
+          }
           return SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
-            child: constraints.maxWidth >= 700
-                ? Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(flex: 6, child: board),
-                      const SizedBox(width: 24),
-                      Expanded(flex: 5, child: sidePanel),
-                    ],
-                  )
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Center(child: board),
-                      const SizedBox(height: 24),
-                      sidePanel,
-                    ],
-                  ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(child: board),
+                const SizedBox(height: 24),
+                sidePanel,
+              ],
+            ),
           );
         },
       ),

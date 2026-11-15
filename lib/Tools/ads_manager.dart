@@ -14,8 +14,16 @@ class AdsManager {
   static bool _mobileAdsInitialized = false;
   static bool _consentFlowCompleted = false;
 
+  /// Google Mobile Ads only runs on Android and iOS. Other platforms (the Mac
+  /// App Store build) have no ads at all, so ad-gated extras need Premium.
+  static bool get platformSupportsAds =>
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS);
+
   /// Whether any ads should initialize, load, or show.
-  static bool get adsEnabled => !disableAllAdsForScreenshot && shouldShowAds;
+  static bool get adsEnabled =>
+      platformSupportsAds && !disableAllAdsForScreenshot && shouldShowAds;
 
   static bool get mobileAdsInitialized => _mobileAdsInitialized;
 
@@ -179,9 +187,19 @@ class RewardedAdHelper {
 
   bool get isReady => _ad != null;
 
-  /// True when the user can earn rewards without watching an ad.
+  /// Whether this platform can show rewarded ads at all.
+  static bool get rewardsAvailable => AdsManager.platformSupportsAds;
+
+  /// True when the user can earn rewards without watching an ad: Premium, or
+  /// ads switched off on a platform that has them (screenshots, tests).
   static bool get grantsWithoutAd =>
-      !AdsManager.adsEnabled || PurchaseService.instance.isPremium;
+      PurchaseService.instance.isPremium ||
+      (rewardsAvailable && !AdsManager.adsEnabled);
+
+  /// True when an ad-gated extra can only be unlocked with Premium because
+  /// this platform has no rewarded ads (macOS).
+  static bool get needsPremium =>
+      !PurchaseService.instance.isPremium && !rewardsAvailable;
 
   Future<bool> load({Duration timeout = const Duration(seconds: 12)}) async {
     if (grantsWithoutAd) {

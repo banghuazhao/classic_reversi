@@ -493,6 +493,7 @@
   },
   "PremiumHeadline": "Upgrade to Premium",
   "PremiumSubheadline": "Play ad-free and unlock advanced tools that sharpen every game.",
+  "PremiumSubheadlineNoAds": "Unlock advanced tools that sharpen every game.",
   "PremiumWelcomeTitle": "You're a Premium player",
   "PremiumWelcomeBody": "Thank you for your support. Every Premium feature is unlocked.",
   "PremiumIncludes": "Premium includes",
@@ -509,6 +510,7 @@
   },
   "PremiumHintsTitle": "Legal-move hints everywhere",
   "PremiumHintsBody": "See every legal square on Medium, Hard, and Expert without ads.",
+  "PremiumHintsBodyNoAds": "See every legal square on Medium, Hard, and Expert.",
   "PremiumExpertTitle": "Expert opponent",
   "PremiumExpertBody": "Challenge the strongest computer, with deeper search and perfect endgames.",
   "PremiumAnalysisTitle": "Full game analysis",
@@ -562,6 +564,15 @@
       "count": {}
     }
   },
+  "CoachTipLimitPremiumMessage": "You've used all {count} free coach tips for today. Go Premium for unlimited tips, or come back tomorrow for more.",
+  "@CoachTipLimitPremiumMessage": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "UndoWithPremium": "Undo · Premium",
+  "HintWithPremium": "Legal moves · Premium",
+  "CoachTipWithPremium": "Coach tip · Premium",
   "CoachTipWatchAd": "Watch ad",
   "BoardSuggestedMove": "Suggested by the coach",
   "AnalysisTitle": "Game analysis",
