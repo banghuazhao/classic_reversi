@@ -75,8 +75,7 @@ void main() {
     messenger.setMockMethodCallHandler(
         const MethodChannel('xyz.luan/audioplayers'), (_) async => null);
     messenger.setMockMethodCallHandler(
-        const MethodChannel('xyz.luan/audioplayers.global'),
-        (_) async => null);
+        const MethodChannel('xyz.luan/audioplayers.global'), (_) async => null);
   });
 
   tearDown(() async {
@@ -99,8 +98,8 @@ void main() {
       expect(analysis.keyMoments.length, lessThanOrEqualTo(3));
       for (final moment in analysis.keyMoments) {
         expect(moment.player, PieceType.black);
-        expect(moment.quality,
-            anyOf(MoveQuality.inaccuracy, MoveQuality.mistake));
+        expect(
+            moment.quality, anyOf(MoveQuality.inaccuracy, MoveQuality.mistake));
       }
       final indexes = analysis.keyMoments.map((m) => m.index).toList();
       expect(indexes, [...indexes]..sort());
@@ -124,8 +123,8 @@ void main() {
     testWidgets('review offers analysis as a Premium unlock', (tester) async {
       await tester.pumpWidget(_localized(GameReviewScreen(
         history: _fullGame(),
-        gameAnalyzer: (history, {player}) async =>
-            GameAnalysis(players: const {}, keyMoments: const [], turningPoint: null),
+        gameAnalyzer: (history, {player}) async => GameAnalysis(
+            players: const {}, keyMoments: const [], turningPoint: null),
       )));
       await _settleIsolates(
           tester,
@@ -236,8 +235,8 @@ void main() {
 
   group('undo', () {
     testWidgets('free players get one undo per turn', (tester) async {
-      await tester.pumpWidget(
-          _localized(const GameScreen(settings: _friendSettings)));
+      await tester
+          .pumpWidget(_localized(const GameScreen(settings: _friendSettings)));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('cell-4-2')));
       await tester.pumpAndSettle();
@@ -253,8 +252,8 @@ void main() {
     testWidgets('Premium players can step back through every move',
         (tester) async {
       await PurchaseService.instance.debugSetPremium(true);
-      await tester.pumpWidget(
-          _localized(const GameScreen(settings: _friendSettings)));
+      await tester
+          .pumpWidget(_localized(const GameScreen(settings: _friendSettings)));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('cell-4-2')));
       await tester.pumpAndSettle();
@@ -271,10 +270,9 @@ void main() {
   });
 
   group('coach tips', () {
-    testWidgets('free tips mark a legal square and count down',
-        (tester) async {
-      await tester.pumpWidget(
-          _localized(const GameScreen(settings: _friendSettings)));
+    testWidgets('free tips mark a legal square and count down', (tester) async {
+      await tester
+          .pumpWidget(_localized(const GameScreen(settings: _friendSettings)));
       await tester.pumpAndSettle();
       expect(find.byTooltip('Coach tip · 3 free today'), findsOneWidget);
       await tester.tap(_tipButton());
@@ -305,8 +303,8 @@ void main() {
         'coachTipsDate': SettingsService.todayKey(),
         'coachTipsUsed': kFreeDailyCoachTips,
       });
-      await tester.pumpWidget(
-          _localized(const GameScreen(settings: _friendSettings)));
+      await tester
+          .pumpWidget(_localized(const GameScreen(settings: _friendSettings)));
       await tester.pumpAndSettle();
       expect(find.byTooltip('Coach tip · watch an ad'), findsOneWidget);
       await tester.tap(_tipButton());
@@ -320,8 +318,8 @@ void main() {
     testWidgets('Premium tips are unlimited and do not use the allowance',
         (tester) async {
       await PurchaseService.instance.debugSetPremium(true);
-      await tester.pumpWidget(
-          _localized(const GameScreen(settings: _friendSettings)));
+      await tester
+          .pumpWidget(_localized(const GameScreen(settings: _friendSettings)));
       await tester.pumpAndSettle();
       expect(find.byTooltip('Coach tip'), findsOneWidget);
       await tester.tap(_tipButton());
@@ -332,12 +330,106 @@ void main() {
     });
   });
 
+  group('Mac App Store build (no ads)', () {
+    final mac = TargetPlatformVariant.only(TargetPlatform.macOS);
+
+    testWidgets('Premium is purchasable and does not promise ad removal',
+        (tester) async {
+      expect(PurchaseService.instance.isSupportedPlatform, isTrue);
+      expect(AdsManager.platformSupportsAds, isFalse);
+      await tester.pumpWidget(_localized(const PremiumScreen()));
+      await tester.pumpAndSettle();
+      expect(find.text('Ad-free play'), findsNothing);
+      expect(
+          find.textContaining(
+              RegExp(r'\bad-free\b|\bads\b', caseSensitive: false)),
+          findsNothing);
+      expect(find.text('Unlimited undo'), findsOneWidget);
+      await tester.scrollUntilVisible(
+          find.byKey(const ValueKey('premium-buy')), 300,
+          scrollable: find.byType(Scrollable).first);
+      expect(find.byKey(const ValueKey('premium-buy')), findsOneWidget);
+    }, variant: mac);
+
+    testWidgets('ad-gated hints open Premium instead of an ad', (tester) async {
+      await tester.pumpWidget(_localized(const GameScreen(
+          settings: GameSettings(
+              difficulty: Difficulty.hard, twoPlayerMode: false))));
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('Legal moves · watch an ad'), findsNothing);
+      await tester.tap(find.byTooltip('Legal moves · Premium'));
+      await tester.pumpAndSettle();
+      expect(find.byType(PremiumScreen), findsOneWidget);
+    }, variant: mac);
+
+    testWidgets('the daily tip limit offers Premium but no ad', (tester) async {
+      SharedPreferences.setMockInitialValues({
+        'reduceMotion': true,
+        'coachTipsDate': SettingsService.todayKey(),
+        'coachTipsUsed': kFreeDailyCoachTips,
+      });
+      await tester
+          .pumpWidget(_localized(const GameScreen(settings: _friendSettings)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Coach tip · Premium'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('come back tomorrow'), findsOneWidget);
+      expect(find.text('Watch ad'), findsNothing);
+      await tester.tap(find.text('Go Premium'));
+      await tester.pumpAndSettle();
+      expect(find.byType(PremiumScreen), findsOneWidget);
+    }, variant: mac);
+
+    testWidgets('Premium on Mac unlocks hints without any ad', (tester) async {
+      await PurchaseService.instance.debugSetPremium(true);
+      expect(RewardedAdHelper.needsPremium, isFalse);
+      expect(RewardedAdHelper.grantsWithoutAd, isTrue);
+      await tester.pumpWidget(_localized(const GameScreen(
+          settings: GameSettings(
+              difficulty: Difficulty.hard, twoPlayerMode: false))));
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('Legal moves · Premium'), findsNothing);
+      expect(find.byTooltip('Undo · Premium'), findsNothing);
+    }, variant: mac);
+
+    // The Mac window opens at 1180x820, can shrink to 720x620 and can go
+    // full screen on a 16:10 display.
+    for (final size in const [
+      Size(720, 620),
+      Size(1180, 820),
+      Size(1440, 900)
+    ]) {
+      testWidgets('home, setup, game and Premium fit a $size Mac window',
+          (tester) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = size;
+        addTearDown(tester.view.resetDevicePixelRatio);
+        addTearDown(tester.view.resetPhysicalSize);
+        await tester.pumpWidget(const MyApp());
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        await tester.ensureVisible(find.text('Play'));
+        await tester.tap(find.text('Play'));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(_localized(const GameScreen(
+            settings: GameSettings(
+                difficulty: Difficulty.hard, twoPlayerMode: false))));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        await tester.pumpWidget(_localized(const PremiumScreen()));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+      }, variant: mac);
+    }
+  });
+
   group('board', () {
     test('Premium themes are complete palettes', () {
       for (final id in BoardThemeId.values) {
         final palette = AppTheme.forId(id);
-        expect(palette.pieceGradients.keys,
-            containsAll(PieceType.values), reason: id.name);
+        expect(palette.pieceGradients.keys, containsAll(PieceType.values),
+            reason: id.name);
       }
       expect(BoardThemeId.royal.requiresPremium, isTrue);
       expect(BoardThemeId.ember.requiresPremium, isTrue);

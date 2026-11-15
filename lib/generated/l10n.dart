@@ -2624,6 +2624,16 @@ class S {
     );
   }
 
+  /// `Unlock advanced tools that sharpen every game.`
+  String get PremiumSubheadlineNoAds {
+    return Intl.message(
+      'Unlock advanced tools that sharpen every game.',
+      name: 'PremiumSubheadlineNoAds',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `You're a Premium player`
   String get PremiumWelcomeTitle {
     return Intl.message(
@@ -2729,6 +2739,16 @@ class S {
     return Intl.message(
       'See every legal square on Medium, Hard, and Expert without ads.',
       name: 'PremiumHintsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `See every legal square on Medium, Hard, and Expert.`
+  String get PremiumHintsBodyNoAds {
+    return Intl.message(
+      'See every legal square on Medium, Hard, and Expert.',
+      name: 'PremiumHintsBodyNoAds',
       desc: '',
       args: [],
     );
@@ -2941,6 +2961,46 @@ class S {
       name: 'CoachTipLimitMessage',
       desc: '',
       args: [count],
+    );
+  }
+
+  /// `You've used all {count} free coach tips for today. Go Premium for unlimited tips, or come back tomorrow for more.`
+  String CoachTipLimitPremiumMessage(Object count) {
+    return Intl.message(
+      'You\'ve used all $count free coach tips for today. Go Premium for unlimited tips, or come back tomorrow for more.',
+      name: 'CoachTipLimitPremiumMessage',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Undo · Premium`
+  String get UndoWithPremium {
+    return Intl.message(
+      'Undo · Premium',
+      name: 'UndoWithPremium',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Legal moves · Premium`
+  String get HintWithPremium {
+    return Intl.message(
+      'Legal moves · Premium',
+      name: 'HintWithPremium',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Coach tip · Premium`
+  String get CoachTipWithPremium {
+    return Intl.message(
+      'Coach tip · Premium',
+      name: 'CoachTipWithPremium',
+      desc: '',
+      args: [],
     );
   }
 

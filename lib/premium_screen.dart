@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'Tools/ads_manager.dart';
 import 'Tools/purchase_service.dart';
 import 'app_chrome.dart';
 import 'generated/l10n.dart';
@@ -88,15 +89,17 @@ class _PremiumScreenState extends State<PremiumScreen> {
   static (String, String) _copyFor(S s, PremiumFeature feature) =>
       switch (feature) {
         PremiumFeature.adFree => (s.PremiumAdFreeTitle, s.PremiumAdFreeBody),
-        PremiumFeature.unlimitedUndo => (
-            s.PremiumUndoTitle,
-            s.PremiumUndoBody
-          ),
+        PremiumFeature.unlimitedUndo => (s.PremiumUndoTitle, s.PremiumUndoBody),
         PremiumFeature.unlimitedTips => (
             s.PremiumTipsTitle,
             s.PremiumTipsBody(kFreeDailyCoachTips)
           ),
-        PremiumFeature.hints => (s.PremiumHintsTitle, s.PremiumHintsBody),
+        PremiumFeature.hints => (
+            s.PremiumHintsTitle,
+            AdsManager.platformSupportsAds
+                ? s.PremiumHintsBody
+                : s.PremiumHintsBodyNoAds
+          ),
         PremiumFeature.expertAi => (s.PremiumExpertTitle, s.PremiumExpertBody),
         PremiumFeature.gameAnalysis => (
             s.PremiumAnalysisTitle,
@@ -119,6 +122,12 @@ class _PremiumScreenState extends State<PremiumScreen> {
             ? s.GetPremium
             : s.GetPremiumWithPrice(price);
     final working = _busy || purchase.isPurchaseInProgress;
+    // The Mac build never shows ads, so "ad-free" is not a Premium benefit there.
+    final features = [
+      for (final feature in PremiumFeature.values)
+        if (feature != PremiumFeature.adFree || AdsManager.platformSupportsAds)
+          feature,
+    ];
 
     return AppGradientScaffold(
       title: s.Premium,
@@ -172,7 +181,11 @@ class _PremiumScreenState extends State<PremiumScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  owned ? s.PremiumWelcomeBody : s.PremiumSubheadline,
+                  owned
+                      ? s.PremiumWelcomeBody
+                      : AdsManager.platformSupportsAds
+                          ? s.PremiumSubheadline
+                          : s.PremiumSubheadlineNoAds,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontFamily: 'Roboto',
@@ -190,9 +203,8 @@ class _PremiumScreenState extends State<PremiumScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                for (final feature in PremiumFeature.values) ...[
-                  if (feature != PremiumFeature.values.first)
-                    const SizedBox(height: 18),
+                for (final feature in features) ...[
+                  if (feature != features.first) const SizedBox(height: 18),
                   _Benefit(
                     icon: _iconFor(feature),
                     title: _copyFor(s, feature).$1,
@@ -317,7 +329,8 @@ class _Benefit extends StatelessWidget {
           if (unlocked) ...[
             const SizedBox(width: 8),
             ExcludeSemantics(
-              child: Icon(CupertinoIcons.checkmark_alt, size: 18, color: accent),
+              child:
+                  Icon(CupertinoIcons.checkmark_alt, size: 18, color: accent),
             ),
           ],
         ],

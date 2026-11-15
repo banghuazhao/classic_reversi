@@ -47,64 +47,66 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m11(count) =>
       "你今天已用完 ${count} 次免费教练提示。观看一段短广告可再获得一次提示，或升级高级版享受无限提示。";
 
-  static String m12(coordinate) => "教练提示：试试 ${coordinate}。";
+  static String m12(count) => "你今天已用完 ${count} 次免费教练提示。升级高级版即可无限使用，或明天再来。";
 
-  static String m13(count) => "教练提示 · 今日免费 ${count} 次";
+  static String m13(coordinate) => "教练提示：试试 ${coordinate}。";
 
-  static String m14(color) => "电脑 · ${color}";
+  static String m14(count) => "教练提示 · 今日免费 ${count} 次";
 
-  static String m15(status, black, white) =>
+  static String m15(color) => "电脑 · ${color}";
+
+  static String m16(status, black, white) =>
       "${status}。黑棋 ${black}，白棋 ${white}。";
 
-  static String m16(price) => "获取高级版 · ${price}";
+  static String m17(price) => "获取高级版 · ${price}";
 
-  static String m17(color) => "轮到${color}落子";
+  static String m18(color) => "轮到${color}落子";
 
-  static String m18(count) => "翻转棋子：${count}";
+  static String m19(count) => "翻转棋子：${count}";
 
-  static String m19(coordinate) => "你下在了${coordinate}";
+  static String m20(coordinate) => "你下在了${coordinate}";
 
-  static String m20(store) => "一次付费，无需订阅。可随时用你的 ${store} 账户恢复购买。";
+  static String m21(store) => "一次付费，无需订阅。可随时用你的 ${store} 账户恢复购买。";
 
-  static String m21(theme) => "${theme} · 高级版";
+  static String m22(theme) => "${theme} · 高级版";
 
-  static String m22(count) => "随时查看好棋及原因。免费玩家每天可用 ${count} 次。";
+  static String m23(count) => "随时查看好棋及原因。免费玩家每天可用 ${count} 次。";
 
-  static String m23(color, coordinate) => "执${color}，一步占据${coordinate}角位。";
+  static String m24(color, coordinate) => "执${color}，一步占据${coordinate}角位。";
 
-  static String m24(color) => "执${color}，应对最佳应手并赢下这个残局。";
+  static String m25(color) => "执${color}，应对最佳应手并赢下这个残局。";
 
-  static String m25(number) => "提示 ${number}/3";
+  static String m26(number) => "提示 ${number}/3";
 
-  static String m26(coordinate) => "试试${coordinate}。";
+  static String m27(coordinate) => "试试${coordinate}。";
 
-  static String m27(number) => "第 ${number} 题";
+  static String m28(number) => "第 ${number} 题";
 
-  static String m28(color) => "执${color}，在不结束对局的情况下，让对手跳过回合，自己再走一步。";
+  static String m29(color) => "执${color}，在不结束对局的情况下，让对手跳过回合，自己再走一步。";
 
-  static String m29(completed, total) => "已解开 ${completed}/${total}";
+  static String m30(completed, total) => "已解开 ${completed}/${total}";
 
-  static String m30(store) => "已购买？可从你的 ${store} 账户恢复。";
+  static String m31(store) => "已购买？可从你的 ${store} 账户恢复。";
 
-  static String m31(result, score, mode, date) =>
+  static String m32(result, score, mode, date) =>
       "${result}。${score}。${mode}。${date}。";
 
-  static String m32(black, white) => "角位 · 黑棋 ${black} · 白棋 ${white}";
+  static String m33(black, white) => "角位 · 黑棋 ${black} · 白棋 ${white}";
 
-  static String m33(move, total) => "第 ${move} 步，共 ${total} 步";
+  static String m34(move, total) => "第 ${move} 步，共 ${total} 步";
 
-  static String m34(black, white) => "黑棋 ${black} · 白棋 ${white}";
+  static String m35(black, white) => "黑棋 ${black} · 白棋 ${white}";
 
-  static String m35(result, black, white, mode) =>
+  static String m36(result, black, white, mode) =>
       "${result} · 黑 ${black} – 白 ${white}（${mode}）— 经典黑白棋";
 
-  static String m36(passed, current) => "${passed}无合法落子点，${current}再走一步。";
+  static String m37(passed, current) => "${passed}无合法落子点，${current}再走一步。";
 
-  static String m37(step, total) => "第 ${step} 课，共 ${total} 课";
+  static String m38(step, total) => "第 ${step} 课，共 ${total} 课";
 
-  static String m38(wins, losses) => "胜 ${wins} · 负 ${losses}";
+  static String m39(wins, losses) => "胜 ${wins} · 负 ${losses}";
 
-  static String m39(color) => "你 · ${color}";
+  static String m40(color) => "你 · ${color}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -188,17 +190,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "CoachSuggested": m10,
     "CoachTip": MessageLookupByLibrary.simpleMessage("教练提示"),
     "CoachTipLimitMessage": m11,
+    "CoachTipLimitPremiumMessage": m12,
     "CoachTipLimitTitle": MessageLookupByLibrary.simpleMessage("今日免费提示已用完"),
-    "CoachTipSuggestion": m12,
+    "CoachTipSuggestion": m13,
     "CoachTipWatchAd": MessageLookupByLibrary.simpleMessage("观看广告"),
     "CoachTipWithAd": MessageLookupByLibrary.simpleMessage("教练提示 · 观看广告"),
-    "CoachTipsLeft": m13,
+    "CoachTipWithPremium": MessageLookupByLibrary.simpleMessage("教练提示 · 高级版"),
+    "CoachTipsLeft": m14,
     "CoachTitle": MessageLookupByLibrary.simpleMessage("策略教练"),
     "CoachTurnTitle": MessageLookupByLibrary.simpleMessage("值得回顾的局面"),
     "CoachUnavailable": MessageLookupByLibrary.simpleMessage(
       "暂时无法使用教练功能，你仍然可以逐步复盘。",
     ),
-    "ComputerColor": m14,
+    "ComputerColor": m15,
     "ComputerThinking": MessageLookupByLibrary.simpleMessage("电脑思考中…"),
     "ContinueGame": MessageLookupByLibrary.simpleMessage("继续游戏"),
     "Crazy_Pyramid": MessageLookupByLibrary.simpleMessage("疯狂金字塔"),
@@ -236,11 +240,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "GameOver": MessageLookupByLibrary.simpleMessage("游戏结束"),
     "GameSaveFailed": MessageLookupByLibrary.simpleMessage("无法保存对局。请在离开前重试。"),
     "GameSetup": MessageLookupByLibrary.simpleMessage("设置对局"),
-    "GameStatusAnnouncement": m15,
+    "GameStatusAnnouncement": m16,
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("对局数"),
     "Garden_Catch_Bugs": MessageLookupByLibrary.simpleMessage("抓虫子"),
     "GetPremium": MessageLookupByLibrary.simpleMessage("获取高级版"),
-    "GetPremiumWithPrice": m16,
+    "GetPremiumWithPrice": m17,
     "GoPremium": MessageLookupByLibrary.simpleMessage("升级高级版"),
     "GuidedFirstGame": MessageLookupByLibrary.simpleMessage("跟着引导学下棋"),
     "GuidedFirstGameSubtitle": MessageLookupByLibrary.simpleMessage(
@@ -250,6 +254,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "Help": MessageLookupByLibrary.simpleMessage("帮助"),
     "Hint": MessageLookupByLibrary.simpleMessage("提示"),
     "HintWithAd": MessageLookupByLibrary.simpleMessage("合法落子点 · 观看广告"),
+    "HintWithPremium": MessageLookupByLibrary.simpleMessage("合法落子点 · 高级版"),
     "HintsEnabled": MessageLookupByLibrary.simpleMessage("本局已启用提示。"),
     "Home": MessageLookupByLibrary.simpleMessage("主页"),
     "HomeTagline": MessageLookupByLibrary.simpleMessage("用一点策略，享一刻自在。"),
@@ -291,16 +296,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "PerfectWins": MessageLookupByLibrary.simpleMessage("完胜"),
     "Play": MessageLookupByLibrary.simpleMessage("开始游戏"),
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage("与好友在本设备上对战"),
-    "PlayerTurn": m17,
+    "PlayerTurn": m18,
     "PracticeBoardLabel": MessageLookupByLibrary.simpleMessage("策略练习棋盘"),
-    "PracticeFlipped": m18,
+    "PracticeFlipped": m19,
     "PracticeInstructions": MessageLookupByLibrary.simpleMessage(
       "在任意标记的格子落子，观察局面如何变化。",
     ),
     "PracticeNoMoves": MessageLookupByLibrary.simpleMessage(
       "当前局面中，这一方没有合法落子点。",
     ),
-    "PracticePlayed": m19,
+    "PracticePlayed": m20,
     "PracticeReset": MessageLookupByLibrary.simpleMessage("尝试其他落子"),
     "PracticeSafe": MessageLookupByLibrary.simpleMessage("练习不会影响已保存的对局和统计数据。"),
     "PracticeTitle": MessageLookupByLibrary.simpleMessage("试下这个局面"),
@@ -322,9 +327,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "PremiumHintsBody": MessageLookupByLibrary.simpleMessage(
       "在中等、困难和专家难度显示所有合法落子点，无需观看广告。",
     ),
+    "PremiumHintsBodyNoAds": MessageLookupByLibrary.simpleMessage(
+      "在中等、困难和专家难度显示所有合法落子点。",
+    ),
     "PremiumHintsTitle": MessageLookupByLibrary.simpleMessage("全难度落子提示"),
     "PremiumIncludes": MessageLookupByLibrary.simpleMessage("高级版包括"),
-    "PremiumOneTime": m20,
+    "PremiumOneTime": m21,
     "PremiumRequired": MessageLookupByLibrary.simpleMessage("需要高级版"),
     "PremiumSettingsActiveSubtitle": MessageLookupByLibrary.simpleMessage(
       "谢谢你！所有高级版功能均已解锁。",
@@ -335,10 +343,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "PremiumSubheadline": MessageLookupByLibrary.simpleMessage(
       "无广告畅玩，并解锁进阶工具，让每一局都更进一步。",
     ),
-    "PremiumThemeLabel": m21,
+    "PremiumSubheadlineNoAds": MessageLookupByLibrary.simpleMessage(
+      "解锁进阶工具，让每一局都更进一步。",
+    ),
+    "PremiumThemeLabel": m22,
     "PremiumThemesBody": MessageLookupByLibrary.simpleMessage("皇家与余烬棋桌，高级版专享。"),
     "PremiumThemesTitle": MessageLookupByLibrary.simpleMessage("专属棋盘主题"),
-    "PremiumTipsBody": m22,
+    "PremiumTipsBody": m23,
     "PremiumTipsTitle": MessageLookupByLibrary.simpleMessage("无限教练提示"),
     "PremiumUndoBody": MessageLookupByLibrary.simpleMessage(
       "任何难度都可随意悔棋，想退几步就退几步。",
@@ -380,7 +391,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleCornerHintTwo": MessageLookupByLibrary.simpleMessage(
       "从目标角位向内寻找，直到你的棋子能夹住对手棋子。",
     ),
-    "PuzzleCornerObjective": m23,
+    "PuzzleCornerObjective": m24,
     "PuzzleCornerSkill": MessageLookupByLibrary.simpleMessage("占据角位"),
     "PuzzleCornerSuccess": MessageLookupByLibrary.simpleMessage(
       "成功占角！角位棋子将一直属于你，直到对局结束。",
@@ -394,7 +405,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleEndgameHintTwo": MessageLookupByLibrary.simpleMessage(
       "比较对手的应手。少翻一些棋子，可能有助于保留最后一步。",
     ),
-    "PuzzleEndgameObjective": m24,
+    "PuzzleEndgameObjective": m25,
     "PuzzleEndgameSkill": MessageLookupByLibrary.simpleMessage("赢下残局"),
     "PuzzleEndgameSuccess": MessageLookupByLibrary.simpleMessage(
       "成功赢下残局！你的选择经受住了最佳应手的考验。",
@@ -402,13 +413,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleEndgameTryAgain": MessageLookupByLibrary.simpleMessage(
       "面对最佳应对，这条路线无法确保获胜。请重新开始，比较其他落子。",
     ),
-    "PuzzleHint": m25,
-    "PuzzleHintCoordinate": m26,
+    "PuzzleHint": m26,
+    "PuzzleHintCoordinate": m27,
     "PuzzleNext": MessageLookupByLibrary.simpleMessage("下一题"),
     "PuzzleNoResults": MessageLookupByLibrary.simpleMessage(
       "没有匹配的练习题，请尝试搜索技巧或题目编号。",
     ),
-    "PuzzleNumber": m27,
+    "PuzzleNumber": m28,
     "PuzzleOpponentThinking": MessageLookupByLibrary.simpleMessage("正在考虑最佳应手…"),
     "PuzzlePassDescription": MessageLookupByLibrary.simpleMessage(
       "让对手没有合法落子点。",
@@ -419,12 +430,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzlePassHintTwo": MessageLookupByLibrary.simpleMessage(
       "比较每个候选落子之后，对手还可以走哪些位置。",
     ),
-    "PuzzlePassObjective": m28,
+    "PuzzlePassObjective": m29,
     "PuzzlePassSkill": MessageLookupByLibrary.simpleMessage("争取再走一步"),
     "PuzzlePassSuccess": MessageLookupByLibrary.simpleMessage(
       "你争取到了下一步！对手没有合法落子点，对局继续。",
     ),
-    "PuzzleProgress": m29,
+    "PuzzleProgress": m30,
     "PuzzleProgressLoadFailed": MessageLookupByLibrary.simpleMessage(
       "无法加载谜题进度。请重试。",
     ),
@@ -454,23 +465,23 @@ class MessageLookup extends MessageLookupByLibrary {
     "RestartConfirmTitle": MessageLookupByLibrary.simpleMessage("重新开始这局游戏？"),
     "RestartGame": MessageLookupByLibrary.simpleMessage("重新开始本局"),
     "RestoreNothing": MessageLookupByLibrary.simpleMessage("没有可恢复的购买。"),
-    "RestorePurchaseHelp": m30,
+    "RestorePurchaseHelp": m31,
     "RestorePurchases": MessageLookupByLibrary.simpleMessage("恢复购买"),
     "RestoreSuccess": MessageLookupByLibrary.simpleMessage("已恢复购买。"),
     "ResultCardError": MessageLookupByLibrary.simpleMessage("无法制作战绩卡。"),
     "ResultCardPreparing": MessageLookupByLibrary.simpleMessage("正在制作战绩卡…"),
-    "ResultCardPreviewLabel": m31,
+    "ResultCardPreviewLabel": m32,
     "ResultCardShareFailed": MessageLookupByLibrary.simpleMessage(
       "暂时无法分享，请重试。",
     ),
     "ResultCardTitle": MessageLookupByLibrary.simpleMessage("分享战绩"),
     "ReviewBoardLabel": MessageLookupByLibrary.simpleMessage("复盘棋盘"),
-    "ReviewCorners": m32,
+    "ReviewCorners": m33,
     "ReviewFinal": MessageLookupByLibrary.simpleMessage("最终局面"),
     "ReviewFirst": MessageLookupByLibrary.simpleMessage("回到开局"),
     "ReviewGame": MessageLookupByLibrary.simpleMessage("复盘"),
     "ReviewLast": MessageLookupByLibrary.simpleMessage("前往终局"),
-    "ReviewMove": m33,
+    "ReviewMove": m34,
     "ReviewNext": MessageLookupByLibrary.simpleMessage("下一步"),
     "ReviewPrevious": MessageLookupByLibrary.simpleMessage("上一步"),
     "ReviewStart": MessageLookupByLibrary.simpleMessage("初始局面"),
@@ -478,11 +489,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "SavedGameSubtitle": MessageLookupByLibrary.simpleMessage(
       "棋盘已为你保留，随时可以继续。",
     ),
-    "SavedMatchScore": m34,
+    "SavedMatchScore": m35,
     "Saving_Ambulance": MessageLookupByLibrary.simpleMessage("拯救救护车"),
     "Settings": MessageLookupByLibrary.simpleMessage("设置"),
     "Share": MessageLookupByLibrary.simpleMessage("分享"),
-    "ShareResult": m35,
+    "ShareResult": m36,
     "Simple_Calculator": MessageLookupByLibrary.simpleMessage("极简计算器"),
     "Solitaire_Guru": MessageLookupByLibrary.simpleMessage("纸牌大师"),
     "Sound": MessageLookupByLibrary.simpleMessage("音效"),
@@ -500,7 +511,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "Tie": MessageLookupByLibrary.simpleMessage("平局"),
     "Ties": MessageLookupByLibrary.simpleMessage("平局"),
     "TryAgain": MessageLookupByLibrary.simpleMessage("重试"),
-    "TurnPassed": m36,
+    "TurnPassed": m37,
     "TutorialBoardLabel": MessageLookupByLibrary.simpleMessage("练习棋盘"),
     "TutorialCaptureBody": MessageLookupByLibrary.simpleMessage(
       "你执黑棋。点击标记的格子，用两枚黑子夹住一枚白子。",
@@ -520,7 +531,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "TutorialCornersTitle": MessageLookupByLibrary.simpleMessage("占据角位"),
     "TutorialNext": MessageLookupByLibrary.simpleMessage("继续"),
     "TutorialPlayEasy": MessageLookupByLibrary.simpleMessage("开始简单对局"),
-    "TutorialProgress": m37,
+    "TutorialProgress": m38,
     "TutorialReplyBody": MessageLookupByLibrary.simpleMessage(
       "白棋已落子。点击任意标记的格子，再翻一次棋子。",
     ),
@@ -533,6 +544,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "Undo": MessageLookupByLibrary.simpleMessage("悔棋"),
     "UndoUnlimited": MessageLookupByLibrary.simpleMessage("悔棋 · 无限"),
     "UndoWithAd": MessageLookupByLibrary.simpleMessage("悔棋 · 观看广告"),
+    "UndoWithPremium": MessageLookupByLibrary.simpleMessage("悔棋 · 高级版"),
     "UnlockWithPremium": MessageLookupByLibrary.simpleMessage("用高级版解锁"),
     "Watch": MessageLookupByLibrary.simpleMessage("观看"),
     "WatchAd": MessageLookupByLibrary.simpleMessage("观看广告"),
@@ -544,10 +556,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "WhoGoesFirst": MessageLookupByLibrary.simpleMessage("谁先手？"),
     "WinRate": MessageLookupByLibrary.simpleMessage("胜率"),
     "WinsByDifficulty": MessageLookupByLibrary.simpleMessage("各难度胜场"),
-    "WinsLosses": m38,
+    "WinsLosses": m39,
     "World_Weather_Live": MessageLookupByLibrary.simpleMessage("极简天气"),
     "Yes_Habit": MessageLookupByLibrary.simpleMessage("签签习惯"),
-    "YouColor": m39,
+    "YouColor": m40,
     "YouLose": MessageLookupByLibrary.simpleMessage("你输了"),
     "YouWin": MessageLookupByLibrary.simpleMessage("你赢了！"),
     "YourTurn": MessageLookupByLibrary.simpleMessage("轮到你了"),

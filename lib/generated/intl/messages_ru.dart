@@ -49,71 +49,74 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m11(count) =>
       "Вы использовали все ${count} бесплатных совета на сегодня. Посмотрите короткую рекламу, чтобы получить ещё один, или перейдите на Премиум для безлимитных советов.";
 
-  static String m12(coordinate) => "Совет тренера: попробуйте ${coordinate}.";
+  static String m12(count) =>
+      "Вы использовали все ${count} бесплатных совета тренера на сегодня. Перейдите на Премиум для безлимитных советов или возвращайтесь завтра.";
 
-  static String m13(count) => "Совет тренера · бесплатно сегодня: ${count}";
+  static String m13(coordinate) => "Совет тренера: попробуйте ${coordinate}.";
 
-  static String m14(color) => "Компьютер · ${color}";
+  static String m14(count) => "Совет тренера · бесплатно сегодня: ${count}";
 
-  static String m15(status, black, white) =>
+  static String m15(color) => "Компьютер · ${color}";
+
+  static String m16(status, black, white) =>
       "${status}. Чёрные ${black}, белые ${white}.";
 
-  static String m16(price) => "Получить Премиум · ${price}";
+  static String m17(price) => "Получить Премиум · ${price}";
 
-  static String m17(color) => "Ход: ${color}";
+  static String m18(color) => "Ход: ${color}";
 
-  static String m18(count) => "Перевёрнуто фишек: ${count}";
+  static String m19(count) => "Перевёрнуто фишек: ${count}";
 
-  static String m19(coordinate) => "Ваш ход: ${coordinate}";
+  static String m20(coordinate) => "Ваш ход: ${coordinate}";
 
-  static String m20(store) =>
+  static String m21(store) =>
       "Один платёж, без подписки. Восстановить покупку можно в любой момент через аккаунт ${store}.";
 
-  static String m21(theme) => "${theme} · Премиум";
+  static String m22(theme) => "${theme} · Премиум";
 
-  static String m22(count) =>
+  static String m23(count) =>
       "Узнавайте сильный ход и его смысл в любой момент. Без Премиум — ${count} совета в день.";
 
-  static String m23(color, coordinate) =>
+  static String m24(color, coordinate) =>
       "Играйте цветом ${color}. Займите угол ${coordinate} за один ход.";
 
-  static String m24(color) =>
+  static String m25(color) =>
       "Играйте цветом ${color}. Выиграйте этот эндшпиль против лучших ответов соперника.";
 
-  static String m25(number) => "Подсказка ${number} из 3";
+  static String m26(number) => "Подсказка ${number} из 3";
 
-  static String m26(coordinate) => "Попробуйте ${coordinate}.";
+  static String m27(coordinate) => "Попробуйте ${coordinate}.";
 
-  static String m27(number) => "Задача ${number}";
+  static String m28(number) => "Задача ${number}";
 
-  static String m28(color) =>
+  static String m29(color) =>
       "Играйте цветом ${color}. Вынудите соперника пропустить ход, чтобы походить снова, не заканчивая партию.";
 
-  static String m29(completed, total) => "Решено: ${completed} из ${total}";
+  static String m30(completed, total) => "Решено: ${completed} из ${total}";
 
-  static String m30(store) =>
+  static String m31(store) =>
       "Уже купили? Восстановите покупку из аккаунта ${store}.";
 
-  static String m31(result, score, mode, date) =>
+  static String m32(result, score, mode, date) =>
       "${result}. ${score}. ${mode}. ${date}.";
 
-  static String m32(black, white) => "Углы · Чёрные ${black} · Белые ${white}";
+  static String m33(black, white) => "Углы · Чёрные ${black} · Белые ${white}";
 
-  static String m33(move, total) => "Ход ${move} из ${total}";
+  static String m34(move, total) => "Ход ${move} из ${total}";
 
-  static String m34(black, white) => "Чёрные ${black} · Белые ${white}";
+  static String m35(black, white) => "Чёрные ${black} · Белые ${white}";
 
-  static String m35(result, black, white, mode) =>
+  static String m36(result, black, white, mode) =>
       "${result} · Чёрные ${black} – Белые ${white} (${mode}) — Classic Reversi";
 
-  static String m36(passed, current) =>
+  static String m37(passed, current) =>
       "${passed}: нет допустимых ходов. ${current} ходят снова.";
 
-  static String m37(step, total) => "Урок ${step} из ${total}";
+  static String m38(step, total) => "Урок ${step} из ${total}";
 
-  static String m38(wins, losses) => "Побед ${wins} · Поражений ${losses}";
+  static String m39(wins, losses) => "Побед ${wins} · Поражений ${losses}";
 
-  static String m39(color) => "Вы · ${color}";
+  static String m40(color) => "Вы · ${color}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -222,15 +225,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "CoachSuggested": m10,
     "CoachTip": MessageLookupByLibrary.simpleMessage("Совет тренера"),
     "CoachTipLimitMessage": m11,
+    "CoachTipLimitPremiumMessage": m12,
     "CoachTipLimitTitle": MessageLookupByLibrary.simpleMessage(
       "Бесплатные советы на сегодня закончились",
     ),
-    "CoachTipSuggestion": m12,
+    "CoachTipSuggestion": m13,
     "CoachTipWatchAd": MessageLookupByLibrary.simpleMessage("Смотреть рекламу"),
     "CoachTipWithAd": MessageLookupByLibrary.simpleMessage(
       "Совет тренера · смотреть рекламу",
     ),
-    "CoachTipsLeft": m13,
+    "CoachTipWithPremium": MessageLookupByLibrary.simpleMessage(
+      "Совет тренера · Премиум",
+    ),
+    "CoachTipsLeft": m14,
     "CoachTitle": MessageLookupByLibrary.simpleMessage("Тренер по стратегии"),
     "CoachTurnTitle": MessageLookupByLibrary.simpleMessage(
       "Позиция, к которой стоит вернуться",
@@ -238,7 +245,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "CoachUnavailable": MessageLookupByLibrary.simpleMessage(
       "Сейчас разбор недоступен. Вы по-прежнему можете просмотреть все ходы.",
     ),
-    "ComputerColor": m14,
+    "ComputerColor": m15,
     "ComputerThinking": MessageLookupByLibrary.simpleMessage(
       "Компьютер думает…",
     ),
@@ -282,10 +289,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Не удалось сохранить игру. Повторите попытку перед выходом.",
     ),
     "GameSetup": MessageLookupByLibrary.simpleMessage("Настройте игру"),
-    "GameStatusAnnouncement": m15,
+    "GameStatusAnnouncement": m16,
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("Сыграно партий"),
     "GetPremium": MessageLookupByLibrary.simpleMessage("Получить Премиум"),
-    "GetPremiumWithPrice": m16,
+    "GetPremiumWithPrice": m17,
     "GoPremium": MessageLookupByLibrary.simpleMessage("Перейти на Премиум"),
     "GuidedFirstGame": MessageLookupByLibrary.simpleMessage("Обучающая игра"),
     "GuidedFirstGameSubtitle": MessageLookupByLibrary.simpleMessage(
@@ -296,6 +303,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "Hint": MessageLookupByLibrary.simpleMessage("Подсказка"),
     "HintWithAd": MessageLookupByLibrary.simpleMessage(
       "Допустимые ходы · смотреть рекламу",
+    ),
+    "HintWithPremium": MessageLookupByLibrary.simpleMessage(
+      "Допустимые ходы · Премиум",
     ),
     "HintsEnabled": MessageLookupByLibrary.simpleMessage(
       "Подсказки включены для этой игры.",
@@ -343,18 +353,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Играть с другом на этом устройстве",
     ),
-    "PlayerTurn": m17,
+    "PlayerTurn": m18,
     "PracticeBoardLabel": MessageLookupByLibrary.simpleMessage(
       "Доска для тренировки стратегии",
     ),
-    "PracticeFlipped": m18,
+    "PracticeFlipped": m19,
     "PracticeInstructions": MessageLookupByLibrary.simpleMessage(
       "Сыграйте в любую отмеченную клетку и изучите изменения.",
     ),
     "PracticeNoMoves": MessageLookupByLibrary.simpleMessage(
       "У этой стороны нет допустимых ходов в данной позиции.",
     ),
-    "PracticePlayed": m19,
+    "PracticePlayed": m20,
     "PracticeReset": MessageLookupByLibrary.simpleMessage(
       "Попробовать другой ход",
     ),
@@ -388,13 +398,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "PremiumHintsBody": MessageLookupByLibrary.simpleMessage(
       "Все допустимые клетки на уровнях «Средний», «Сложный» и «Эксперт» без рекламы.",
     ),
+    "PremiumHintsBodyNoAds": MessageLookupByLibrary.simpleMessage(
+      "Все допустимые клетки на уровнях «Средний», «Сложный» и «Эксперт».",
+    ),
     "PremiumHintsTitle": MessageLookupByLibrary.simpleMessage(
       "Подсказки ходов везде",
     ),
     "PremiumIncludes": MessageLookupByLibrary.simpleMessage(
       "Что входит в Премиум",
     ),
-    "PremiumOneTime": m20,
+    "PremiumOneTime": m21,
     "PremiumRequired": MessageLookupByLibrary.simpleMessage(
       "Требуется Премиум",
     ),
@@ -407,14 +420,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "PremiumSubheadline": MessageLookupByLibrary.simpleMessage(
       "Играйте без рекламы и откройте продвинутые инструменты, чтобы играть сильнее.",
     ),
-    "PremiumThemeLabel": m21,
+    "PremiumSubheadlineNoAds": MessageLookupByLibrary.simpleMessage(
+      "Откройте продвинутые инструменты, чтобы играть сильнее.",
+    ),
+    "PremiumThemeLabel": m22,
     "PremiumThemesBody": MessageLookupByLibrary.simpleMessage(
       "Темы «Королевская» и «Угли» — только для Премиум.",
     ),
     "PremiumThemesTitle": MessageLookupByLibrary.simpleMessage(
       "Эксклюзивные темы доски",
     ),
-    "PremiumTipsBody": m22,
+    "PremiumTipsBody": m23,
     "PremiumTipsTitle": MessageLookupByLibrary.simpleMessage(
       "Безлимитные советы тренера",
     ),
@@ -482,7 +498,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleCornerHintTwo": MessageLookupByLibrary.simpleMessage(
       "Проследите линию от нужного угла к центру: ваша фишка должна замкнуть ряд фишек соперника.",
     ),
-    "PuzzleCornerObjective": m23,
+    "PuzzleCornerObjective": m24,
     "PuzzleCornerSkill": MessageLookupByLibrary.simpleMessage("Займите угол"),
     "PuzzleCornerSuccess": MessageLookupByLibrary.simpleMessage(
       "Угол занят. Эта фишка останется вашей до конца партии.",
@@ -496,7 +512,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleEndgameHintTwo": MessageLookupByLibrary.simpleMessage(
       "Сравните ответы соперника. Захват меньшего числа фишек может сохранить за вами последний ход.",
     ),
-    "PuzzleEndgameObjective": m24,
+    "PuzzleEndgameObjective": m25,
     "PuzzleEndgameSkill": MessageLookupByLibrary.simpleMessage(
       "Завершите победой",
     ),
@@ -506,13 +522,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleEndgameTryAgain": MessageLookupByLibrary.simpleMessage(
       "Эта линия не гарантирует победу против лучшей игры. Начните заново и сравните другой ход.",
     ),
-    "PuzzleHint": m25,
-    "PuzzleHintCoordinate": m26,
+    "PuzzleHint": m26,
+    "PuzzleHintCoordinate": m27,
     "PuzzleNext": MessageLookupByLibrary.simpleMessage("Следующая задача"),
     "PuzzleNoResults": MessageLookupByLibrary.simpleMessage(
       "Подходящих задач нет. Попробуйте название навыка или номер задачи.",
     ),
-    "PuzzleNumber": m27,
+    "PuzzleNumber": m28,
     "PuzzleOpponentThinking": MessageLookupByLibrary.simpleMessage(
       "Ищем лучший ответ…",
     ),
@@ -525,14 +541,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzlePassHintTwo": MessageLookupByLibrary.simpleMessage(
       "Сравните доступные ходы соперника после каждого вашего возможного хода.",
     ),
-    "PuzzlePassObjective": m28,
+    "PuzzlePassObjective": m29,
     "PuzzlePassSkill": MessageLookupByLibrary.simpleMessage(
       "Получите ещё один ход",
     ),
     "PuzzlePassSuccess": MessageLookupByLibrary.simpleMessage(
       "Вы получили ещё один ход. У соперника нет допустимого хода, и партия продолжается.",
     ),
-    "PuzzleProgress": m29,
+    "PuzzleProgress": m30,
     "PuzzleProgressLoadFailed": MessageLookupByLibrary.simpleMessage(
       "Не удалось загрузить прогресс задач. Повторите попытку.",
     ),
@@ -575,7 +591,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "RestoreNothing": MessageLookupByLibrary.simpleMessage(
       "Нет покупок для восстановления.",
     ),
-    "RestorePurchaseHelp": m30,
+    "RestorePurchaseHelp": m31,
     "RestorePurchases": MessageLookupByLibrary.simpleMessage(
       "Восстановить покупки",
     ),
@@ -588,7 +604,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ResultCardPreparing": MessageLookupByLibrary.simpleMessage(
       "Создаём карточку результата…",
     ),
-    "ResultCardPreviewLabel": m31,
+    "ResultCardPreviewLabel": m32,
     "ResultCardShareFailed": MessageLookupByLibrary.simpleMessage(
       "Сейчас не удаётся поделиться. Попробуйте ещё раз.",
     ),
@@ -598,12 +614,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "ReviewBoardLabel": MessageLookupByLibrary.simpleMessage(
       "Доска разбора партии",
     ),
-    "ReviewCorners": m32,
+    "ReviewCorners": m33,
     "ReviewFinal": MessageLookupByLibrary.simpleMessage("Конечная позиция"),
     "ReviewFirst": MessageLookupByLibrary.simpleMessage("К началу"),
     "ReviewGame": MessageLookupByLibrary.simpleMessage("Разбор партии"),
     "ReviewLast": MessageLookupByLibrary.simpleMessage("К концу"),
-    "ReviewMove": m33,
+    "ReviewMove": m34,
     "ReviewNext": MessageLookupByLibrary.simpleMessage("Следующий ход"),
     "ReviewPrevious": MessageLookupByLibrary.simpleMessage("Предыдущий ход"),
     "ReviewStart": MessageLookupByLibrary.simpleMessage("Начальная позиция"),
@@ -611,10 +627,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "SavedGameSubtitle": MessageLookupByLibrary.simpleMessage(
       "Ваша доска ждёт вас.",
     ),
-    "SavedMatchScore": m34,
+    "SavedMatchScore": m35,
     "Settings": MessageLookupByLibrary.simpleMessage("Настройки"),
     "Share": MessageLookupByLibrary.simpleMessage("Поделиться"),
-    "ShareResult": m35,
+    "ShareResult": m36,
     "Sound": MessageLookupByLibrary.simpleMessage("Звук"),
     "StartGame": MessageLookupByLibrary.simpleMessage("Начать игру"),
     "StartNewGame": MessageLookupByLibrary.simpleMessage("Начать новую игру"),
@@ -628,7 +644,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "Tie": MessageLookupByLibrary.simpleMessage("Ничья"),
     "Ties": MessageLookupByLibrary.simpleMessage("Ничьи"),
     "TryAgain": MessageLookupByLibrary.simpleMessage("Попробовать ещё раз"),
-    "TurnPassed": m36,
+    "TurnPassed": m37,
     "TutorialBoardLabel": MessageLookupByLibrary.simpleMessage("Учебная доска"),
     "TutorialCaptureBody": MessageLookupByLibrary.simpleMessage(
       "Вы играете чёрными. Нажмите на отмеченную клетку, чтобы зажать белую фишку между двумя чёрными.",
@@ -658,7 +674,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "TutorialPlayEasy": MessageLookupByLibrary.simpleMessage(
       "Играть на лёгком уровне",
     ),
-    "TutorialProgress": m37,
+    "TutorialProgress": m38,
     "TutorialReplyBody": MessageLookupByLibrary.simpleMessage(
       "Белые сделали ход. Нажмите на любую отмеченную клетку, чтобы снова перевернуть фишки.",
     ),
@@ -676,6 +692,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "UndoWithAd": MessageLookupByLibrary.simpleMessage(
       "Отменить ход · смотреть рекламу",
+    ),
+    "UndoWithPremium": MessageLookupByLibrary.simpleMessage(
+      "Отменить ход · Премиум",
     ),
     "UnlockWithPremium": MessageLookupByLibrary.simpleMessage(
       "Открыть с Премиум",
@@ -695,8 +714,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "WinsByDifficulty": MessageLookupByLibrary.simpleMessage(
       "Победы по сложности",
     ),
-    "WinsLosses": m38,
-    "YouColor": m39,
+    "WinsLosses": m39,
+    "YouColor": m40,
     "YouLose": MessageLookupByLibrary.simpleMessage("Вы проиграли"),
     "YouWin": MessageLookupByLibrary.simpleMessage("Вы победили!"),
     "YourTurn": MessageLookupByLibrary.simpleMessage("Ваш ход"),

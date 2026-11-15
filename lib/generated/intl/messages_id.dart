@@ -50,72 +50,75 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m11(count) =>
       "Anda telah memakai ${count} tip pelatih gratis hari ini. Tonton iklan singkat untuk satu tip lagi, atau jadi Premium untuk tip tanpa batas.";
 
-  static String m12(coordinate) => "Tip pelatih: coba ${coordinate}.";
+  static String m12(count) =>
+      "Kamu sudah memakai semua ${count} tip pelatih gratis hari ini. Jadi Premium untuk tip tanpa batas, atau kembali besok.";
 
-  static String m13(count) => "Tip pelatih · ${count} gratis hari ini";
+  static String m13(coordinate) => "Tip pelatih: coba ${coordinate}.";
 
-  static String m14(color) => "Komputer · ${color}";
+  static String m14(count) => "Tip pelatih · ${count} gratis hari ini";
 
-  static String m15(status, black, white) =>
+  static String m15(color) => "Komputer · ${color}";
+
+  static String m16(status, black, white) =>
       "${status}. Hitam ${black}, Putih ${white}.";
 
-  static String m16(price) => "Dapatkan Premium · ${price}";
+  static String m17(price) => "Dapatkan Premium · ${price}";
 
-  static String m17(color) => "Giliran ${color}";
+  static String m18(color) => "Giliran ${color}";
 
-  static String m18(count) => "Keping yang dibalik: ${count}";
+  static String m19(count) => "Keping yang dibalik: ${count}";
 
-  static String m19(coordinate) => "Anda memainkan ${coordinate}";
+  static String m20(coordinate) => "Anda memainkan ${coordinate}";
 
-  static String m20(store) =>
+  static String m21(store) =>
       "Sekali bayar. Tanpa langganan. Pulihkan kapan saja dengan akun ${store} Anda.";
 
-  static String m21(theme) => "${theme} · Premium";
+  static String m22(theme) => "${theme} · Premium";
 
-  static String m22(count) =>
+  static String m23(count) =>
       "Dapatkan langkah kuat beserta alasannya kapan saja. Pemain gratis mendapat ${count} tip per hari.";
 
-  static String m23(color, coordinate) =>
+  static String m24(color, coordinate) =>
       "Mainkan warna ${color}. Rebut sudut ${coordinate} dalam satu langkah.";
 
-  static String m24(color) =>
+  static String m25(color) =>
       "Mainkan warna ${color}. Menangkan posisi akhir ini melawan balasan terbaik.";
 
-  static String m25(number) => "Petunjuk ${number} dari 3";
+  static String m26(number) => "Petunjuk ${number} dari 3";
 
-  static String m26(coordinate) => "Coba ${coordinate}.";
+  static String m27(coordinate) => "Coba ${coordinate}.";
 
-  static String m27(number) => "Teka-teki ${number}";
+  static String m28(number) => "Teka-teki ${number}";
 
-  static String m28(color) =>
+  static String m29(color) =>
       "Mainkan warna ${color}. Paksa lawan melewatkan giliran agar Anda bermain lagi, tanpa mengakhiri permainan.";
 
-  static String m29(completed, total) =>
+  static String m30(completed, total) =>
       "${completed} dari ${total} terpecahkan";
 
-  static String m30(store) =>
+  static String m31(store) =>
       "Sudah membeli? Pulihkan dari akun ${store} Anda.";
 
-  static String m31(result, score, mode, date) =>
+  static String m32(result, score, mode, date) =>
       "${result}. ${score}. ${mode}. ${date}.";
 
-  static String m32(black, white) => "Sudut · Hitam ${black} · Putih ${white}";
+  static String m33(black, white) => "Sudut · Hitam ${black} · Putih ${white}";
 
-  static String m33(move, total) => "Langkah ${move} dari ${total}";
+  static String m34(move, total) => "Langkah ${move} dari ${total}";
 
-  static String m34(black, white) => "Hitam ${black} · Putih ${white}";
+  static String m35(black, white) => "Hitam ${black} · Putih ${white}";
 
-  static String m35(result, black, white, mode) =>
+  static String m36(result, black, white, mode) =>
       "${result} · Hitam ${black} – Putih ${white} (${mode}) — Classic Reversi";
 
-  static String m36(passed, current) =>
+  static String m37(passed, current) =>
       "${passed} tidak memiliki langkah yang sah. ${current} bermain lagi.";
 
-  static String m37(step, total) => "Pelajaran ${step} dari ${total}";
+  static String m38(step, total) => "Pelajaran ${step} dari ${total}";
 
-  static String m38(wins, losses) => "Menang ${wins} · Kalah ${losses}";
+  static String m39(wins, losses) => "Menang ${wins} · Kalah ${losses}";
 
-  static String m39(color) => "Anda · ${color}";
+  static String m40(color) => "Anda · ${color}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -220,15 +223,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "CoachSuggested": m10,
     "CoachTip": MessageLookupByLibrary.simpleMessage("Tip pelatih"),
     "CoachTipLimitMessage": m11,
+    "CoachTipLimitPremiumMessage": m12,
     "CoachTipLimitTitle": MessageLookupByLibrary.simpleMessage(
       "Tip gratis hari ini sudah habis",
     ),
-    "CoachTipSuggestion": m12,
+    "CoachTipSuggestion": m13,
     "CoachTipWatchAd": MessageLookupByLibrary.simpleMessage("Tonton iklan"),
     "CoachTipWithAd": MessageLookupByLibrary.simpleMessage(
       "Tip pelatih · tonton iklan",
     ),
-    "CoachTipsLeft": m13,
+    "CoachTipWithPremium": MessageLookupByLibrary.simpleMessage(
+      "Tip pelatih · Premium",
+    ),
+    "CoachTipsLeft": m14,
     "CoachTitle": MessageLookupByLibrary.simpleMessage("Pelatih strategi"),
     "CoachTurnTitle": MessageLookupByLibrary.simpleMessage(
       "Posisi yang layak ditinjau kembali",
@@ -236,7 +243,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "CoachUnavailable": MessageLookupByLibrary.simpleMessage(
       "Analisis pelatih belum tersedia saat ini. Anda tetap dapat meninjau setiap langkah.",
     ),
-    "ComputerColor": m14,
+    "ComputerColor": m15,
     "ComputerThinking": MessageLookupByLibrary.simpleMessage(
       "Komputer sedang berpikir…",
     ),
@@ -280,10 +287,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Permainan Anda tidak dapat disimpan. Coba lagi sebelum keluar.",
     ),
     "GameSetup": MessageLookupByLibrary.simpleMessage("Atur permainan Anda"),
-    "GameStatusAnnouncement": m15,
+    "GameStatusAnnouncement": m16,
     "GamesPlayed": MessageLookupByLibrary.simpleMessage("Permainan dimainkan"),
     "GetPremium": MessageLookupByLibrary.simpleMessage("Dapatkan Premium"),
-    "GetPremiumWithPrice": m16,
+    "GetPremiumWithPrice": m17,
     "GoPremium": MessageLookupByLibrary.simpleMessage("Jadi Premium"),
     "GuidedFirstGame": MessageLookupByLibrary.simpleMessage(
       "Belajar dengan permainan terpandu",
@@ -296,6 +303,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "Hint": MessageLookupByLibrary.simpleMessage("Petunjuk"),
     "HintWithAd": MessageLookupByLibrary.simpleMessage(
       "Langkah yang sah · tonton iklan",
+    ),
+    "HintWithPremium": MessageLookupByLibrary.simpleMessage(
+      "Langkah yang sah · Premium",
     ),
     "HintsEnabled": MessageLookupByLibrary.simpleMessage(
       "Petunjuk diaktifkan untuk permainan ini.",
@@ -343,18 +353,18 @@ class MessageLookup extends MessageLookupByLibrary {
     "PlayAgainstFriend": MessageLookupByLibrary.simpleMessage(
       "Main melawan teman di perangkat ini",
     ),
-    "PlayerTurn": m17,
+    "PlayerTurn": m18,
     "PracticeBoardLabel": MessageLookupByLibrary.simpleMessage(
       "Papan latihan strategi",
     ),
-    "PracticeFlipped": m18,
+    "PracticeFlipped": m19,
     "PracticeInstructions": MessageLookupByLibrary.simpleMessage(
       "Mainkan salah satu kotak yang ditandai dan lihat perubahannya.",
     ),
     "PracticeNoMoves": MessageLookupByLibrary.simpleMessage(
       "Pihak ini tidak memiliki langkah yang sah dalam posisi ini.",
     ),
-    "PracticePlayed": m19,
+    "PracticePlayed": m20,
     "PracticeReset": MessageLookupByLibrary.simpleMessage("Coba langkah lain"),
     "PracticeSafe": MessageLookupByLibrary.simpleMessage(
       "Latihan terpisah dari permainan tersimpan dan statistik Anda.",
@@ -382,11 +392,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "PremiumHintsBody": MessageLookupByLibrary.simpleMessage(
       "Lihat semua kotak yang sah di tingkat Sedang, Sulit, dan Ahli tanpa iklan.",
     ),
+    "PremiumHintsBodyNoAds": MessageLookupByLibrary.simpleMessage(
+      "Lihat semua kotak yang sah di tingkat Sedang, Sulit, dan Ahli.",
+    ),
     "PremiumHintsTitle": MessageLookupByLibrary.simpleMessage(
       "Petunjuk langkah di mana saja",
     ),
     "PremiumIncludes": MessageLookupByLibrary.simpleMessage("Premium mencakup"),
-    "PremiumOneTime": m20,
+    "PremiumOneTime": m21,
     "PremiumRequired": MessageLookupByLibrary.simpleMessage(
       "Memerlukan Premium",
     ),
@@ -399,14 +412,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "PremiumSubheadline": MessageLookupByLibrary.simpleMessage(
       "Bermain tanpa iklan dan buka alat lanjutan untuk mempertajam setiap permainan.",
     ),
-    "PremiumThemeLabel": m21,
+    "PremiumSubheadlineNoAds": MessageLookupByLibrary.simpleMessage(
+      "Buka alat lanjutan untuk mempertajam setiap permainan.",
+    ),
+    "PremiumThemeLabel": m22,
     "PremiumThemesBody": MessageLookupByLibrary.simpleMessage(
       "Meja Royal dan Bara, khusus untuk Premium.",
     ),
     "PremiumThemesTitle": MessageLookupByLibrary.simpleMessage(
       "Tema papan eksklusif",
     ),
-    "PremiumTipsBody": m22,
+    "PremiumTipsBody": m23,
     "PremiumTipsTitle": MessageLookupByLibrary.simpleMessage(
       "Tip pelatih tanpa batas",
     ),
@@ -470,7 +486,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleCornerHintTwo": MessageLookupByLibrary.simpleMessage(
       "Telusuri dari sudut tujuan ke arah dalam hingga keping Anda mengapit deretan keping lawan.",
     ),
-    "PuzzleCornerObjective": m23,
+    "PuzzleCornerObjective": m24,
     "PuzzleCornerSkill": MessageLookupByLibrary.simpleMessage("Rebut sudut"),
     "PuzzleCornerSuccess": MessageLookupByLibrary.simpleMessage(
       "Sudut berhasil direbut. Keping sudut ini akan tetap menjadi milik Anda hingga permainan berakhir.",
@@ -484,7 +500,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleEndgameHintTwo": MessageLookupByLibrary.simpleMessage(
       "Bandingkan balasan lawan. Menangkap lebih sedikit keping dapat menyisakan langkah terakhir untuk Anda.",
     ),
-    "PuzzleEndgameObjective": m24,
+    "PuzzleEndgameObjective": m25,
     "PuzzleEndgameSkill": MessageLookupByLibrary.simpleMessage(
       "Akhiri dengan kemenangan",
     ),
@@ -494,13 +510,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzleEndgameTryAgain": MessageLookupByLibrary.simpleMessage(
       "Jalur ini tidak dapat menjamin kemenangan melawan permainan terbaik. Mulai ulang dan bandingkan langkah lain.",
     ),
-    "PuzzleHint": m25,
-    "PuzzleHintCoordinate": m26,
+    "PuzzleHint": m26,
+    "PuzzleHintCoordinate": m27,
     "PuzzleNext": MessageLookupByLibrary.simpleMessage("Teka-teki berikutnya"),
     "PuzzleNoResults": MessageLookupByLibrary.simpleMessage(
       "Tidak ada teka-teki yang cocok. Coba keterampilan atau nomor teka-teki.",
     ),
-    "PuzzleNumber": m27,
+    "PuzzleNumber": m28,
     "PuzzleOpponentThinking": MessageLookupByLibrary.simpleMessage(
       "Mempertimbangkan balasan terbaik…",
     ),
@@ -513,14 +529,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "PuzzlePassHintTwo": MessageLookupByLibrary.simpleMessage(
       "Bandingkan langkah yang tersedia bagi lawan setelah setiap calon langkah Anda.",
     ),
-    "PuzzlePassObjective": m28,
+    "PuzzlePassObjective": m29,
     "PuzzlePassSkill": MessageLookupByLibrary.simpleMessage(
       "Dapatkan giliran tambahan",
     ),
     "PuzzlePassSuccess": MessageLookupByLibrary.simpleMessage(
       "Anda mendapat giliran tambahan. Lawan tidak memiliki langkah yang sah dan permainan berlanjut.",
     ),
-    "PuzzleProgress": m29,
+    "PuzzleProgress": m30,
     "PuzzleProgressLoadFailed": MessageLookupByLibrary.simpleMessage(
       "Progres teka-teki tidak dapat dimuat. Coba lagi.",
     ),
@@ -565,7 +581,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "RestoreNothing": MessageLookupByLibrary.simpleMessage(
       "Tidak ada pembelian untuk dipulihkan.",
     ),
-    "RestorePurchaseHelp": m30,
+    "RestorePurchaseHelp": m31,
     "RestorePurchases": MessageLookupByLibrary.simpleMessage(
       "Pulihkan Pembelian",
     ),
@@ -578,7 +594,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "ResultCardPreparing": MessageLookupByLibrary.simpleMessage(
       "Membuat kartu hasil…",
     ),
-    "ResultCardPreviewLabel": m31,
+    "ResultCardPreviewLabel": m32,
     "ResultCardShareFailed": MessageLookupByLibrary.simpleMessage(
       "Fitur berbagi belum tersedia saat ini. Silakan coba lagi.",
     ),
@@ -588,12 +604,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "ReviewBoardLabel": MessageLookupByLibrary.simpleMessage(
       "Papan tinjauan permainan",
     ),
-    "ReviewCorners": m32,
+    "ReviewCorners": m33,
     "ReviewFinal": MessageLookupByLibrary.simpleMessage("Posisi akhir"),
     "ReviewFirst": MessageLookupByLibrary.simpleMessage("Ke awal"),
     "ReviewGame": MessageLookupByLibrary.simpleMessage("Tinjau permainan"),
     "ReviewLast": MessageLookupByLibrary.simpleMessage("Ke akhir"),
-    "ReviewMove": m33,
+    "ReviewMove": m34,
     "ReviewNext": MessageLookupByLibrary.simpleMessage("Langkah berikutnya"),
     "ReviewPrevious": MessageLookupByLibrary.simpleMessage(
       "Langkah sebelumnya",
@@ -603,10 +619,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "SavedGameSubtitle": MessageLookupByLibrary.simpleMessage(
       "Papan Anda siap saat Anda ingin bermain.",
     ),
-    "SavedMatchScore": m34,
+    "SavedMatchScore": m35,
     "Settings": MessageLookupByLibrary.simpleMessage("Pengaturan"),
     "Share": MessageLookupByLibrary.simpleMessage("Bagikan"),
-    "ShareResult": m35,
+    "ShareResult": m36,
     "Sound": MessageLookupByLibrary.simpleMessage("Suara"),
     "StartGame": MessageLookupByLibrary.simpleMessage("Mulai Permainan"),
     "StartNewGame": MessageLookupByLibrary.simpleMessage(
@@ -622,7 +638,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "Tie": MessageLookupByLibrary.simpleMessage("Seri"),
     "Ties": MessageLookupByLibrary.simpleMessage("Seri"),
     "TryAgain": MessageLookupByLibrary.simpleMessage("Coba lagi"),
-    "TurnPassed": m36,
+    "TurnPassed": m37,
     "TutorialBoardLabel": MessageLookupByLibrary.simpleMessage("Papan latihan"),
     "TutorialCaptureBody": MessageLookupByLibrary.simpleMessage(
       "Anda bermain sebagai Hitam. Ketuk kotak bertanda untuk mengapit keping putih di antara dua keping hitam.",
@@ -652,7 +668,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "TutorialPlayEasy": MessageLookupByLibrary.simpleMessage(
       "Main di tingkat Mudah",
     ),
-    "TutorialProgress": m37,
+    "TutorialProgress": m38,
     "TutorialReplyBody": MessageLookupByLibrary.simpleMessage(
       "Putih sudah bermain. Ketuk kotak bertanda untuk membalik keping lagi.",
     ),
@@ -672,6 +688,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "UndoWithAd": MessageLookupByLibrary.simpleMessage(
       "Urungkan · tonton iklan",
+    ),
+    "UndoWithPremium": MessageLookupByLibrary.simpleMessage(
+      "Urungkan · Premium",
     ),
     "UnlockWithPremium": MessageLookupByLibrary.simpleMessage(
       "Buka dengan Premium",
@@ -693,8 +712,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "WinsByDifficulty": MessageLookupByLibrary.simpleMessage(
       "Menang per kesulitan",
     ),
-    "WinsLosses": m38,
-    "YouColor": m39,
+    "WinsLosses": m39,
+    "YouColor": m40,
     "YouLose": MessageLookupByLibrary.simpleMessage("Kamu kalah"),
     "YouWin": MessageLookupByLibrary.simpleMessage("Kamu menang!"),
     "YourTurn": MessageLookupByLibrary.simpleMessage("Giliran Anda"),
